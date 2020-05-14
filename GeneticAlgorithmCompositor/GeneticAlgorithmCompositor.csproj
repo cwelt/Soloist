@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B06C8DF0-916D-4F02-9370-7857ABDA2729}</ProjectGuid>
+    <ProjectGuid>{855F5C16-A40E-4471-81A9-CE0B47D667A6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CW.Soloist.Services</RootNamespace>
-    <AssemblyName>CW.Soloist.Services</AssemblyName>
+    <RootNamespace>GeneticAlgorithmCompositor</RootNamespace>
+    <AssemblyName>GeneticAlgorithmCompositor</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -21,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\CW.Soloist.Services.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,10 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArpeggiatorCompositor.cs" />
-    <Compile Include="Composition.cs" />
-    <Compile Include="CompositorStrategy.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CW.Soloist.Services\CW.Soloist.Services.csproj">
+      <Project>{B06C8DF0-916D-4F02-9370-7857ABDA2729}</Project>
+      <Name>CW.Soloist.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
