@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CW.Soloist.Services
 {
-    interface IComposer
+    public class Class1
     {
     }
 }
