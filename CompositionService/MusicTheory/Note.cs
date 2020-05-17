@@ -123,7 +123,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         {
             string name = _name?.GetDescription() ?? "NIL";
             string pitch = _pitch.GetDescription() ?? _pitch.ToString();
-            return $"[name={name}, pitch={pitch}, duration={Duration}]";
+            return $"[name = {name}, pitch = {pitch}, duration = {Duration}]";
         }
         #endregion
 
