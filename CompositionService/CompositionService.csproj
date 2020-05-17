@@ -48,6 +48,7 @@
     <Compile Include="CompositionStrategies\Compositor.cs" />
     <Compile Include="InternTestProgram.cs" />
     <Compile Include="MusicTheory\ChordType.cs" />
+    <Compile Include="MusicTheory\EnumExtensions.cs" />
     <Compile Include="MusicTheory\INote.cs" />
     <Compile Include="MusicTheory\Note.cs" />
     <Compile Include="MusicTheory\NoteDuration.cs" />

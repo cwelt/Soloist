@@ -121,8 +121,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <returns> A string representing the note's instance. </returns>
         public override string ToString()
         {
-            string name = _name.ToString() ?? "";
-            string pitch = _pitch.ToString();
+            string name = _name?.GetDescription() ?? "NIL";
+            string pitch = _pitch.GetDescription() ?? _pitch.ToString();
             return $"[name={name}, pitch={pitch}, duration={Duration}]";
         }
         #endregion

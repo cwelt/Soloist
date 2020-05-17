@@ -20,6 +20,7 @@ namespace ConsoleClient
             var composition = new Composition { Compositor = geneticAlgorithmCompositor };
             composition.Compositor.Compose("demofile.mid", new object[] { "chord1", "chord2"});
 
+
             InternTestProgram.Main();
         }
     }
