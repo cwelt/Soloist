@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy
 {
     /// <summary>
-    /// <inheritdoc/>
+    /// Compose a solo-melody over a given playback by implementing a genetic algorithm,
+    /// <para>
+    /// This class implements a concrete composition strategy (<see cref="Compositor"/>)
+    /// for use by a <see cref="Composition"/> context instance.
+    /// </para>
     /// </summary>
     public class GeneticAlgorithmCompositor : Compositor
     {
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
-        /// 
-        /// <returns></returns>
         public override object Compose(string playback, IEnumerable<object> chordProgression)
         {
             // get first generatiion 

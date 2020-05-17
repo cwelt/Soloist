@@ -19,10 +19,10 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
     {
         /// <summary>
         /// Compose a solo-melody over a given <paramref name="playback"/>.
+        /// </summary>
         /// <param name="playback"> The MIDI playback file name.</param>
         /// <param name="chordProgression"> The chords of the song in the playback. </param>
         /// <returns> The composition of solo-melody</returns>
-        /// </summary>
 
         public abstract object Compose(string playback, IEnumerable<object> chordProgression);
     }

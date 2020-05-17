@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace CW.Soloist.CompositionService.CompositionStrategies.ArpeggiatorStrategy
 {
-
     /// <summary>
     /// Compose a solo-melody over a given playback by implementing an arpeggiator,
     /// which generates arpeggioes of the chord note under the given 

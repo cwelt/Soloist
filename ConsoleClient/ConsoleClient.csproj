@@ -49,5 +49,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CompositionService\CompositionService.csproj">
+      <Project>{0c3d2a16-dd1e-46e7-ade6-a1a42c9bbc63}</Project>
+      <Name>CompositionService</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
