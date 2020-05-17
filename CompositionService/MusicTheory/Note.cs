@@ -8,17 +8,18 @@ namespace CW.Soloist.CompositionService.MusicTheory
 {
     internal class Note : INote
     {
-        // constants 
-        internal const int NumberOfUniqueChromaticNotes = 12;
-        internal const int MidiMinimumPitchValue = 0;
-        internal const int MidiMaximumPitchValue = 127;
-
+        #region Private Internal Data
+        // internal static constants 
+        private const int NumberOfUniqueChromaticNotes = 12;
+        private const int MidiMinimumPitchValue = 0;
+        private const int MidiMaximumPitchValue = 127;
 
         // internal state backing fields 
         private NotePitch _pitch;
         private NoteName? _name;
+        #endregion
 
-
+        #region Public Properties 
         public INoteDuration Duration { get; set; }
         public NoteName? Name => _name;
 
@@ -31,7 +32,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 _name = GetNoteNameByNotePitch(value);
             }
         }
-
+        #endregion
 
         #region Constructors 
         /// <summary>
@@ -74,6 +75,9 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
         #endregion
 
+        #region Methods
+
+        #region GetNoteNameByNotePitch
         /// <summary>
         /// Returns the <see cref="NoteName"/> which corresponds to the 
         /// given <paramref name="notePitch"/>.
@@ -108,5 +112,21 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 default: return null;
             }
         }
+        #endregion
+
+        #region ToString
+        /// <summary>
+        /// Return a comma separated name-value pair list describing the note's state.
+        /// </summary>
+        /// <returns> A string representing the note's instance. </returns>
+        public override string ToString()
+        {
+            string name = _name.ToString() ?? "";
+            string pitch = _pitch.ToString();
+            return $"[name={name}, pitch={pitch}, duration={Duration}]";
+        }
+        #endregion
+
+        #endregion
     }
 }
