@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 
 namespace CW.Soloist.GeneticAlgorithmCompositor
 {
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public abstract class GeneticAlgorithmCompositor : CompositorStrategy
     {
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="playback"></param>
+        /// <returns></returns>
         public override object Compose(string playback)
         {
             // get first generatiion 

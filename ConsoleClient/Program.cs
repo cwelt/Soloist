@@ -12,6 +12,7 @@ namespace ConsoleClient
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Hello");
         }
     }
 }
