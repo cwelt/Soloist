@@ -46,7 +46,9 @@
     <Compile Include="CompositionStrategies\ArpeggiatorStrategy\ArpeggiatorCompositor.cs" />
     <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\GeneticAlgorithmCompositor.cs" />
     <Compile Include="CompositionStrategies\Compositor.cs" />
+    <Compile Include="MusicTheory\NoteName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
