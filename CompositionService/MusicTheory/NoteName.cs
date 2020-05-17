@@ -8,7 +8,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
 {
     /// <summary> Represets one of the 12-tonal note names. </summary>
     /// <remarks> The enumeration values support both sharp notes and flat notes. </remarks>
-    public enum NoteName
+    internal enum NoteName
     {
         /// <summary> A ("La")  </summary>
         A,
