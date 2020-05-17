@@ -27,8 +27,11 @@ namespace CW.Soloist.CompositionService.MusicTheory
     {
         /// <summary> Represents a hold note, i.e., a note that holds the pitch of it's predecessor note. </summary>
         HoldNote = 128,
+
         /// <summary> Represents a hold note (i.e., silent note).  </summary>
         RestNote = -1,
+
+        // all the midi notes from 0 to 127 
         CMinus1,
         CSharpMinus1,
         DMinus1,
