@@ -29,9 +29,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
         public IEnumerable<NotePitch> GetNotes(int minOctave, int maxOctave)
         {
-            throw new NotImplementedException();
+            return MidiServices.GetNotes(this.ChordRoot, this.ChordType, minOctave, maxOctave);
         }
-
-
     }
 }
