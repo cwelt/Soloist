@@ -10,7 +10,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     {
         public NoteName ChordRoot { get; }
         public ChordType ChordType { get; }
-        public INoteDuration Duration { get; set; }
+        public IDuration Duration { get; set; }
 
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <param name="root"> The name of the note which is the chord's root. </param>
         /// <param name="type"> The type of the chord (<see cref="ChordType"/>).</param>
         /// <param name="duration"> The Duration of the chord (<see cref="INoteDuration"/>).</param>
-        public Chord(NoteName root, ChordType type, INoteDuration duration)
+        public Chord(NoteName root, ChordType type, IDuration duration)
         {
             ChordRoot = root;
             ChordType = type;
@@ -31,5 +31,6 @@ namespace CW.Soloist.CompositionService.MusicTheory
         {
             return MidiServices.GetNotes(this.ChordRoot, this.ChordType, minOctave, maxOctave);
         }
+
     }
 }

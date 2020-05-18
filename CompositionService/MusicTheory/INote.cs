@@ -23,6 +23,6 @@ namespace CW.Soloist.CompositionService.MusicTheory
         NotePitch Pitch { get; set; }
 
         /// <summary> The note's duration (<see cref="INoteDuration"/>) .</summary>
-        INoteDuration Duration { get; set; }
+        IDuration Duration { get; set; }
     }
 }

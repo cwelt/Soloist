@@ -20,7 +20,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         #endregion
 
         #region Public Properties 
-        public INoteDuration Duration { get; set; }
+        public IDuration Duration { get; set; }
         public NoteName? Name => _name;
 
         public NotePitch Pitch
@@ -42,10 +42,10 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// </summary>
         /// <param name="pitch"> MIDI absolute pitch value. </param>
         /// <param name="duration"> Duration of new note. </param>
-        public Note(NotePitch pitch, INoteDuration duration)
+        public Note(NotePitch pitch, IDuration duration)
         {
             Pitch = pitch;
-            Duration = new NoteDuration(duration.Nominator, duration.Denominator);
+            Duration = new Duration(duration.Nominator, duration.Denominator);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <param name="nominator">Duration nominator.</param>
         /// <param name="denominator">Duration denominator.</param>
         public Note(NotePitch pitch, byte nominator, byte denominator)
-            : this(pitch, new NoteDuration(nominator, denominator)) { }
+            : this(pitch, new Duration(nominator, denominator)) { }
 
 
         /// <summary> 
@@ -65,7 +65,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// </summary>
         /// <param name="pitch">Absolute pitch of the constructed note. </param>
         public Note(NotePitch pitch)
-            : this(pitch, new NoteDuration()) { }
+            : this(pitch, new Duration()) { }
 
 
         /// <summary> Copy Constructor </summary>
