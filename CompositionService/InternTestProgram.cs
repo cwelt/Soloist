@@ -11,24 +11,17 @@ namespace CW.Soloist.CompositionService
     {
         public static void Main()
         {
-            IDuration duration = new Duration(1, 2);
-            Console.WriteLine("Duration printout: {0}", duration);
+            IDuration durationHalf = new Duration(1, 2);
+            IDuration durationQuarter = new Duration(1, 4);
+            INote noteA = new Note(NotePitch.A4, durationHalf);
+            Console.WriteLine(noteA);
+            Console.WriteLine(durationQuarter);
+            var chord = new Chord(NoteName.C, ChordType.Major7, durationHalf);
+            Console.WriteLine(chord);
 
-            INote note1 = new Note(NotePitch.C4, duration);
-            Console.WriteLine("Note name before pitch change: {0}", note1.Name);
-            Console.WriteLine(note1);
-            note1.Pitch = NotePitch.G9;
-            Console.WriteLine("Note name after pitch change: {0}", note1.Name);
-            Console.WriteLine(note1);
+            var bar = new Bar(new Duration(4, 4), new List<IChord>() { chord, new Chord(NoteName.ASharp, ChordType.Dominant7Suspended4, new Duration()) });
+            Console.WriteLine(bar);
 
-            var note2 = new Note(note1);
-            note2.Pitch = NotePitch.RestNote;
-            note2.Duration = new Duration();
-            Console.WriteLine("\nprinting after duplication");
-
-            Console.WriteLine("note1" + note1 + "\n\nNote 2" + note2);
-            var note3 = new Note(NotePitch.HoldNote);
-            Console.WriteLine(note3);
         }
     }
 }

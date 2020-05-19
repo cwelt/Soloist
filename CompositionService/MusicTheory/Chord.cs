@@ -32,5 +32,10 @@ namespace CW.Soloist.CompositionService.MusicTheory
             return MidiServices.GetNotes(this.ChordRoot, this.ChordType, minOctave, maxOctave);
         }
 
+        public override string ToString()
+        {
+            return $"{{Root={ChordRoot}; ChordType={ChordType}; Duration={Duration}}}";
+        }
+
     }
 }

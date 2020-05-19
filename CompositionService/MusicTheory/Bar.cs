@@ -88,21 +88,26 @@ namespace CW.Soloist.CompositionService.MusicTheory
         public override string ToString()
         {
             // time signature 
-            string timeSignature = $"{{Bar TimeSignature={_beatsPerBar}/{_beatsDuration};";
+            string timeSignature = $"{{TimeSignature={TimeSignature}; ";
             
             // chords 
-            string barChordsTitle = "Bar Chords";
-            StringBuilder chords = new StringBuilder(Chords.Count);
-            //chords.Append
-            //foreach (IChord chord in Chords)
-                //chords.Append($"\tPitch: {note.Pitch}, Duration: { note.Duration}");
+            StringBuilder chords = new StringBuilder();
+            chords.Append("Chords={");
+            for (int i = 0; i < Chords.Count - 1; i++)
+                chords.Append(Chords[i] + ",");
+            chords.Append(Chords[Chords.Count - 1] + "}; ");
+            
+                
 
             // notes 
-            String barNotesTitle = "Bar Notes:";
-            StringBuilder notes = new StringBuilder(Notes.Count);
-            foreach (INote note in Notes)
-                notes.Append($"\tPitch: {note.Pitch}, Duration: { note.Duration}");
-            return timeSignature + barNotesTitle + notes;
+            StringBuilder notes = new StringBuilder();
+            chords.Append("Notes={");
+            for (int i = 0; i < Notes.Count - 1; i++)
+                notes.Append(Notes[i] + ",");
+            notes.Append(Notes[Notes.Count - 1] + "}; ");
+
+            // assemble & return the result   
+            return timeSignature + chords + notes + "}";
         }
     }
 }
