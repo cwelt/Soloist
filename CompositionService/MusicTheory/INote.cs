@@ -22,7 +22,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <summary> The note's absolute pitch (<see cref="NotePitch"/>) .</summary>
         NotePitch Pitch { get; set; }
 
-        /// <summary> The note's duration (<see cref="INoteDuration"/>) .</summary>
+        /// <summary> The note's duration (<see cref="Duration"/>) .</summary>
         IDuration Duration { get; set; }
     }
 }

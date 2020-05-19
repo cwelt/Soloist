@@ -20,7 +20,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <summary> Type of the chord (<see cref="ChordType"/>) </summary>
         ChordType ChordType { get; }
 
-        /// <summary> The chords's duration (<see cref="INoteDuration"/>) .</summary>
+        /// <summary> The chords's duration (<see cref="IDuration"/>) .</summary>
         IDuration Duration { get; set; }
 
 
