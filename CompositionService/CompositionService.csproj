@@ -51,6 +51,7 @@
     <Compile Include="CompositionStrategies\Compositor.cs" />
     <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\MelodyGenome.cs" />
     <Compile Include="InternTestProgram.cs" />
+    <Compile Include="Midi\IMidiFile.cs" />
     <Compile Include="MusicTheory\Bar.cs" />
     <Compile Include="MusicTheory\Chord.cs" />
     <Compile Include="MusicTheory\ChordType.cs" />
@@ -58,7 +59,7 @@
     <Compile Include="MusicTheory\IBar.cs" />
     <Compile Include="MusicTheory\IChord.cs" />
     <Compile Include="MusicTheory\INote.cs" />
-    <Compile Include="MusicTheory\MusicTheoryServices.cs" />
+    <Compile Include="MusicTheory\MidiServices.cs" />
     <Compile Include="MusicTheory\Note.cs" />
     <Compile Include="MusicTheory\Duration.cs" />
     <Compile Include="MusicTheory\IDuration.cs" />
