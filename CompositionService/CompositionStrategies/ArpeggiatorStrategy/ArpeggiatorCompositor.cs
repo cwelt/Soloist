@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CW.Soloist.CompositionService.MusicTheory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.ArpeggiatorStrateg
     public class ArpeggiatorCompositor : Compositor
     {
         /// <inheritdoc/>
-        public override object Compose(string playback, IEnumerable<object> chordProgression)
+        internal override IEnumerable<IBar> Compose(string playback, IEnumerable<object> chordProgression)
         {
             throw new NotImplementedException();
         }

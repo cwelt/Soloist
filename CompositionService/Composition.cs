@@ -16,6 +16,7 @@ namespace CW.Soloist.CompositionService
     public class Composition
     {
 
+        
         /// <summary>
         /// <value> 
         /// Gets or sets the compositor responsible for composing the solo melody with the desired composition strategy.
