@@ -16,6 +16,13 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
     /// </summary>
     public class GeneticAlgorithmCompositor : Compositor
     {
+
+        internal IList<MelodyGenome> Candidates { get; set; }
+
+
+
+
+
         /// <inheritdoc/>
         internal override IEnumerable<IBar> Compose(string playback, IEnumerable<object> chordProgression)
         {
