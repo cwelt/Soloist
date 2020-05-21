@@ -1,13 +1,6 @@
 ﻿using CW.Soloist.CompositionService;
 using CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy;
-using CW.Soloist.CompositionService.MusicTheory;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleClient
 {
@@ -15,13 +8,17 @@ namespace ConsoleClient
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello");
+            Console.WriteLine("Testing Composition Services...");
+
             var geneticAlgorithmCompositor = new GeneticAlgorithmCompositor();
             var composition = new Composition { Compositor = geneticAlgorithmCompositor };
-            composition.Compositor.Compose("demofile.mid", new object[] { "chord1", "chord2"});
 
 
-            InternTestProgram.Main();
+
+            string filePath = @"C:\Users\chwel\OneDrive\שולחן העבודה\Soloist\Soloist\Soloist\bin\Debug\‏‏after_20_years.mid";
+
+            var newMidiFile = composition.Compose(filePath, "mockChordFile");
+            newMidiFile.Play();
         }
     }
 }

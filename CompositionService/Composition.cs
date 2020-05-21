@@ -1,4 +1,7 @@
 ﻿using CW.Soloist.CompositionService.CompositionStrategies;
+using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.CompositionService.MusicTheory;
+using Melanchall.DryWetMidi.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +27,22 @@ namespace CW.Soloist.CompositionService
         /// </value> 
         /// </summary>
         public Compositor Compositor { get; set; }
+
+        public IMidiFile Compose(string midiFilePath, string chordProgressionFilePath)
+        {
+            // TODO: extract chord progression data and build strongly typed collection
+            // of IChord so we could delegate the compose request to the composition 
+            // strategy
+
+            var melody = Compositor.Compose(new Bar[] { });
+
+            // TODO: Convert melody to IMidiTrack 
+
+            IMidiFile midiFile = new DryWetMidiAdapter(midiFilePath);
+
+            // TODO: assemble midi file with the composed midi track
+
+            return midiFile;
+        }
     }
 }

@@ -43,6 +43,6 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         /// <param name="chordProgression"> The chords of the song in the playback. </param>
         /// <returns> The composition of solo-melody</returns>
 
-        internal abstract IEnumerable<IBar> Compose(string playback, IEnumerable<object> chordProgression);
+        internal abstract IEnumerable<IBar> Compose(IEnumerable<IBar> chordProgression, IEnumerable<IBar> seed = null);
     }
 }

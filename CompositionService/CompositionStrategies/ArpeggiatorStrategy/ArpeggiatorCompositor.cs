@@ -18,7 +18,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.ArpeggiatorStrateg
     public class ArpeggiatorCompositor : Compositor
     {
         /// <inheritdoc/>
-        internal override IEnumerable<IBar> Compose(string playback, IEnumerable<object> chordProgression)
+        internal override IEnumerable<IBar> Compose(IEnumerable<IBar> chordProgression, IEnumerable<IBar> seed = null)
         {
             throw new NotImplementedException();
         }

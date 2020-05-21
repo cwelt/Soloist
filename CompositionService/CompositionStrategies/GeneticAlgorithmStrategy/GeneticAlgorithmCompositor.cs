@@ -24,7 +24,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
 
 
         /// <inheritdoc/>
-        internal override IEnumerable<IBar> Compose(string playback, IEnumerable<object> chordProgression)
+        internal override IEnumerable<IBar> Compose(IEnumerable<IBar> chordProgression, IEnumerable<IBar> seed = null)
         {
             // get first generatiion 
             InitializeFirstGeneration();
