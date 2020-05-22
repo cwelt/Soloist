@@ -1,4 +1,7 @@
-﻿using Melanchall.DryWetMidi.Core;
+﻿using CW.Soloist.CompositionService.MusicTheory;
+using Melanchall.DryWetMidi.Common;
+using Melanchall.DryWetMidi.Composing;
+using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Standards;
@@ -7,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Note = CW.Soloist.CompositionService.MusicTheory.Note;
 
 namespace CW.Soloist.CompositionService.Midi
 {
@@ -19,6 +23,8 @@ namespace CW.Soloist.CompositionService.Midi
         #region Adapter Specific Private Data Members 
 
         private readonly MidiFile _midiFile;
+
+        private readonly TempoMap _tempoMap;
 
         private readonly IList<TrackChunk> _trackChunks;
 
@@ -127,7 +133,123 @@ namespace CW.Soloist.CompositionService.Midi
             _midiPlayBack?.Stop();
         }
 
+/*        public MelodyGenome(TrackChunk seed, MidiFile midiFile, List<IBar> chordProgression = null)
+        {
+            this.Bars = Utilities.EncodeMelody(seed, midiFile).ToArray();
+            if (chordProgression != null)
+                for (int i = 0; i < this.Bars.Count; i++)
+                    Bars.ElementAt(i).Chords = chordProgression.ElementAt(i).Chords;
+        }*/
+
+        /// <summary>
+        /// Converts a melody encoded in list of <see cref="IBar"/> to a 
+        /// <see cref="TrackChunk"/> and adds the created track chunk to this midi's 
+        /// files chunk list. 
+        /// 
+        /// TODO:
+        ///     set instrument parameter, 
+        ///     overload with track index
+        ///     ...
+        ///     
+        /// </summary>
+        /// 
+        /// <param name="melody"></param>
+        /// <param name="trackName"></param>
+        /// <param name="instrument"></param>
+        /// <param name="channel"></param>
+        /// <returns></returns>
+        internal TrackChunk ConvertMelodyToTrackChunk(IEnumerable<IBar> melody, string trackName = "Generated Melody", byte instrument = 24, byte channel = 15)
+        {
+            PatternBuilder melodyTrackBuilder = new PatternBuilder();
+            melodyTrackBuilder.ProgramChange(GeneralMidiProgram.AcousticGuitar1); // set instrument  
+            melodyTrackBuilder.SetVelocity((SevenBitNumber)100);
+            foreach (IBar bar in melody)
+            {
+                foreach (INote note in bar.Notes)
+                {
+                    // set new note's length 
+                    var duration = new MusicalTimeSpan(note.Duration.Nominator, note.Duration.Denominator);
+
+                    // if this is a rest note, just step forward and continue to next note
+                    if (note.Pitch == NotePitch.RestNote)
+                        melodyTrackBuilder.StepForward(duration);
+                    else
+                    {
+                        // create new note:
+                        var newNote = Melanchall.DryWetMidi.MusicTheory.Note.Get((SevenBitNumber)(int)note.Pitch);
+
+                        // add new note with pre-seted length to midi chunk track: 
+                        melodyTrackBuilder.Note(newNote, duration);
+                    }
+                }
+            }
+
+            Pattern pattern = melodyTrackBuilder.Build();
+            var melodyTrackChunk = pattern.ToTrackChunk(this._tempoMap, (FourBitNumber)channel);
+            SequenceTrackNameEvent newTrackName = new SequenceTrackNameEvent(trackName);
+            melodyTrackChunk.Events.Add(newTrackName);
+            return melodyTrackChunk;
+        }
+
+        #region EncodeMelody
+        // EncodeMelody
+        internal IEnumerable<IBar> EncodeMelody(TrackChunk melodyTrack)
+        {
+            List<MusicTheory.INote> notes = new List<Note>().Cast<INote>().ToList(); ;
+            List<IBar> bars = new List<IBar>();
+            IBar currentBar = new Bar();
+            int barCounter = 0;
+            Melanchall.DryWetMidi.Interaction.Note note;
+            short pitch;
+            TempoMap tempoMap = _midiFile.GetTempoMap();
+            long startBar, endBar;
+
+
+            var notesAndRests = melodyTrack.GetNotesAndRests(RestSeparationPolicy.NoSeparation);
+
+            foreach (var currentNote in notesAndRests)
+            {
+                MusicalTimeSpan length = currentNote.LengthAs<MusicalTimeSpan>(tempoMap);
+
+                var musicEndTime = currentNote.EndTimeAs<MusicalTimeSpan>(tempoMap);
+                var barBeatFractionEndTime = currentNote.EndTimeAs<BarBeatFractionTimeSpan>(tempoMap);
+                var barBeatFractionStartTime = currentNote.TimeAs<BarBeatFractionTimeSpan>(tempoMap);
+                startBar = barBeatFractionStartTime.Bars;
+                endBar = barBeatFractionEndTime.Bars;
+
+                note = currentNote as Melanchall.DryWetMidi.Interaction.Note;
+                if (note != null)
+                    pitch = note.NoteNumber;
+                else pitch = -1;
+
+                INote newNote = new Note((NotePitch)pitch, (byte)length.Numerator, (byte)length.Denominator);
+                notes.Add(newNote);
+
+                //add note to bar 
+                if (barBeatFractionStartTime.Bars > barCounter)
+                {
+                    bars.Add(currentBar);
+                    currentBar = new Bar();
+                    currentBar.Notes.Add(newNote);
+                    barCounter++;
+                }
+
+                currentBar.Notes.Add(newNote);
+
+                if (barBeatFractionEndTime.Bars > barCounter)
+                {
+                    bars.Add(currentBar);
+                    currentBar = new Bar();
+                    barCounter++;
+                }
+            }
+            return bars;
+        }
         #endregion
+
+        #endregion
+
+
 
 
         #region DryWetMidi Midi Track Adapter - Internal Class
