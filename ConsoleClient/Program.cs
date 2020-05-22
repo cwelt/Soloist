@@ -10,15 +10,23 @@ namespace ConsoleClient
         {
             Console.WriteLine("Testing Composition Services...");
 
-            var geneticAlgorithmCompositor = new GeneticAlgorithmCompositor();
-            var composition = new Composition { Compositor = geneticAlgorithmCompositor };
+            // set the strategy compositor 
+            var compositor = new GeneticAlgorithmCompositor();
+
+            // inject the depedency to the composition 
+            var composition = new Composition { Compositor = compositor };
 
 
+            // midi (playback) file path 
+            string filePath = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\‏‏after_20_years.mid";
 
-            string filePath = @"C:\Users\chwel\OneDrive\שולחן העבודה\Soloist\Soloist\Soloist\bin\Debug\‏‏after_20_years.mid";
+            // get chords from file... 
+
+
 
             var newMidiFile = composition.Compose(filePath, "mockChordFile");
             newMidiFile.Play();
+            newMidiFile.Stop();
         }
     }
 }
