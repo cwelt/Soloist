@@ -10,7 +10,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// Represents a duration of a musical component such as a note or chord. 
     /// </summary>
     /// <remarks>
-    /// Each duration is assembled of two properties: <see cref="Nominator"/>, 
+    /// Each duration is assembled of two properties: <see cref="Numerator"/>, 
     /// which represents the number of beats in the duration, 
     /// and <see cref="Denominator"/>, which represents the duration of a single beat,
     /// in relation to whole note duration. For example, a chord which is played 
@@ -21,7 +21,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
     internal interface IDuration
     {
-        byte Nominator { get; set; }
+        byte Numerator { get; set; }
         byte Denominator { get; set; }
     }
 }

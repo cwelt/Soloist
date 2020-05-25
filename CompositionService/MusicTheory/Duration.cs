@@ -10,7 +10,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// Represents a duration of a musical component such as a note or chord. 
     /// </summary>
     /// <remarks>
-    /// Each duration is assembled of two properties: <see cref="Nominator"/>, 
+    /// Each duration is assembled of two properties: <see cref="Numerator"/>, 
     /// which represents the number of beats in the duration, 
     /// and <see cref="Denominator"/>, which represents the duration of a single beat,
     /// in relation to whole note duration. For example, a chord which is played 
@@ -21,7 +21,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     internal class Duration : IDuration
     {
         /// <summary> Number of beats </summary>
-        public byte Nominator { get; set; }
+        public byte Numerator { get; set; }
 
         /// <summary> Duration of a single beat </summary>
         public byte Denominator { get; set; }
@@ -35,7 +35,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <param name="denominator"></param>
         public Duration(byte nominator = 1, byte denominator = 4)
         {
-            Nominator = nominator;
+            Numerator = nominator;
             Denominator = denominator;
         }
 
@@ -45,10 +45,10 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// </summary>
         /// <param name="duration"></param>
         public Duration(IDuration duration)
-            : this(duration.Nominator, duration.Denominator) { }
+            : this(duration.Numerator, duration.Denominator) { }
 
         #endregion
 
-        public override string ToString() => $"{Nominator}/{Denominator}";
+        public override string ToString() => $"{Numerator}/{Denominator}";
     }
 }

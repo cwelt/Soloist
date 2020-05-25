@@ -45,7 +45,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         public Note(NotePitch pitch, IDuration duration)
         {
             Pitch = pitch;
-            Duration = new Duration(duration.Nominator, duration.Denominator);
+            Duration = new Duration(duration.Numerator, duration.Denominator);
         }
 
         /// <summary>

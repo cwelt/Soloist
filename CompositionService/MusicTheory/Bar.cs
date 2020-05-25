@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace CW.Soloist.CompositionService.MusicTheory
 {
@@ -44,7 +45,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         public Bar(IDuration timeSignature, IList<IChord> chords, IList<INote> notes)
         {
             this.TimeSignature = timeSignature;
-            this._beatsPerBar = TimeSignature.Nominator;
+            this._beatsPerBar = TimeSignature.Numerator;
             this._beatsDuration = TimeSignature.Denominator;
             this.Chords = chords;
             this.Notes = notes;
@@ -52,11 +53,18 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
         /// <summary>
         /// <para>Default constructor.</para>
-        /// Initializes a bar with a time signature of 4/4, 
+        /// Initializes a bar with a default time signature of 4/4, 
         /// an empy list of chords and an empty list of notes.
         /// </summary>
         public Bar() 
             : this (new Duration(4, 4), new List<IChord>(), new List<INote>()) {}
+
+        /// <summary>
+        /// Constructs an empty bar with the given time signature. />
+        /// </summary>
+        /// <param name="timeSignature"></param>
+        public Bar(Duration timeSignature)
+            : this(timeSignature, new List<IChord>(), new List<INote>()) { }
 
         /// <summary>
         /// Constructs a bar instance based on the given <paramref name="timeSignature"/>

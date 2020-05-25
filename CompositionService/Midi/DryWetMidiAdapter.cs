@@ -168,7 +168,7 @@ namespace CW.Soloist.CompositionService.Midi
                 foreach (INote note in bar.Notes)
                 {
                     // set new note's length 
-                    var duration = new MusicalTimeSpan(note.Duration.Nominator, note.Duration.Denominator);
+                    var duration = new MusicalTimeSpan(note.Duration.Numerator, note.Duration.Denominator);
 
                     // if this is a rest note, just step forward and continue to next note
                     if (note.Pitch == NotePitch.RestNote)
