@@ -1,4 +1,5 @@
 ﻿using CW.Soloist.CompositionService.CompositionStrategies;
+using CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using Melanchall.DryWetMidi.Core;
@@ -20,28 +21,59 @@ namespace CW.Soloist.CompositionService
     /// </summary>
     public class Composition
     {
+        private readonly string _midiInputFile;
+        private IMidiFile _midiOutputFile;
+        private readonly IList<IBar> _chordProgression;
 
-        
         /// <summary>
-        /// <value> 
         /// Gets or sets the compositor responsible for composing the solo melody with the desired composition strategy.
-        /// See <see cref="Compositor"/>.
-        /// </value> 
         /// </summary>
         public Compositor Compositor { get; set; }
 
-        public IMidiFile Compose(string midiFilePath, string chordProgressionFilePath)
+
+        /// <summary>
+        /// Construct a new composition.
+        /// </summary>
+        /// <param name="midiFilePath"> Path of the midi playback file.</param>
+        /// <param name="chordProgressionFilePath"> Path of the chord progression file.</param>
+        /// <param name="CompositionStrategy"> Composition strategy compositor.</param>
+        public Composition(string midiFilePath, string chordProgressionFilePath, Compositor CompositionStrategy)
         {
-            // TODO: extract chord progression data and build strongly typed collection
-            // of IChord so we could delegate the compose request to the composition 
-            // strategy;
-            var chords = ReadChordsFromFile(chordProgressionFilePath);
+            _midiInputFile = midiFilePath;
+            Compositor = CompositionStrategy;
 
-            var melody = Compositor.Compose(new Bar[] { });
+            // get chords from file 
+            try
+            {
+                _chordProgression = ReadChordsFromFile(chordProgressionFilePath).ToList();
+            }
+            catch (FormatException)
+            {
+                throw;
+            }
+        }
+        
 
-            // TODO: Convert melody to IMidiTrack 
 
-            IMidiFile midiFile = new DryWetMidiAdapter(midiFilePath);
+        public IMidiFile Compose()
+        {
+            var midiFile = new DryWetMidiAdapter(_midiInputFile);
+            IEnumerable<IBar> melody = Compositor.Compose(_chordProgression);
+
+
+            // test mock melody 
+            IBar bar = new Bar(new Duration(4, 4));
+            bar.Notes.Add(new Note(NotePitch.A5, new Duration(1, 2)));
+            bar.Notes.Add(new Note(NotePitch.E5, new Duration(1, 2)));
+            bar.Notes.Add(new Note(NotePitch.F5, new Duration(1, 2)));
+            bar.Notes.Add(new Note(NotePitch.E5, new Duration(1, 2)));
+
+
+            melody = new List<IBar>() { bar };
+
+            // Embed the generated melody in the midi file
+            midiFile.EmbedMelody(melody);
+
 
             // TODO: assemble midi file with the composed midi track
 

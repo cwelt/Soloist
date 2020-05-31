@@ -19,23 +19,20 @@ namespace ConsoleClient
 
             Console.WriteLine("Testing Composition Services...");
 
-            // set the strategy compositor 
-            var compositor = new GeneticAlgorithmCompositor();
-
-            // inject the depedency to the composition 
-            var composition = new Composition { Compositor = compositor };
-
-
             // midi (playback) file path 
-            string filePath = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\‏‏after_20_years.mid";
+            string filePath = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\after_20_years_playback.mid";
 
             // get chords from file... 
             string chordsFilePath = @"C:\Users\chwel\OneDrive\שולחן העבודה\twenty_years_chords.txt";
 
+            // set the strategy compositor 
+            var compositor = new GeneticAlgorithmCompositor();
 
+            // create a new composition with injected strategy
+            var composition = new Composition(filePath, chordsFilePath, compositor);
+            var newMidiFile = composition.Compose();
 
-            var newMidiFile = composition.Compose(filePath, chordsFilePath);
-            //newMidiFile.Play();
+            newMidiFile.Play();
             //newMidiFile.Stop();
 
 

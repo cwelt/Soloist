@@ -18,7 +18,7 @@ namespace CW.Soloist.CompositionService.Midi
         string Title { get; set; }
 
         /// <summary> BPM <a href="https://bit.ly/2LIuuVE">(Beats Per Minute).</a> </summary>
-        int BeatsPerMinute { get; set; }
+        byte BeatsPerMinute { get;  }
 
         /// <summary> Total number of bars in the MIDI file. </summary>
         int NumberOfBars {get; }

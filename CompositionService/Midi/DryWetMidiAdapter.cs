@@ -16,7 +16,6 @@ namespace CW.Soloist.CompositionService.Midi
 {
     /// <summary>
     /// Provides a high level interface for a <a href="https://bit.ly/3bRVzQT"> SMF (Standard MIDI File) </a> 
-    /// 
     /// </summary>
     internal class DryWetMidiAdapter : IMidiFile
     {
@@ -41,6 +40,10 @@ namespace CW.Soloist.CompositionService.Midi
 
         public string FilePath { get; set; }
 
+
+        //TODO: 
+        // 1. UPDATE THE SETTER TO UPDATE THE ACTUAL SequenceTrackName EVENT 
+        // 2. Update Getter for a Lazy Load
         public string Title
         {
             get
@@ -67,11 +70,7 @@ namespace CW.Soloist.CompositionService.Midi
         }
 
 
-        public int BeatsPerMinute
-        {
-            get => (int)(_midiFile.GetTempoMap().Tempo.AtTime(0).BeatsPerMinute);
-            set => BeatsPerMinute = value;
-        }
+        public byte BeatsPerMinute => (byte)(_midiFile.GetTempoMap().Tempo.AtTime(0).BeatsPerMinute);
 
         public int NumberOfBars
         {
@@ -86,8 +85,8 @@ namespace CW.Soloist.CompositionService.Midi
         }
         public ICollection<IMidiTrack> Tracks
         {
-            get ;
-            set ;
+            get;
+            set;
         }
 
 
@@ -102,6 +101,7 @@ namespace CW.Soloist.CompositionService.Midi
         {
             this.FilePath = midiFilePath;
             this._midiFile = MidiFile.Read(midiFilePath);
+            this._tempoMap = _midiFile.GetTempoMap();
             this._trackChunks = _midiFile.GetTrackChunks().ToList();
 
             // add midi tracks
@@ -133,13 +133,27 @@ namespace CW.Soloist.CompositionService.Midi
             _midiPlayBack?.Stop();
         }
 
-/*        public MelodyGenome(TrackChunk seed, MidiFile midiFile, List<IBar> chordProgression = null)
+        /*        public MelodyGenome(TrackChunk seed, MidiFile midiFile, List<IBar> chordProgression = null)
+                {
+                    this.Bars = Utilities.EncodeMelody(seed, midiFile).ToArray();
+                    if (chordProgression != null)
+                        for (int i = 0; i < this.Bars.Count; i++)
+                            Bars.ElementAt(i).Chords = chordProgression.ElementAt(i).Chords;
+                }*/
+
+
+        /// <summary>
+        /// Converts a melody contained in an enumerable collection of bars 
+        /// into a midi track and adds it to the midi file. 
+        /// </summary>
+        /// <param name="melody"></param>
+        /// <param name="melodyTrackName"></param>
+        /// <param name="instrumentId"></param>
+        internal void EmbedMelody(IEnumerable<IBar> melody, string melodyTrackName = "Melody", byte instrumentId = 64)
         {
-            this.Bars = Utilities.EncodeMelody(seed, midiFile).ToArray();
-            if (chordProgression != null)
-                for (int i = 0; i < this.Bars.Count; i++)
-                    Bars.ElementAt(i).Chords = chordProgression.ElementAt(i).Chords;
-        }*/
+            TrackChunk melodyTrack = ConvertMelodyToTrackChunk(melody, melodyTrackName, instrumentId);
+            this._midiFile.Chunks.Add(melodyTrack);
+        }
 
         /// <summary>
         /// Converts a melody encoded in list of <see cref="IBar"/> to a 
@@ -158,11 +172,17 @@ namespace CW.Soloist.CompositionService.Midi
         /// <param name="instrument"></param>
         /// <param name="channel"></param>
         /// <returns></returns>
-        internal TrackChunk ConvertMelodyToTrackChunk(IEnumerable<IBar> melody, string trackName = "Generated Melody", byte instrument = 24, byte channel = 15)
+        private TrackChunk ConvertMelodyToTrackChunk(IEnumerable<IBar> melody, string trackName, byte instrumentId = 64, byte channel = 15)
         {
             PatternBuilder melodyTrackBuilder = new PatternBuilder();
-            melodyTrackBuilder.ProgramChange(GeneralMidiProgram.AcousticGuitar1); // set instrument  
+
+            // set instrument  
+            melodyTrackBuilder.ProgramChange((SevenBitNumber)instrumentId);
+
+            // set default velocity (volume)
             melodyTrackBuilder.SetVelocity((SevenBitNumber)100);
+
+
             foreach (IBar bar in melody)
             {
                 foreach (INote note in bar.Notes)
@@ -186,8 +206,8 @@ namespace CW.Soloist.CompositionService.Midi
 
             Pattern pattern = melodyTrackBuilder.Build();
             var melodyTrackChunk = pattern.ToTrackChunk(this._tempoMap, (FourBitNumber)channel);
-            SequenceTrackNameEvent newTrackName = new SequenceTrackNameEvent(trackName);
-            melodyTrackChunk.Events.Add(newTrackName);
+            SequenceTrackNameEvent trackNameEvent = new SequenceTrackNameEvent(trackName);
+            melodyTrackChunk.Events.Add(trackNameEvent);
             return melodyTrackChunk;
         }
 
@@ -248,45 +268,7 @@ namespace CW.Soloist.CompositionService.Midi
         #endregion
 
         #endregion
-
-
-
-
-        #region DryWetMidi Midi Track Adapter - Internal Class
-        // TODO: add setters to handle midi events in the individual chunks
-        private class DryWetMidiTrackAdapter : IMidiTrack
-        {
-            public string TrackName { get; }
-            public byte InstrumentMidiCode { get; }
-            public string InstrumentName { get; }
-
-            
-            internal DryWetMidiTrackAdapter(TrackChunk track)
-            {
-                // track name 
-                TrackName = (from e in track.Events
-                                 where e.EventType == MidiEventType.SequenceTrackName
-                                 select ((SequenceTrackNameEvent)e)).FirstOrDefault()?.Text;
-
-                // instrument 
-                var programChangeEvent = from e in track.Events
-                                         where e.EventType == MidiEventType.ProgramChange
-                                         select ((ProgramChangeEvent)e);
-
-                if (programChangeEvent != null && programChangeEvent.Count() > 0)
-                {
-                    InstrumentMidiCode = (byte)(programChangeEvent.First().ProgramNumber);
-                    if (InstrumentMidiCode > 0 && InstrumentMidiCode <= 127)
-                        InstrumentName = Enum.GetName(typeof(GeneralMidiProgram), InstrumentMidiCode);
-                    else InstrumentName = "Drums";
-                }
-                else
-                {
-                    InstrumentName = "Drums & Percussion";
-                }
-            }
-        }
-        #endregion
     }
+
 }
 
