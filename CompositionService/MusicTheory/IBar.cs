@@ -15,7 +15,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// the current bar, and a list of notes (<see cref="INote"/>).
     /// </para>
     /// </summary>
-    internal interface IBar
+    public interface IBar
     {
         /// <summary> 
         /// Time signature of current bar which contains the bar's duration: 

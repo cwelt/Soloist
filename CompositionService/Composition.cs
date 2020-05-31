@@ -57,7 +57,7 @@ namespace CW.Soloist.CompositionService
 
         public IMidiFile Compose()
         {
-            var midiFile = new DryWetMidiAdapter(_midiInputFile);
+            IMidiFile midiFile = new DryWetMidiAdapter(_midiInputFile);
             IEnumerable<IBar> melody = Compositor.Compose(_chordProgression);
 
 

@@ -19,7 +19,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// so for example, a duration instance of 2/4 is equivalent to 1/2. 
     /// </remarks>
 
-    internal interface IDuration
+    public interface IDuration
     {
         byte Numerator { get; set; }
         byte Denominator { get; set; }

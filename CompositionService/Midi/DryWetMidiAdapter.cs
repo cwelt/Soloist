@@ -6,6 +6,7 @@ using Melanchall.DryWetMidi.Devices;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Standards;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -142,14 +143,8 @@ namespace CW.Soloist.CompositionService.Midi
                 }*/
 
 
-        /// <summary>
-        /// Converts a melody contained in an enumerable collection of bars 
-        /// into a midi track and adds it to the midi file. 
-        /// </summary>
-        /// <param name="melody"></param>
-        /// <param name="melodyTrackName"></param>
-        /// <param name="instrumentId"></param>
-        internal void EmbedMelody(IEnumerable<IBar> melody, string melodyTrackName = "Melody", byte instrumentId = 64)
+        /// <inheritdoc/>
+        public void EmbedMelody(IEnumerable<IBar> melody, string melodyTrackName = "Melody", byte instrumentId = 64)
         {
             TrackChunk melodyTrack = ConvertMelodyToTrackChunk(melody, melodyTrackName, instrumentId);
             this._midiFile.Chunks.Add(melodyTrack);
@@ -211,9 +206,24 @@ namespace CW.Soloist.CompositionService.Midi
             return melodyTrackChunk;
         }
 
-        #region EncodeMelody
+
+        /// <inheritdoc/>
+        public IEnumerable<IBar> ExtractMelody(byte trackNumber)
+        {
+            // get the requested track 
+            TrackChunk melodyTrack = _midiFile.Chunks[trackNumber] as TrackChunk;
+
+            // remove the track from the midi file 
+            _midiFile.Chunks.RemoveAt(trackNumber);
+
+            // convert the track to a music-theory melody representation
+            IEnumerable<IBar> extractedMelody = ConvertTrackChunkToMelody(melodyTrack);
+            return extractedMelody;
+        }
+
+        #region ConvertTrackChunkToMelody
         // EncodeMelody
-        internal IEnumerable<IBar> EncodeMelody(TrackChunk melodyTrack)
+        private IEnumerable<IBar> ConvertTrackChunkToMelody(TrackChunk melodyTrack)
         {
             List<MusicTheory.INote> notes = new List<Note>().Cast<INote>().ToList(); ;
             List<IBar> bars = new List<IBar>();
@@ -221,7 +231,7 @@ namespace CW.Soloist.CompositionService.Midi
             int barCounter = 0;
             Melanchall.DryWetMidi.Interaction.Note note;
             short pitch;
-            TempoMap tempoMap = _midiFile.GetTempoMap();
+            TempoMap tempoMap = _tempoMap;
             long startBar, endBar;
 
 

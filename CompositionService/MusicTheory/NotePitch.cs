@@ -24,7 +24,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// </item>
     /// </list>
     /// </remarks>
-    internal enum NotePitch
+    public enum NotePitch
     {
         /// <summary> Represents a hold note, i.e., a note that holds the pitch of it's predecessor note. </summary>
         [Description("Hold Note")]

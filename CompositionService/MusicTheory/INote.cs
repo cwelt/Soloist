@@ -14,7 +14,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// which also determines it's name (<see cref="Name"/>).
     /// </para>
     /// </summary>
-    internal interface INote
+    public interface INote
     {
         /// <summary> The note's name (<see cref="NoteName"/>) .</summary>
         NoteName? Name { get; }

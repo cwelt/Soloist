@@ -12,7 +12,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// Each chord is represented by a chord root, a chord type and a chord duration.
     /// </para>
     /// </summary>
-    internal interface IChord
+    public interface IChord
     {
         /// <summary> Name of the note which is the root of the chord. </summary>
         NoteName ChordRoot { get; }
