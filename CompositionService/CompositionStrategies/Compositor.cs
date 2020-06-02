@@ -36,13 +36,10 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         /// <summary> Maximum octave of note pitch range for the composition. </summary>
         internal int MaxOctave { get; set; } = 9;
 
-        /// <summary>
-        /// Compose a solo-melody over a given <paramref name="playback"/>.
-        /// </summary>
-        /// <param name="playback"> The MIDI playback file name.</param>
+        /// <summary> Compose a solo-melody over a given playback. </summary>
         /// <param name="chordProgression"> The chords of the song in the playback. </param>
+        /// <param name="seed"> Optional existing melody on which to base the composition on.</param>
         /// <returns> The composition of solo-melody</returns>
-
         internal abstract IEnumerable<IBar> Compose(IEnumerable<IBar> chordProgression, IEnumerable<IBar> seed = null);
     }
 }

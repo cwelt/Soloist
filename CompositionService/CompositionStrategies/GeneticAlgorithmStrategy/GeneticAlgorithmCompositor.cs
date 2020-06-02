@@ -7,21 +7,12 @@ using System.Threading.Tasks;
 
 namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy
 {
-    /// <summary>
-    /// Compose a solo-melody over a given playback by implementing a genetic algorithm,
-    /// <para>
+    /// <summary> <para> Compose a solo-melody over a given playback by implementing a genetic algorithm. </para>
     /// This class implements a concrete composition strategy (<see cref="Compositor"/>)
-    /// for use by a <see cref="Composition"/> context instance.
-    /// </para>
-    /// </summary>
+    /// for use by a <see cref="Composition"/> context instance. </summary>
     public class GeneticAlgorithmCompositor : Compositor
     {
-
         internal IList<MelodyGenome> Candidates { get; set; }
-
-
-
-
 
         /// <inheritdoc/>
         internal override IEnumerable<IBar> Compose(IEnumerable<IBar> chordProgression, IEnumerable<IBar> seed = null)
@@ -45,15 +36,14 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
 
                 // natural selection 
                 SelectNextGeneration();
-                //MelodyGenome.CurrentGeneration++;
 
+                //MelodyGenome.CurrentGeneration++;
                 if (i++ == 100)
                     terminateCondition = true;
             }
 
             // TODO: convert internal genome representation of each candidate in to a MIDI track chunk representation
             return null;
-
         }
 
 

@@ -1,29 +1,27 @@
-﻿using CW.Soloist.CompositionService.CompositionStrategies;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService.CompositionStrategies;
 using CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
-using Melanchall.DryWetMidi.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+
 
 namespace CW.Soloist.CompositionService
 {
     /// <summary>
     /// Context service class for composing a solo-melody over a given playback.
-    /// <para>
-    /// <remarks> This class serves as the context participant in the strategy design pattern. </remarks>
-    /// </para>
+    /// <para> This class serves as the context participant in the strategy design pattern. </para>
     /// </summary>
     public class Composition
     {
         private readonly string _midiInputFilePath;
+        private readonly string _midiInputFileName;
         private IMidiFile _midiInputFile;
+        
+        // TODO: use input file to construct the output without duplicating unnecessary data (prototype\flyweight)
         private IMidiFile _midiOutputFile;
+
         private readonly IList<IBar> _chordProgression;
 
         /// <summary>
@@ -31,16 +29,15 @@ namespace CW.Soloist.CompositionService
         /// </summary>
         public Compositor Compositor { get; set; }
 
-
-        /// <summary>
-        /// Construct a new composition.
-        /// </summary>
+        #region Constructor 
+        /// <summary> Construct a new composition. </summary>
         /// <param name="midiFilePath"> Path of the midi playback file.</param>
         /// <param name="chordProgressionFilePath"> Path of the chord progression file.</param>
-        /// <param name="CompositionStrategy"> Composition strategy compositor.</param>
         public Composition(string midiFilePath, string chordProgressionFilePath)
         {
+            // open & read the midi file using an adapter 
             _midiInputFilePath = midiFilePath;
+            _midiInputFileName = Path.GetFileNameWithoutExtension(midiFilePath);
             _midiInputFile = new DryWetMidiAdapter(_midiInputFilePath);
 
             // get chords from file 
@@ -53,38 +50,44 @@ namespace CW.Soloist.CompositionService
                 throw;
             }
         }
+        #endregion
 
 
         /// <summary>
-        /// overloaded version that uses the default composition strategy.
-        /// <see cref="Compose(Compositor)"/>
+        /// overloaded version that uses the default composition strategy. <see cref="Compose(Compositor)"/>
         /// </summary>
-        /// <returns></returns>
+        /// <returns> A new midi file containing the composed solo-melody. </returns>
         public IMidiFile Compose()
         {
             return Compose(new GeneticAlgorithmCompositor());
         }
 
+        /// <summary>
+        /// Composes a solo-melody over this composition's midi playback file & chord progression. 
+        /// </summary>
+        /// <param name="CompositionStrategy"> The strategy to use to compose the melody. </param>
+        /// <returns> A new midi file containing the composed solo-melody. </returns>
         public IMidiFile Compose(Compositor CompositionStrategy)
         {
             // set composition strategy
             Compositor = CompositionStrategy;
 
+            // create adapter handle for the newly created midi file 
+            _midiOutputFile = new DryWetMidiAdapter(_midiInputFilePath);
 
-            IMidiFile midiFile = new DryWetMidiAdapter(_midiInputFilePath);
+            // remove currently existing melody from midi file 
+            _midiOutputFile.ExtractMelody(1, _chordProgression);
 
+            // compose a new melody 
+            IEnumerable<IBar> melody = Compositor.Compose(_chordProgression);
 
-            midiFile.ExtractMelody(1, _chordProgression);
+            // Embed the new generated melody into the midi file
+            _midiOutputFile.EmbedMelody(_chordProgression, "new melody", 53);
 
-            //IEnumerable<IBar> melody = Compositor.Compose(_chordProgression);
+            // save output
+            _midiOutputFile.SaveFile(_midiInputFileName);
 
-
-            // Embed the generated melody in the midi file
-            midiFile.EmbedMelody(_chordProgression, "new melody", 53);
-            
-
-            midiFile.SaveFile("out.mid");
-            return midiFile;
+            return _midiOutputFile;
         }
 
         #region ReadChordsFromFile
