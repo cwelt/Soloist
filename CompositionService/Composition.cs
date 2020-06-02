@@ -21,7 +21,8 @@ namespace CW.Soloist.CompositionService
     /// </summary>
     public class Composition
     {
-        private readonly string _midiInputFile;
+        private readonly string _midiInputFilePath;
+        private IMidiFile _midiInputFile;
         private IMidiFile _midiOutputFile;
         private readonly IList<IBar> _chordProgression;
 
@@ -37,46 +38,52 @@ namespace CW.Soloist.CompositionService
         /// <param name="midiFilePath"> Path of the midi playback file.</param>
         /// <param name="chordProgressionFilePath"> Path of the chord progression file.</param>
         /// <param name="CompositionStrategy"> Composition strategy compositor.</param>
-        public Composition(string midiFilePath, string chordProgressionFilePath, Compositor CompositionStrategy)
+        public Composition(string midiFilePath, string chordProgressionFilePath)
         {
-            _midiInputFile = midiFilePath;
-            Compositor = CompositionStrategy;
+            _midiInputFilePath = midiFilePath;
+            _midiInputFile = new DryWetMidiAdapter(_midiInputFilePath);
 
             // get chords from file 
             try
             {
-                _chordProgression = ReadChordsFromFile(chordProgressionFilePath).ToList();
+                _chordProgression = ReadChordsFromFile(chordProgressionFilePath);
             }
             catch (FormatException)
             {
                 throw;
             }
         }
-        
 
 
+        /// <summary>
+        /// overloaded version that uses the default composition strategy.
+        /// <see cref="Compose(Compositor)"/>
+        /// </summary>
+        /// <returns></returns>
         public IMidiFile Compose()
         {
-            IMidiFile midiFile = new DryWetMidiAdapter(_midiInputFile);
-            IEnumerable<IBar> melody = Compositor.Compose(_chordProgression);
+            return Compose(new GeneticAlgorithmCompositor());
+        }
+
+        public IMidiFile Compose(Compositor CompositionStrategy)
+        {
+            // set composition strategy
+            Compositor = CompositionStrategy;
 
 
-            // test mock melody 
-            IBar bar = new Bar(new Duration(4, 4));
-            bar.Notes.Add(new Note(NotePitch.A5, new Duration(1, 2)));
-            bar.Notes.Add(new Note(NotePitch.E5, new Duration(1, 2)));
-            bar.Notes.Add(new Note(NotePitch.F5, new Duration(1, 2)));
-            bar.Notes.Add(new Note(NotePitch.E5, new Duration(1, 2)));
+            IMidiFile midiFile = new DryWetMidiAdapter(_midiInputFilePath);
 
 
-            melody = new List<IBar>() { bar };
+            midiFile.ExtractMelody(1, _chordProgression);
+
+            //IEnumerable<IBar> melody = Compositor.Compose(_chordProgression);
+
 
             // Embed the generated melody in the midi file
-            midiFile.EmbedMelody(melody);
+            midiFile.EmbedMelody(_chordProgression, "new melody", 53);
+            
 
-
-            // TODO: assemble midi file with the composed midi track
-
+            midiFile.SaveFile("out.mid");
             return midiFile;
         }
 
@@ -104,7 +111,7 @@ namespace CW.Soloist.CompositionService
         /// <exception cref="FormatException">
         /// The lines are not compatible to the defined format. see the format details above.
         /// </exception>
-        private IEnumerable<IBar> ReadChordsFromFile(string chordProgressionFilePath)
+        private IList<IBar> ReadChordsFromFile(string chordProgressionFilePath)
         {
             using (StreamReader streamReader = File.OpenText(chordProgressionFilePath))
             {
@@ -113,6 +120,7 @@ namespace CW.Soloist.CompositionService
                 string currentLine = null;
                 List<IBar> chordProgression = new List<IBar>();
                 IBar bar = null;
+                IDuration midiDuration = null;
                 NoteName chordRoot;
                 ChordType chordType;
                 byte barNumerator = 0;
@@ -123,7 +131,7 @@ namespace CW.Soloist.CompositionService
                 string[] barTimeSignature = null;
                 string[] chordProperties = null;
                 string customErrorMessage = string.Empty;
-                string genericErrorMessage = $"Error parsing line {lineNumber} in file '{chordProgressionFilePath}'.\n";
+                string genericErrorMessage = $"Error parsing chord progression file '{chordProgressionFilePath}'.\n";
 
                 // parse file line after line 
                 while ((currentLine = streamReader.ReadLine()) != null)
@@ -136,7 +144,7 @@ namespace CW.Soloist.CompositionService
                     lineTokens = currentLine.Split('\b','\t');
                     if(lineTokens?.Length < 2)
                     {
-                        customErrorMessage = "Each line must include a time signature and at least one chord.";
+                        customErrorMessage = $"Line {lineNumber} must include a time signature and at least one chord.";
                         throw new FormatException(genericErrorMessage + customErrorMessage);
                     }
 
@@ -146,10 +154,18 @@ namespace CW.Soloist.CompositionService
                         (!Byte.TryParse(barTimeSignature?[0], out barNumerator)) ||
                         (!Byte.TryParse(barTimeSignature?[1], out barDenominator)))
                     {
-                        customErrorMessage = $"Invalid time signature format: {lineTokens[0]}. The required format is 'numerator/denominator', for example 4/4.";
+                        customErrorMessage = $"Invalid time signature format in line {lineNumber}: '{lineTokens[0]}'. The required format is 'numerator/denominator', for example 4/4.";
                         throw new FormatException(genericErrorMessage + customErrorMessage);
                     }
                     bar = new Bar(new Duration(barNumerator, barDenominator));
+
+                    // validate that bar duration from CHORD file matches the duration from MIDI file  
+                    midiDuration = _midiInputFile.GetBarDuration(chordProgression.Count);
+                    if (barNumerator != midiDuration.Numerator || barDenominator != midiDuration.Denominator)
+                    {
+                        customErrorMessage = $"Time signature '{barNumerator}/{barDenominator}' of bar number {chordProgression.Count + 1} in line {lineNumber} in chord file [{chordProgressionFilePath}] does not match time signature '{midiDuration.Numerator}/{midiDuration.Denominator}' in midi file [{_midiInputFilePath}].";
+                        throw new FormatException(genericErrorMessage + customErrorMessage);
+                    }
 
                     // set bar's chords (rest of tokens in line)
                     for (int i = 1; i < lineTokens.Length; i++)
@@ -164,7 +180,7 @@ namespace CW.Soloist.CompositionService
                             (!Enum.TryParse(chordProperties?[1], out chordType)) ||
                             (!Byte.TryParse(chordProperties?[2], out numberOfBeats)))
                         {
-                            customErrorMessage = $"Invalid chord format: {chordProperties}. The required format is '{typeof(NoteName)}-{typeof(ChordType)}-DurationInBeats', for example F-Major7-2.";
+                            customErrorMessage = $"Invalid chord format in line {lineNumber}: '{chordProperties}'. The required format is '{typeof(NoteName)}-{typeof(ChordType)}-DurationInBeats', for example F-Major7-2.";
                             throw new FormatException(genericErrorMessage + customErrorMessage);
                         }
                         totalBeatsInBar += numberOfBeats;
@@ -174,7 +190,7 @@ namespace CW.Soloist.CompositionService
                     // validate bar's chords total duration == bar's duration 
                     if (bar.TimeSignature.Numerator != totalBeatsInBar)
                     {
-                        customErrorMessage = $"Total number of beats of chords in the bar which is {totalBeatsInBar} must be equal to the bar's key signature numerator, which is {bar.TimeSignature.Numerator}.";
+                        customErrorMessage = $"Line {lineNumber}: Total number of beats of chords in bar {chordProgression.Count + 1} which is {totalBeatsInBar} must be equal to the bar's key signature numerator, which is {bar.TimeSignature.Numerator}.";
                         throw new FormatException(genericErrorMessage + customErrorMessage);
                     }
 
@@ -187,6 +203,13 @@ namespace CW.Soloist.CompositionService
                     currentLine = customErrorMessage = string.Empty;
                     lineTokens = chordProperties = barTimeSignature = null;
                     barNumerator = barDenominator = numberOfBeats = totalBeatsInBar = 0;
+                }
+
+                // validate that total nubmer of bars in CHORD file match MIDI file total
+                if (_midiInputFile.NumberOfBars != chordProgression.Count)
+                {
+                    customErrorMessage = $"Number of bars mismatch: chord file [{chordProgressionFilePath}] has {chordProgression.Count} bars, while midi file [{_midiInputFilePath}] has {_midiInputFile.NumberOfBars}!";
+                    throw new FormatException(customErrorMessage);
                 }
                 return chordProgression;
             }

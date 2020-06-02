@@ -21,7 +21,9 @@ namespace ConsoleClient
 
             // midi (playback) file path 
             string filePath = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\after_20_years_playback.mid";
-            string filePath2 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\after_20_years.mid";
+            string filePath2 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\‏‏after_20_years.mid";
+            string filePath3 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\testbug.mid";
+            string filePath4 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\debug2.mid";
 
             // get chords from file... 
             string chordsFilePath = @"C:\Users\chwel\OneDrive\שולחן העבודה\twenty_years_chords.txt";
@@ -30,7 +32,7 @@ namespace ConsoleClient
             var compositor = new GeneticAlgorithmCompositor();
 
             // create a new composition with injected strategy
-            var composition = new Composition(filePath2, chordsFilePath, compositor);
+            var composition = new Composition(filePath2, chordsFilePath);
             var newMidiFile = composition.Compose();
 
             newMidiFile.Play();

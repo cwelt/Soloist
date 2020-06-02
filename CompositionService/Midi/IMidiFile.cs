@@ -13,10 +13,10 @@ namespace CW.Soloist.CompositionService.Midi
     public interface IMidiFile
     {
         /// <summary> Absolute physical path of the MIDI file. </summary>
-        string FilePath { get; set; }
+        string FilePath { get; }
 
         /// <summary> MIDI Sequence Name from the header track meta events. </summary>
-        string Title { get; set; }
+        string Title { get; }
 
         /// <summary> BPM <a href="https://bit.ly/2LIuuVE">(Beats Per Minute).</a> </summary>
         byte BeatsPerMinute { get;  }
@@ -25,10 +25,10 @@ namespace CW.Soloist.CompositionService.Midi
         int NumberOfBars {get; }
 
         /// <summary> The key signature from the MIDI meta events. </summary>
-        string KeySignature { get; }
+        IDuration KeySignature { get; }
 
         /// <summary> The tracks contained in the MIDI file. </summary>
-        ICollection<IMidiTrack> Tracks { get; set; }
+        ICollection<IMidiTrack> Tracks { get; }
 
         /// <summary> Starts playing the MIDI events containd in the file. </summary>
         void Play();
@@ -37,7 +37,7 @@ namespace CW.Soloist.CompositionService.Midi
         void Stop();
 
 
-                /// <summary>
+        /// <summary>
         /// <para> 
         /// Remove the the requested track from the midi file, 
         /// and return it's content in a music-theory enumerable bar collection representation.
@@ -45,21 +45,34 @@ namespace CW.Soloist.CompositionService.Midi
         /// This can be useful when the midi file already contains a melody which we would
         /// like to replace with a new one: the original one is removed and returned,
         /// so it could be further processed if necessary and serve as a seed for generation of new melodies. 
-        /// Inorder to embed a new melody track instead of the removed one, <see cref="EmbedMelody(IEnumerable{IBar}, string, byte)"/>
+        /// Inorder to embed a new melody track instead of the removed one, <see cref="EmbedMelody(IList{IBar}, string, byte, byte?)"/>
         /// </summary>
         /// <param name="trackNumber"> The number of the melody track in the midi file.</param>
+        /// <param name="melodyBars"> The melody contained in the specified track is returned 
+        /// in this parameter decoded as music notes in the bar's note collections. 
+        /// The bars supplied in this parameter should be fully initialized with the amount of bars 
+        /// and duration compatible to the midi's file structure. </param>
         /// <returns> The melody track encoded as a music-theory melody. </returns>
-        IEnumerable<IBar> ExtractMelody(byte trackNumber);
+        void ExtractMelody(byte trackNumber, in IList<IBar> melodyBars);
 
 
-        /// <summary>
-        /// Converts a melody contained in an enumerable collection of bars 
-        /// into a midi track and adds it to the midi file. 
-        /// </summary>
-        /// <param name="melody"></param>
-        /// <param name="melodyTrackName"></param>
-        /// <param name="instrumentId"></param>
-        void EmbedMelody(IEnumerable<IBar> melody, string melodyTrackName = "Melody", byte instrumentId = 64);
+        /// <summary> Converts a melody contained in a collection of bars
+        ///  into a midi track and adds it to the midi file. </summary>
+        /// <param name="melody"> List of notes divided into bars. </param>
+        /// <param name="melodyTrackName"> Name that would be given to the new midi track. </param>
+        /// <param name="instrumentId"> Midi <a href="https://en.wikipedia.org/wiki/General_MIDI">program number</a>  which represents a musical instrument.</param>
+        /// <param name="trackIndex"> If specified, the new track would be inserted in this index position. </param>
+        void EmbedMelody(IList<IBar> melody, string melodyTrackName = "Melody", byte instrumentId = 64, byte? trackIndex = null);
 
+
+        /// <summary> Save midi file on local device. </summary>
+        /// <param name="outputPath"> The path in which to save the midi file. </param>
+        /// <param name="fileNamePrefix"> Optional prefix for the new midi file. </param>
+        void SaveFile(string outputPath = null, string fileNamePrefix = "");
+
+        /// <summary> Returns the specified bar's duration. </summary>
+        /// <param name="barIndex"> Zero-based index of the bar in the midi file.</param>
+        /// <returns> Duration defined in the bar's key signature on the midi file. </returns>
+        IDuration GetBarDuration(int barIndex);
     }
 }

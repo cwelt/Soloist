@@ -1,16 +1,15 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Composing;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using Melanchall.DryWetMidi.Interaction;
-using Melanchall.DryWetMidi.Standards;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DWMidiI = Melanchall.DryWetMidi.Interaction;
+using DWMidiMT = Melanchall.DryWetMidi.MusicTheory;
+using CW.Soloist.CompositionService.MusicTheory;
 using Note = CW.Soloist.CompositionService.MusicTheory.Note;
 
 namespace CW.Soloist.CompositionService.Midi
@@ -37,87 +36,60 @@ namespace CW.Soloist.CompositionService.Midi
 
         #endregion
 
+
         #region IMidiFile Interface Properties 
 
-        public string FilePath { get; set; }
-
-
-        //TODO: 
-        // 1. UPDATE THE SETTER TO UPDATE THE ACTUAL SequenceTrackName EVENT 
-        // 2. Update Getter for a Lazy Load
-        public string Title
-        {
-            get
-            {
-                return (((from e in _metaEvents
-                          where e.EventType == MidiEventType.SequenceTrackName
-                          select e).First()) as BaseTextEvent)?.Text;
-                //return ((BaseTextEvent)titleEvent)?.Text
-
-            }
-            set { Title = value; }
-        }
-
-        public string KeySignature
-        {
-            get
-            {
-                // rhythm time key signature & BPM 
-                var timeSignatureEvent = (from e in _metaEvents
-                                          where e.EventType == MidiEventType.TimeSignature
-                                          select e)?.First() as TimeSignatureEvent;
-                return $"{timeSignatureEvent.Numerator}/{timeSignatureEvent.Denominator}";
-            }
-        }
-
-
-        public byte BeatsPerMinute => (byte)(_midiFile.GetTempoMap().Tempo.AtTime(0).BeatsPerMinute);
-
-        public int NumberOfBars
-        {
-            get
-            {
-                var duration = _midiFile.GetDuration<BarBeatFractionTimeSpan>();
-                var timeSignatureEvent = (from e in _metaEvents
-                                          where e.EventType == MidiEventType.TimeSignature
-                                          select e)?.First() as TimeSignatureEvent;
-                return (int)duration.Bars + (int)Math.Ceiling(duration.Beats / timeSignatureEvent.Numerator);
-            }
-        }
-        public ICollection<IMidiTrack> Tracks
-        {
-            get;
-            set;
-        }
-
+        public string FilePath { get; }
+        public string Title { get; } 
+        public IDuration KeySignature { get; }
+        public byte BeatsPerMinute { get; }
+        public int NumberOfBars { get; }
+        public ICollection<IMidiTrack> Tracks { get; private set; }
 
         #endregion
 
+
         #region Consturctor 
-        /// <summary>
-        /// Constructor 
-        /// </summary>
+        /// <summary> Constructor </summary>
         /// <param name="midiFilePath"></param>
         public DryWetMidiAdapter(string midiFilePath)
         {
-            this.FilePath = midiFilePath;
-            this._midiFile = MidiFile.Read(midiFilePath);
-            this._tempoMap = _midiFile.GetTempoMap();
-            this._trackChunks = _midiFile.GetTrackChunks().ToList();
+            FilePath = midiFilePath;
+            _midiFile = MidiFile.Read(midiFilePath);
+            _tempoMap = _midiFile.GetTempoMap();
+            _trackChunks = _midiFile.GetTrackChunks().ToList();
+
+            // set midi title property 
+            Title = (((from e in _metaEvents
+                       where e.EventType == MidiEventType.SequenceTrackName
+                       select e).First()) as BaseTextEvent)?.Text ?? "Undefined";
+
+            // set key signature property 
+            TimeSignatureEvent timeSignatureEvent = (from e in _metaEvents
+                                      where e.EventType == MidiEventType.TimeSignature
+                                      select e)?.First() as TimeSignatureEvent;
+            KeySignature = new Duration(timeSignatureEvent.Numerator, timeSignatureEvent.Denominator);
+
+
+            // set number of bars property
+            BarBeatFractionTimeSpan duration = _midiFile.GetDuration<BarBeatFractionTimeSpan>();
+            NumberOfBars = (int)duration.Bars + (int)Math.Ceiling(duration.Beats / timeSignatureEvent.Numerator);
+
+            // set BPM property 
+            BeatsPerMinute = (byte)(_midiFile.GetTempoMap().Tempo.AtTime(0).BeatsPerMinute);
 
             // add midi tracks
-            this.Tracks = new List<IMidiTrack>();
+            Tracks = new List<IMidiTrack>();
             foreach (var track in _trackChunks)
             {
                 Tracks.Add(new DryWetMidiTrackAdapter(track));
             }
-            this._metadataTrack = _trackChunks.First();
-            this._metaEvents = _metadataTrack.Events.ToList();
+            _metadataTrack = _trackChunks.First();
+            _metaEvents = _metadataTrack.Events.ToList();
         }
 
         #endregion
 
-        #region Public Methods 
         public void Play()
         {
             // Play the Output
@@ -134,41 +106,34 @@ namespace CW.Soloist.CompositionService.Midi
             _midiPlayBack?.Stop();
         }
 
-        /*        public MelodyGenome(TrackChunk seed, MidiFile midiFile, List<IBar> chordProgression = null)
-                {
-                    this.Bars = Utilities.EncodeMelody(seed, midiFile).ToArray();
-                    if (chordProgression != null)
-                        for (int i = 0; i < this.Bars.Count; i++)
-                            Bars.ElementAt(i).Chords = chordProgression.ElementAt(i).Chords;
-                }*/
-
-
+        #region EmbedMelody
         /// <inheritdoc/>
-        public void EmbedMelody(IEnumerable<IBar> melody, string melodyTrackName = "Melody", byte instrumentId = 64)
+        public void EmbedMelody(IList<IBar> melody, string melodyTrackName = "Melody", byte instrumentId = 64, byte? trackNumber = null)
         {
+            // use utility private helper method to convert the melody into a midi track 
             TrackChunk melodyTrack = ConvertMelodyToTrackChunk(melody, melodyTrackName, instrumentId);
-            this._midiFile.Chunks.Add(melodyTrack);
-        }
 
+            // assemble the midi file with new track which contains the melody's midi events 
+            int indexOfNewTrack = trackNumber ?? _midiFile.Chunks.Count;
+            _midiFile.Chunks.Insert(indexOfNewTrack, melodyTrack);
+        }
+        #endregion
+
+        #region ConvertMelodyToTrackChunk
         /// <summary>
-        /// Converts a melody encoded in list of <see cref="IBar"/> to a 
-        /// <see cref="TrackChunk"/> and adds the created track chunk to this midi's 
-        /// files chunk list. 
-        /// 
-        /// TODO:
-        ///     set instrument parameter, 
-        ///     overload with track index
-        ///     ...
-        ///     
+        /// Converts a melody encoded in list of <see cref="IBar"/> to a <see cref="TrackChunk"/>
         /// </summary>
-        /// 
-        /// <param name="melody"></param>
-        /// <param name="trackName"></param>
-        /// <param name="instrument"></param>
-        /// <param name="channel"></param>
-        /// <returns></returns>
-        private TrackChunk ConvertMelodyToTrackChunk(IEnumerable<IBar> melody, string trackName, byte instrumentId = 64, byte channel = 15)
+        /// <param name="melodyBars"> The bars & notes which are to be converted. </param>
+        /// <param name="trackName"> The name that would be given to the newly created midi track. </param>
+        /// <param name="instrumentId"> Midi <a href="https://en.wikipedia.org/wiki/General_MIDI">program number</a> which represents a musical instrument. </param>
+        /// <param name="channel"> The channel number in which the new track would be assigned to. </param>
+        /// <returns> A Midi track which contains the melody encapsulated as midi events data. </returns>
+        private TrackChunk ConvertMelodyToTrackChunk(IList<IBar> melodyBars, string trackName, byte instrumentId, byte channel = 15)
         {
+            // initialization 
+            IBar bar = null;
+            INote note = null, nextNote = null;
+
             PatternBuilder melodyTrackBuilder = new PatternBuilder();
 
             // set instrument  
@@ -177,21 +142,34 @@ namespace CW.Soloist.CompositionService.Midi
             // set default velocity (volume)
             melodyTrackBuilder.SetVelocity((SevenBitNumber)100);
 
-
-            foreach (IBar bar in melody)
+            // enumerate over all notes         
+            for (int i = 0; i < melodyBars.Count; i++)
             {
-                foreach (INote note in bar.Notes)
+                bar = melodyBars[i];
+                for (int j = 0; j < bar.Notes.Count; j++)
                 {
+                    note = bar.Notes[j];
+
                     // set new note's length 
                     var duration = new MusicalTimeSpan(note.Duration.Numerator, note.Duration.Denominator);
 
-                    // if this is a rest note, just step forward and continue to next note
-                    if (note.Pitch == NotePitch.RestNote)
+                    // if this is a rest or hold note, just step forward and continue to next note
+                    if (note.Pitch == NotePitch.RestNote || note.Pitch == NotePitch.HoldNote)
                         melodyTrackBuilder.StepForward(duration);
                     else
                     {
                         // create new note:
-                        var newNote = Melanchall.DryWetMidi.MusicTheory.Note.Get((SevenBitNumber)(int)note.Pitch);
+                        var newNote = DWMidiMT::Note.Get((SevenBitNumber)(int)note.Pitch);
+
+                        // if successor note(s) are hold notes, add their lengths to the current note  
+                        nextNote = (j < bar.Notes.Count - 1) ? (bar.Notes[j + 1]) : ((i < melodyBars.Count - 1 && melodyBars[i + 1].Notes.Count > 0) ? (melodyBars[i + 1].Notes?[0]) : null);
+                        while (nextNote?.Pitch == NotePitch.HoldNote)
+                        {
+                            duration = duration.Add(new MusicalTimeSpan(nextNote.Duration.Numerator, nextNote.Duration.Denominator), TimeSpanMode.LengthLength) as MusicalTimeSpan;
+                            (i, j) = (j == bar.Notes.Count - 1) ? (i + 1, 0) : (i, j + 1);
+                            bar = melodyBars[i];
+                            nextNote = (j < bar.Notes.Count - 1) ? (bar.Notes[j + 1]) : ((i < melodyBars.Count - 1) ? (melodyBars[i + 1].Notes[0]) : null);
+                        }
 
                         // add new note with pre-seted length to midi chunk track: 
                         melodyTrackBuilder.Note(newNote, duration);
@@ -199,16 +177,22 @@ namespace CW.Soloist.CompositionService.Midi
                 }
             }
 
+            // use the builder to build a midi track on the requested channel
             Pattern pattern = melodyTrackBuilder.Build();
-            var melodyTrackChunk = pattern.ToTrackChunk(this._tempoMap, (FourBitNumber)channel);
+            TrackChunk melodyTrackChunk = pattern.ToTrackChunk(_tempoMap, (FourBitNumber)channel);
+
+            // add the track's name from input parameter 
             SequenceTrackNameEvent trackNameEvent = new SequenceTrackNameEvent(trackName);
             melodyTrackChunk.Events.Add(trackNameEvent);
+
+            // return midi track to caller 
             return melodyTrackChunk;
         }
+        #endregion
 
-
+        #region ExtractMelody
         /// <inheritdoc/>
-        public IEnumerable<IBar> ExtractMelody(byte trackNumber)
+        public void ExtractMelody(byte trackNumber, in IList<IBar> melodyBars)
         {
             // get the requested track 
             TrackChunk melodyTrack = _midiFile.Chunks[trackNumber] as TrackChunk;
@@ -216,69 +200,147 @@ namespace CW.Soloist.CompositionService.Midi
             // remove the track from the midi file 
             _midiFile.Chunks.RemoveAt(trackNumber);
 
-            // convert the track to a music-theory melody representation
-            IEnumerable<IBar> extractedMelody = ConvertTrackChunkToMelody(melodyTrack);
-            return extractedMelody;
+            // encode the melody in the track as a list of bars with music notes 
+            ConvertTrackChunkToMelody(melodyTrack, melodyBars);
         }
+        #endregion
 
         #region ConvertTrackChunkToMelody
-        // EncodeMelody
-        private IEnumerable<IBar> ConvertTrackChunkToMelody(TrackChunk melodyTrack)
+        /// <summary>
+        /// Converts a midi track from a midi file into a collection of musical notes.
+        /// </summary>
+        /// <param name="melodyTrack"> The midi track to be converted. </param>
+        /// <param name="bars"> The melody contained in the specified track is returned 
+        /// in this parameter decoded as music notes in the bar's note collections. 
+        /// The bars supplied in this parameter should be fully initialized with the amount of bars 
+        /// and duration compatible to the midi's file structure. </param>
+        private void ConvertTrackChunkToMelody(TrackChunk melodyTrack, in IList<IBar> bars)
         {
-            List<MusicTheory.INote> notes = new List<Note>().Cast<INote>().ToList(); ;
-            List<IBar> bars = new List<IBar>();
-            IBar currentBar = new Bar();
-            int barCounter = 0;
-            Melanchall.DryWetMidi.Interaction.Note note;
-            short pitch;
-            TempoMap tempoMap = _tempoMap;
-            long startBar, endBar;
+            //Data Initialization
+            int currentBarIndex = 0;
 
+            /* note length, start time & end time in two different metric representations:
+            / (1) BarBeatFractionTimeSpan (BB):  total number of bars & beats.
+            / (2) MusicalTimeSpan (F): total number of beats as a fraction of numerator/denominator. */
+            BarBeatFractionTimeSpan lengthBB, startTimeBB, endTimeBB;
+            MusicalTimeSpan lengthF, startTimeF, endTimeF, barEndTime, barLengthRemainder, noteLengthRemainder;
 
-            var notesAndRests = melodyTrack.GetNotesAndRests(RestSeparationPolicy.NoSeparation);
+            INote note; // current note in iteration 
+            short pitch; // curent note's pitch 
+            long startBar, endBar; // start & end bar indices of an current note
+            Duration barDuration, noteDuration; // current note's & current bar's duration 
 
-            foreach (var currentNote in notesAndRests)
+            // fetch all notes & rests in midi file 
+            IEnumerable<ILengthedObject> notesAndRests = melodyTrack.GetNotesAndRests(RestSeparationPolicy.NoSeparation);
+
+            // enumerate over all notes in file 
+            foreach (var midiNote in notesAndRests)
             {
-                MusicalTimeSpan length = currentNote.LengthAs<MusicalTimeSpan>(tempoMap);
+                // current note length 
+                lengthF = midiNote.LengthAs<MusicalTimeSpan>(_tempoMap);
+                lengthBB = midiNote.LengthAs<BarBeatFractionTimeSpan>(_tempoMap);
 
-                var musicEndTime = currentNote.EndTimeAs<MusicalTimeSpan>(tempoMap);
-                var barBeatFractionEndTime = currentNote.EndTimeAs<BarBeatFractionTimeSpan>(tempoMap);
-                var barBeatFractionStartTime = currentNote.TimeAs<BarBeatFractionTimeSpan>(tempoMap);
-                startBar = barBeatFractionStartTime.Bars;
-                endBar = barBeatFractionEndTime.Bars;
+                // current note start time 
+                startTimeF = midiNote.TimeAs<MusicalTimeSpan>(_tempoMap);
+                startTimeBB = midiNote.TimeAs<BarBeatFractionTimeSpan>(_tempoMap);
 
-                note = currentNote as Melanchall.DryWetMidi.Interaction.Note;
-                if (note != null)
-                    pitch = note.NoteNumber;
-                else pitch = -1;
+                // current note end time 
+                endTimeF = midiNote.EndTimeAs<MusicalTimeSpan>(_tempoMap);
+                endTimeBB = midiNote.EndTimeAs<BarBeatFractionTimeSpan>(_tempoMap);
 
-                INote newNote = new Note((NotePitch)pitch, (byte)length.Numerator, (byte)length.Denominator);
-                notes.Add(newNote);
+                // bars on which the note starts at \ end on 
+                startBar = startTimeBB.Bars;
+                endBar = endTimeBB.Bars;
 
-                //add note to bar 
-                if (barBeatFractionStartTime.Bars > barCounter)
+                // fetch pitch of current note 
+                pitch = (midiNote as DWMidiI::Note)?.NoteNumber ?? (short)NotePitch.RestNote;
+
+                // case 1: current note fits entirely inside current bar 
+                if (endBar <= currentBarIndex)
                 {
-                    bars.Add(currentBar);
-                    currentBar = new Bar();
-                    currentBar.Notes.Add(newNote);
-                    barCounter++;
+                    note = new Note((NotePitch)pitch, (byte)lengthF.Numerator, (byte)lengthF.Denominator);
+                    bars[currentBarIndex].Notes.Add(note);
+
+                    // in case current note ends on edge of bar, advance to next one 
+                    if (endTimeBB.Beats == bars[currentBarIndex].TimeSignature.Numerator)
+                        currentBarIndex++;
+                    continue;
                 }
 
-                currentBar.Notes.Add(newNote);
-
-                if (barBeatFractionEndTime.Bars > barCounter)
+                // case 2: note's length spans over multipile bars 
+                else
                 {
-                    bars.Add(currentBar);
-                    currentBar = new Bar();
-                    barCounter++;
+                    // fill remainder of bar with current note 
+                    barEndTime = new MusicalTimeSpan(currentBarIndex + 1, 1);
+                    barLengthRemainder = barEndTime.Subtract(startTimeF, TimeSpanMode.TimeTime) as MusicalTimeSpan;
+                    
+                    note = new Note((NotePitch)pitch, (byte)barLengthRemainder.Numerator, (byte)barLengthRemainder.Denominator);
+                    bars[currentBarIndex++].Notes.Add(note);
+
+                    // if bar spans over 3 bars or more, fill inbetween bars with hold notes. 
+                    while (currentBarIndex < endBar)
+                    {
+                        barDuration = new Duration(bars[currentBarIndex].TimeSignature.Numerator, bars[currentBarIndex].TimeSignature.Denominator);
+                        note = new Note(NotePitch.HoldNote, barDuration);
+                        bars[currentBarIndex++].Notes.Add(note);
+                    }
+
+                    // fill the note's end bar with the a hold note with remainder of the note's length 
+                    noteLengthRemainder = endTimeF.Subtract(new MusicalTimeSpan(currentBarIndex, 1), TimeSpanMode.TimeTime) as MusicalTimeSpan;
+                    if (noteLengthRemainder.Numerator > 0)
+                    {
+                        noteDuration = new Duration((byte)noteLengthRemainder.Numerator, (byte)noteLengthRemainder.Denominator);
+                        note = new Note(NotePitch.HoldNote, noteDuration);
+                        bars[currentBarIndex].Notes.Add(note);
+                    }
+
+                    // in case current note ends on edge of bar, advance to next one 
+                    if (endTimeBB.Beats == bars[currentBarIndex].TimeSignature.Numerator)
+                        currentBarIndex++;
                 }
             }
-            return bars;
         }
         #endregion
 
-        #endregion
-    }
 
+        /// <inheritdoc/>
+        public IDuration GetBarDuration(int barIndex)
+        {
+            // try to fetch key signature defined for the specified bar 
+            ValueChange<TimeSignature> barKeySignature = _tempoMap.TimeSignature.AtTime(new MusicalTimeSpan(barIndex, 1), _tempoMap).FirstOrDefault();
+
+            // if an explicit key signature for this bar was found, assemble an duration from it
+            if (barKeySignature != null)
+                return new Duration((byte)barKeySignature.Value.Numerator, (byte)barKeySignature.Value.Denominator);
+
+            // if no explicit key signature exists for this specific bar, return the default key signature from meta events
+            else return KeySignature;
+        }
+
+        /// <inheritdoc/>
+        public void SaveFile(string path = null, string fileNamePrefix = "")
+        {
+            // get time stamp 
+            string timeStamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
+
+            // set file name 
+            string fileName = fileNamePrefix + "_output_{timeStamp}.mid";
+
+            // set full path: if no path is specified then set desktop as the default path
+            path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string fullPath = path + Path.DirectorySeparatorChar + fileName;
+
+            // save file 
+            try
+            {
+                this._midiFile.Write(filePath: fullPath, overwriteFile: true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ex.InnerException?.Message);
+                throw;
+            }
+        }
+    }
 }
 
