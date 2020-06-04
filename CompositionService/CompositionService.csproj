@@ -54,7 +54,7 @@
     <Compile Include="InternTestProgram.cs" />
     <Compile Include="Midi\DryWetMidiAdapter.cs" />
     <Compile Include="Midi\DryWetTrackAdapter.cs" />
-    <Compile Include="Midi\IMidiFile.cs" />
+    <Compile Include="Midi\IMidiFileService.cs" />
     <Compile Include="Midi\IMidiTrack.cs" />
     <Compile Include="MusicTheory\Bar.cs" />
     <Compile Include="MusicTheory\Chord.cs" />

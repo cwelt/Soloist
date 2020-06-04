@@ -17,7 +17,7 @@ namespace CW.Soloist.CompositionService.Midi
     /// <summary>
     /// Provides a high level interface for a <a href="https://bit.ly/3bRVzQT"> SMF (Standard MIDI File) </a> 
     /// </summary>
-    internal class DryWetMidiAdapter : IMidiFile
+    internal class DryWetMidiAdapter : IMidiFileService
     {
         #region Adapter Specific Private Data Members 
 

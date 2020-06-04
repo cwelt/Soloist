@@ -17,10 +17,10 @@ namespace CW.Soloist.CompositionService
     {
         private readonly string _midiInputFilePath;
         private readonly string _midiInputFileName;
-        private IMidiFile _midiInputFile;
+        private IMidiFileService _midiInputFile;
         
         // TODO: use input file to construct the output without duplicating unnecessary data (prototype\flyweight)
-        private IMidiFile _midiOutputFile;
+        private IMidiFileService _midiOutputFile;
 
         private readonly IList<IBar> _chordProgression;
 
@@ -57,7 +57,7 @@ namespace CW.Soloist.CompositionService
         /// overloaded version that uses the default composition strategy. <see cref="Compose(Compositor)"/>
         /// </summary>
         /// <returns> A new midi file containing the composed solo-melody. </returns>
-        public IMidiFile Compose()
+        public IMidiFileService Compose()
         {
             return Compose(new GeneticAlgorithmCompositor());
         }
@@ -67,7 +67,7 @@ namespace CW.Soloist.CompositionService
         /// </summary>
         /// <param name="CompositionStrategy"> The strategy to use to compose the melody. </param>
         /// <returns> A new midi file containing the composed solo-melody. </returns>
-        public IMidiFile Compose(Compositor CompositionStrategy)
+        public IMidiFileService Compose(Compositor CompositionStrategy)
         {
             // set composition strategy
             Compositor = CompositionStrategy;

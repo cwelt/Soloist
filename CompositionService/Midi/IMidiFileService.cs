@@ -10,7 +10,7 @@ namespace CW.Soloist.CompositionService.Midi
     /// <summary>
     /// Provides a high level interface for a <a href="https://bit.ly/3bRVzQT"> SMF (Standard MIDI File) </a>.
     /// </summary>
-    public interface IMidiFile
+    public interface IMidiFileService
     {
         /// <summary> Absolute physical path of the MIDI file. </summary>
         string FilePath { get; }
