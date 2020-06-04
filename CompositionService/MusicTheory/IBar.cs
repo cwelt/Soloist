@@ -29,5 +29,23 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
         /// <summary> The notes which represent the melody in the bar. </summary>
         IList<INote> Notes { get; set; }
+
+
+        /// <summary>
+        /// Returns a sublist of the bar's notes which overlap the time interval of the given chord,
+        /// i.e, all the notes from <see cref="IBar.Notes"/> that are played in parallel to 
+        /// the given chord.
+        /// </summary>
+        /// <param name="chordIndex"> Index to the requested chord in this <see cref="IBar.Chords"/> chord list property.</param>
+        /// <returns> List of notes which are playd in parallel to the given chord.</returns>
+        IList<INote> GetOverlappingNotesForChord(int chordIndex);
+
+
+        /// <summary>
+        /// <inheritdoc cref="GetOverlappingNotesForChord(int)"/>
+        /// </summary>
+        /// <param name="chord"> Chord from within this bar's <see cref="IBar.Chords"/>  chord list.</param>
+        /// <returns> <inheritdoc cref="GetOverlappingNotesForChord(int)"/> </returns>
+        IList<INote> GetOverlappingNotesForChord(IChord chord);
     }
 }

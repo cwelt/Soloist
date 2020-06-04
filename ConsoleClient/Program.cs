@@ -24,6 +24,7 @@ namespace ConsoleClient
             string filePath2 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\‏‏after_20_years.mid";
             string filePath3 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\testbug.mid";
             string filePath4 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\debug2.mid";
+            string filePath5 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\test.mid";
 
             // get chords from file... 
             string chordsFilePath = @"C:\Users\chwel\OneDrive\שולחן העבודה\twenty_years_chords.txt";

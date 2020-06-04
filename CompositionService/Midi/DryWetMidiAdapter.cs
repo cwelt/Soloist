@@ -75,7 +75,7 @@ namespace CW.Soloist.CompositionService.Midi
 
             // set number of bars property
             BarBeatFractionTimeSpan duration = _midiFile.GetDuration<BarBeatFractionTimeSpan>();
-            NumberOfBars = (int)duration.Bars + (int)Math.Ceiling(duration.Beats / timeSignatureEvent.Numerator);
+            NumberOfBars = (int)duration.Bars + (int)Math.Floor(duration.Beats / timeSignatureEvent.Numerator);
 
             // set BPM property 
             BeatsPerMinute = (byte)(_midiFile.GetTempoMap().Tempo.AtTime(0).BeatsPerMinute);
@@ -296,7 +296,7 @@ namespace CW.Soloist.CompositionService.Midi
                     }
 
                     // in case current note ends on edge of bar, advance to next one 
-                    if (endTimeBB.Beats == bars[currentBarIndex].TimeSignature.Numerator)
+                    if (currentBarIndex < bars.Count && endTimeBB.Beats == bars[currentBarIndex].TimeSignature.Numerator)
                         currentBarIndex++;
                 }
             }

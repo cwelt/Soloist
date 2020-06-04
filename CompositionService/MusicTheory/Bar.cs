@@ -19,7 +19,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     internal class Bar : IBar
     {
         #region Internal private members 
-        
+
         /// <summary>Number of beats in the bar (nominator from the time signature property). </summary>
         byte _beatsPerBar;
 
@@ -29,7 +29,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         #endregion
 
         #region IBar properties 
-        public IDuration TimeSignature { get; } 
+        public IDuration TimeSignature { get; }
         public IList<IChord> Chords { get; }
         public IList<INote> Notes { get; set; }
         #endregion
@@ -56,8 +56,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// Initializes a bar with a default time signature of 4/4, 
         /// an empy list of chords and an empty list of notes.
         /// </summary>
-        public Bar() 
-            : this (new Duration(4, 4), new List<IChord>(), new List<INote>()) {}
+        public Bar()
+            : this(new Duration(4, 4), new List<IChord>(), new List<INote>()) { }
 
         /// <summary>
         /// Constructs an empty bar with the given time signature. />
@@ -93,19 +93,57 @@ namespace CW.Soloist.CompositionService.MusicTheory
         }
         #endregion
 
+
+        /// <inheritdoc cref="IBar.GetOverlappingNotesForChord(IChord)"/>
+        public IList<INote> GetOverlappingNotesForChord(int chordIndex)
+        {
+            // initialize empty result list 
+            IList<INote> chordNotes = new List<INote>();
+
+            // initialize start & end time trackers as a fraction relative to this bar's duration 
+            float chordStartTime = 0, chordEndTime = 0;
+            float noteStartTime = 0, noteEndTime = 0;
+
+            // calculate starting point for the given chord inside this bar instance  
+            for (int i = 0; i < chordIndex; i++)
+                chordStartTime += (float)Chords[i].Duration.Numerator / Chords[i].Duration.Denominator;
+
+            // calcualte the ending point for the given chord inside this bar instance   
+            chordEndTime = chordStartTime + ((float)Chords[chordIndex].Duration.Numerator / Chords[chordIndex].Duration.Denominator);
+
+            // add all notes that overlap the chord's time interval 
+            foreach (INote note in Notes)
+            {
+                noteStartTime = noteEndTime;
+                noteEndTime = noteStartTime + ((float)note.Duration.Numerator / note.Duration.Denominator);
+                if (noteStartTime < chordEndTime && noteEndTime > chordStartTime)
+                    chordNotes.Add(note);
+            }
+
+            // return overlapping notes 
+            return chordNotes;
+        }
+
+        /// <inheritdoc cref="IBar.GetOverlappingNotesForChord(int)"/>
+        public IList<INote> GetOverlappingNotesForChord(IChord chord)
+        {
+            // Redirect to overloaded version which accepts index of given chord
+            return GetOverlappingNotesForChord(Chords.IndexOf(chord));
+        }
+
         public override string ToString()
         {
             // time signature 
             string timeSignature = $"{{TimeSignature={TimeSignature}; ";
-            
+
             // chords 
             StringBuilder chords = new StringBuilder();
             chords.Append("Chords={");
             for (int i = 0; i < Chords.Count - 1; i++)
                 chords.Append(Chords[i] + ",");
             chords.Append(Chords[Chords.Count - 1] + "}; ");
-            
-                
+
+
 
             // notes 
             StringBuilder notes = new StringBuilder();
@@ -117,5 +155,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
             // assemble & return the result   
             return timeSignature + chords + notes + "}";
         }
+
+
     }
 }

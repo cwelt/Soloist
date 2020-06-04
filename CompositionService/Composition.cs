@@ -5,7 +5,7 @@ using CW.Soloist.CompositionService.CompositionStrategies;
 using CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
-
+using System.Linq;
 
 namespace CW.Soloist.CompositionService
 {
