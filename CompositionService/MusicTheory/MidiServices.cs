@@ -21,7 +21,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
             var noteName = Melanchall.DryWetMidi.MusicTheory.Note.Get(pitch).NoteName;
             return ConvertToInternalNoteName(noteName);
         }
-
+         
         private static NoteName ConvertToInternalNoteName(Melanchall.DryWetMidi.MusicTheory.NoteName noteName)
         {
             return (NoteName)Enum.Parse(typeof(NoteName), noteName.ToString());

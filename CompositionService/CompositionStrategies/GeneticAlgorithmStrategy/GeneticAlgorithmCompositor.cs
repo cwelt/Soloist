@@ -10,7 +10,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
     /// <summary> <para> Compose a solo-melody over a given playback by implementing a genetic algorithm. </para>
     /// This class implements a concrete composition strategy (<see cref="Compositor"/>)
     /// for use by a <see cref="Composition"/> context instance. </summary>
-    public class GeneticAlgorithmCompositor : Compositor
+    public partial class GeneticAlgorithmCompositor : Compositor
     {
         internal IList<MelodyGenome> Candidates { get; set; }
 
