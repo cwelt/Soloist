@@ -85,7 +85,7 @@ namespace CW.Soloist.CompositionService
             _midiOutputFile.EmbedMelody(_chordProgression, "new melody", 53);
 
             // save output
-            _midiOutputFile.SaveFile(_midiInputFileName);
+            _midiOutputFile.SaveFile(fileNamePrefix: _midiInputFileName);
 
             return _midiOutputFile;
         }

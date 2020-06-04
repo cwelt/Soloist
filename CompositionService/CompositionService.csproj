@@ -62,6 +62,7 @@
     <Compile Include="MusicTheory\EnumExtensions.cs" />
     <Compile Include="MusicTheory\IBar.cs" />
     <Compile Include="MusicTheory\IChord.cs" />
+    <Compile Include="MusicTheory\IMusicTheoryService.cs" />
     <Compile Include="MusicTheory\INote.cs" />
     <Compile Include="MusicTheory\MidiServices.cs" />
     <Compile Include="MusicTheory\Note.cs" />

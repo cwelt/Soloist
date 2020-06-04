@@ -17,7 +17,7 @@ namespace CW.Soloist.CompositionService.Midi
     /// <summary>
     /// Provides a high level interface for a <a href="https://bit.ly/3bRVzQT"> SMF (Standard MIDI File) </a> 
     /// </summary>
-    internal class DryWetMidiAdapter : IMidiFileService
+    internal partial class DryWetMidiAdapter : IMidiFileService
     {
         #region Adapter Specific Private Data Members 
 
@@ -58,6 +58,8 @@ namespace CW.Soloist.CompositionService.Midi
             _midiFile = MidiFile.Read(midiFilePath);
             _tempoMap = _midiFile.GetTempoMap();
             _trackChunks = _midiFile.GetTrackChunks().ToList();
+            _metadataTrack = _trackChunks.First();
+            _metaEvents = _metadataTrack.Events.ToList();
 
             // set midi title property 
             Title = (((from e in _metaEvents
@@ -84,8 +86,7 @@ namespace CW.Soloist.CompositionService.Midi
             {
                 Tracks.Add(new DryWetMidiTrackAdapter(track));
             }
-            _metadataTrack = _trackChunks.First();
-            _metaEvents = _metadataTrack.Events.ToList();
+
         }
 
         #endregion
@@ -324,7 +325,7 @@ namespace CW.Soloist.CompositionService.Midi
             string timeStamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
 
             // set file name 
-            string fileName = fileNamePrefix + "_output_{timeStamp}.mid";
+            string fileName = fileNamePrefix + $"_output_{timeStamp}.mid";
 
             // set full path: if no path is specified then set desktop as the default path
             path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);

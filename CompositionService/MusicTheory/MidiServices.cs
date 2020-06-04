@@ -12,7 +12,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// Provides services which support operations and manipulations low level musical components 
     /// such as note, chord scale etc. 
     /// </summary>
-    internal static class MidiServices
+    internal partial class MusicTheoryServices : IMusicTheoryService
     {
 
         private static NoteName GetNoteName(NotePitch notePitch)
@@ -67,6 +67,11 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 default:
                     throw new InvalidCastException("Undefined casting for this note name");
             }
+        }
+
+        public IEnumerable<NotePitch> GetChordNotes(NoteName chordRootNote, ChordType chordType, int minOctave = 0, int maxOctave = 9)
+        {
+            return MusicTheoryServices.GetNotes(chordRootNote, chordType, minOctave, maxOctave);
         }
 
         internal static IEnumerable<NotePitch> GetNotes(NoteName chordRootNote, ChordType chordType, int minOctave = 0, int maxOctave = 9)
