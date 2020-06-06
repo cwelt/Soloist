@@ -12,7 +12,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         #region Pitch Change Mutation 
 
         // change pitches of individual notes in the genome a few step to other notes in the scale 
-        private void ChangePitchMutation(MelodyGenome melodyGenome)
+        private protected virtual void ChangePitchMutation(MelodyGenome melodyGenome)
         {
             NotePitch[] chordNotes; //note pitches of current chord  
             INote[] actualNotes; // note of the individual candidate 
@@ -52,7 +52,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                     // select a random pitch 
                     currentNote = bar.Notes[randomNoteIndex];
                     currentPitch = currentNote.Pitch;
-                    chordNotes = (from notePitch in chord.GetNotes(MinOctave, MaxOctave)
+                    chordNotes = (from notePitch in chord.GetArpeggioNotes(MinOctave, MaxOctave)
                                   where notePitch != currentPitch
                                   && (int)notePitch <= (int)currentPitch + 4
                                   && (int)notePitch >= (int)currentPitch - 4

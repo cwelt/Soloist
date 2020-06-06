@@ -29,7 +29,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 Crossover();
 
                 // modify parts of individuals 
-                Mutate();
+                Mutate(chordProgression);
 
                 // rate each individual 
                 EvaluateFitness();
@@ -38,12 +38,12 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (i++ == 100)
+                if (i++ == 0)
                     terminateCondition = true;
             }
 
             // TODO: convert internal genome representation of each candidate in to a MIDI track chunk representation
-            return null;
+            return chordProgression;
         }
 
 
@@ -66,9 +66,12 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         /// <summary>
         /// Alter a candidate's solution state.
         /// </summary>
-        protected internal void Mutate()
+        protected internal void Mutate(IEnumerable<IBar> melody)
         {
-
+            foreach (var bar in melody)
+            {
+                ChangePitchForARandomNote(bar);
+            }
         }
 
         /// <summary>

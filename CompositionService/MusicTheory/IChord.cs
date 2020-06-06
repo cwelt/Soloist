@@ -35,6 +35,6 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// An enumerator that can be used to iterate through the collection of notes in the chord.
         /// Only note pitches which are within the requested range are enumerated. 
         /// </returns>
-        IEnumerable<NotePitch> GetNotes(int minOctave, int maxOctave);
+        IEnumerable<NotePitch> GetArpeggioNotes(int minOctave, int maxOctave);
     }
 }

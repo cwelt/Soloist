@@ -28,7 +28,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
             Duration = duration;
         }
 
-        public IEnumerable<NotePitch> GetNotes(int minOctave, int maxOctave)
+        public IEnumerable<NotePitch> GetArpeggioNotes(int minOctave, int maxOctave)
         {
             return MusicTheoryServices.GetNotes(this.ChordRoot, this.ChordType, minOctave, maxOctave);
         }

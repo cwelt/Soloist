@@ -38,7 +38,7 @@ namespace CW.Soloist.CompositionService
             // open & read the midi file using an adapter 
             _midiInputFilePath = midiFilePath;
             _midiInputFileName = Path.GetFileNameWithoutExtension(midiFilePath);
-            _midiInputFile = new DryWetMidiAdapter(_midiInputFilePath);
+            _midiInputFile = new DryWetMidiAdapter(midiFilePath);
 
             // get chords from file 
             try
@@ -76,13 +76,13 @@ namespace CW.Soloist.CompositionService
             _midiOutputFile = new DryWetMidiAdapter(_midiInputFilePath);
 
             // remove currently existing melody from midi file 
-            _midiOutputFile.ExtractMelody(1, _chordProgression);
+            _midiOutputFile.ExtractMelody(trackNumber: 1, _chordProgression);
 
             // compose a new melody 
             IEnumerable<IBar> melody = Compositor.Compose(_chordProgression);
 
             // Embed the new generated melody into the midi file
-            _midiOutputFile.EmbedMelody(_chordProgression, "new melody", 53);
+            _midiOutputFile.EmbedMelody(melody: melody.ToList(), melodyTrackName: "new melody", instrumentId: 53);
 
             // save output
             _midiOutputFile.SaveFile(fileNamePrefix: _midiInputFileName);
@@ -90,13 +90,13 @@ namespace CW.Soloist.CompositionService
             return _midiOutputFile;
         }
 
-        #region ReadChordsFromFile
+        #region ReadChordsFromFile()
         /// <summary>
         /// <para>Reads and parses a chord progression from an input chord file.</para>
         /// Input file format:
         /// <list type="bullet">
         /// <item> Each line should contain data for a single bar.</item>
-        /// <item> The bar data should contain a time signature token (further explained), 
+        /// <item> The bar data should contain a time signature token (further explained ahead), 
         /// followed by the bar's chords tokens (further explained ahead). 
         /// All tokens must be separated with white space between each other. </item>
         /// <item><term>Key signature token format</term> 'numerator/dominator' for example '3/4' for a bar with three quarters. </item>
