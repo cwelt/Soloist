@@ -51,6 +51,7 @@
     <Compile Include="CompositionStrategies\Compositor.cs" />
     <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\MelodyGenome.cs" />
     <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\Mutations.cs" />
+    <Compile Include="CompositionStrategies\UtilEnums\DurationSplitRatio.cs" />
     <Compile Include="InternTestProgram.cs" />
     <Compile Include="Midi\DryWetMidiAdapter.cs" />
     <Compile Include="Midi\DryWetTrackAdapter.cs" />
@@ -58,7 +59,7 @@
     <Compile Include="Midi\IMidiTrack.cs" />
     <Compile Include="MusicTheory\Bar.cs" />
     <Compile Include="MusicTheory\Chord.cs" />
-    <Compile Include="MusicTheory\ChordNoteMappingSource.cs" />
+    <Compile Include="CompositionStrategies\UtilEnums\ChordNoteMappingSource.cs" />
     <Compile Include="MusicTheory\ChordType.cs" />
     <Compile Include="MusicTheory\EnumExtensions.cs" />
     <Compile Include="MusicTheory\IBar.cs" />

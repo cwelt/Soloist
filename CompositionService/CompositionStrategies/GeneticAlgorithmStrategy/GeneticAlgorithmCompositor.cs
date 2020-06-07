@@ -1,4 +1,6 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
+﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
+using CW.Soloist.CompositionService.MusicTheory;
+using Melanchall.DryWetMidi.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +14,20 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
     /// for use by a <see cref="Composition"/> context instance. </summary>
     public partial class GeneticAlgorithmCompositor : Compositor
     {
-        internal IList<MelodyGenome> Candidates { get; set; }
+        internal IList<MelodyGenome> Candidates { get; private set; }
+        private protected Action<IBar>[] _mutations;
+
+
+        public GeneticAlgorithmCompositor()
+        {
+            _mutations = new Action<IBar>[]
+            {
+                ChordPitchMutation,
+                ScalePitchMutation,
+                
+            };
+        }
+
 
         /// <inheritdoc/>
         internal override IEnumerable<IBar> Compose(IEnumerable<IBar> chordProgression, IEnumerable<IBar> seed = null)
@@ -38,7 +53,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (i++ == 0)
+                if (i++ == 10)
                     terminateCondition = true;
             }
 
@@ -68,9 +83,19 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         /// </summary>
         protected internal void Mutate(IEnumerable<IBar> melody)
         {
+            Random randomizer = new Random();
+            int NumberOfBars = melody.Count();
+            int randomBarIndex = randomizer.Next(NumberOfBars);
+
             foreach (var bar in melody)
             {
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, octaveRadius: 1);
+                EqualDurationSplitMutation(bar);
                 ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, octaveRadius: 1);
+                AnticipationDurationSplitMutation(bar);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, octaveRadius: 1);
+                DelayDurationSplitMutation(bar);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, octaveRadius: 1);
             }
         }
 

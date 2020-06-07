@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

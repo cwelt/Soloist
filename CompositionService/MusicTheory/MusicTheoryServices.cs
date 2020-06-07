@@ -1,4 +1,5 @@
-﻿using Melanchall.DryWetMidi.Common;
+﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.MusicTheory;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,5 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
+﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
+using CW.Soloist.CompositionService.MusicTheory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,10 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         internal IEnumerable<IBar> ChordProgression { get; }
 
         /// <summary> Default duration denominator for a single note. </summary>
-        internal int DefaultDuration { get; set; } = 8;
+        internal byte DefaultDuration { get; set; } = 8;
+
+        internal byte ShortestDuration { get; } = 16;
+
 
         /// <summary> Minimum octave of note pitch range for the composition. </summary>
         public byte MinOctave { get; } = 4;
@@ -101,8 +105,8 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
             else candidateNotes = chord.GetScaleNotes(MinOctave, MaxOctave);
 
             // filter candidats according to specified octave radius
-            int pitchUpperBound = oldPitch + MusicTheoryServices.SemitonesInOctave-1;
-            int pitchLowerBound = oldPitch - (MusicTheoryServices.SemitonesInOctave-1);
+            int pitchUpperBound = oldPitch + MusicTheoryServices.SemitonesInOctave - 1;
+            int pitchLowerBound = oldPitch - (MusicTheoryServices.SemitonesInOctave - 1);
             NotePitch[] filteredPitches = candidateNotes
                 .Where(pitch => pitch != oldNote.Pitch && (int)pitch >= pitchLowerBound && (int)pitch <= pitchUpperBound)
                 .ToArray();
@@ -125,6 +129,78 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
             return true;
         }
         #endregion
-    }
 
+        #region DurationSplitOfARandomNote()
+        /// <summary>
+        /// Replaces a random note in the given bar with two new shorter notes 
+        /// which preserve the original note's pitch, but have a new duration
+        /// which sums up together to the original's note duration. 
+        /// <para> The duration split is done according to the <paramref name="ratio"/>
+        /// parameter. </para>
+        /// <para> Incase the note's in the bar are too short to be splited, no action 
+        /// is made and the method returns false. Otherwise, it return true. </para>
+        /// </summary>
+        /// <remarks> The shortest possible duration is determined by the corresponding 
+        /// input parameter to the compositor's constructor. 
+        /// parameter </remarks>
+        /// <param name="bar"> The bar in which to make the note's duration split. </param>
+        /// <param name="ratio"> The ratio of the duration split. </param>
+        /// <returns> True if a split has been made, false otherwise. </returns>
+        private protected virtual bool DurationSplitOfARandomNote(IBar bar, DurationSplitRatio ratio)
+        {
+            // extract denominator from the given ratio 
+            int ratioDenominator = ((ratio == DurationSplitRatio.Equal) ? 2 : 4);
+
+            // find candidate notes which are long enough for the given split ratio 
+            INote[] candidateNotes = bar.Notes
+                .Where(note => note.Duration.Denominator <= ShortestDuration / ratioDenominator)
+                .ToArray();
+
+            // assure there is at least one candidate note which long enough for splitting  
+            if (candidateNotes.Length == 0)
+                return false;
+
+            // select a random note from within the bar candidate notes 
+            int randomNoteIndex = new Random().Next(candidateNotes.Length);
+            INote existingNote = candidateNotes[randomNoteIndex];
+
+            // set the two new durations for the two new notes after the split
+            IDuration firstDuration, secondDuration;
+            byte existingNumerator = existingNote.Duration.Numerator;
+            byte existingDenominator = existingNote.Duration.Denominator;
+            byte newDenominator = (byte)(existingDenominator * ratioDenominator);
+
+            switch (ratio)
+            {
+                case DurationSplitRatio.Equal:
+                default:
+                    firstDuration = new Duration(existingNumerator, newDenominator);
+                    secondDuration = new Duration(firstDuration);
+                    break;
+                case DurationSplitRatio.Anticipation:
+                    firstDuration = new Duration(existingNumerator, newDenominator);
+                    secondDuration = new Duration((byte)(existingNumerator * 3), newDenominator);
+                    break;
+                case DurationSplitRatio.Delay:
+                    firstDuration = new Duration((byte)(existingNumerator * 3), newDenominator);
+                    secondDuration = new Duration(existingNumerator, newDenominator);
+                    break;
+            }
+
+            // create two new notes with preseted durtions 
+            INote firstNote = new Note(existingNote.Pitch, firstDuration);
+            INote secondNote = new Note(existingNote.Pitch, secondDuration);
+
+            // replace the existing note with the two new notes 
+            int originalNoteIndex = bar.Notes.IndexOf(existingNote);
+            bar.Notes.RemoveAt(originalNoteIndex);
+            bar.Notes.Insert(originalNoteIndex, firstNote);
+            bar.Notes.Insert(originalNoteIndex + 1, secondNote);
+
+            // indicate that a change has been made
+            return true;
+        }
+        #endregion
+
+    }
 }
