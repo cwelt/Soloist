@@ -70,7 +70,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         {
             foreach (var bar in melody)
             {
-                ChangePitchForARandomNote(bar, 1);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, octaveRadius: 1);
             }
         }
 

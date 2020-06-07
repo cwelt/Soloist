@@ -30,7 +30,12 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
         public IEnumerable<NotePitch> GetArpeggioNotes(int minOctave, int maxOctave)
         {
-            return MusicTheoryServices.GetNotes(this.ChordRoot, this.ChordType, minOctave, maxOctave);
+            return MusicTheoryServices.GetNotes(this, ChordNoteMappingSource.Chord, minOctave, maxOctave);
+        }
+
+        public IEnumerable<NotePitch> GetScaleNotes(int minOctave, int maxOctave)
+        {
+            return MusicTheoryServices.GetNotes(this, ChordNoteMappingSource.Scale, minOctave, maxOctave);
         }
 
         public override string ToString()
