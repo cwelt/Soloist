@@ -52,7 +52,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         /// </summary>
         protected internal void InitializeFirstGeneration()
         {
-            Console.WriteLine($"In {this.GetType().FullName}, initializing first generation");
+            Console.WriteLine($"In {this.GetType().FullName}, \ninitializing first generation");
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         {
             foreach (var bar in melody)
             {
-                ChangePitchForARandomNote(bar);
+                ChangePitchForARandomNote(bar, 1);
             }
         }
 

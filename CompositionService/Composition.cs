@@ -18,6 +18,8 @@ namespace CW.Soloist.CompositionService
         private readonly string _midiInputFilePath;
         private readonly string _midiInputFileName;
         private IMidiFileService _midiInputFile;
+
+        internal static readonly byte SemitonesInOctave = 12;
         
         // TODO: use input file to construct the output without duplicating unnecessary data (prototype\flyweight)
         private IMidiFileService _midiOutputFile;
