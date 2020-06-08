@@ -89,13 +89,13 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
 
             foreach (var bar in melody)
             {
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, octaveRadius: 1);
-                EqualDurationSplitMutation(bar);
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, octaveRadius: 1);
-                AnticipationDurationSplitMutation(bar);
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, octaveRadius: 1);
-                DelayDurationSplitMutation(bar);
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, octaveRadius: 1);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 7);
+                DurationEqualSplitMutation(bar);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 7);
+                DurationAnticipationSplitMutation(bar);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 7);
+                DurationDelaySplitMutation(bar);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 7);
             }
         }
 

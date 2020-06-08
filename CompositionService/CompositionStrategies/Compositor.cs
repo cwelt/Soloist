@@ -59,7 +59,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         /// <para> Pitch selected is in the range between <see cref="MinOctave"/> and <see cref="MaxOctave"/>.
         /// In addition to this global range, it is possible to define another constraint 
         /// which determines "how far" at most the new pitch can be relative to the original 
-        /// pitch. The default is one octave at most, see <paramref name="octaveRadius"/>. </para>
+        /// pitch. The default is seven semitones at most, see <paramref name="semitoneRadius"/>. </para>
         /// <para>The new note with the randomly selected pitch will replace the original old note,
         /// but will preserve the original note's duration. </para>
         /// </summary>
@@ -73,9 +73,9 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         /// </remarks>
         /// <param name="bar"> The bar in which to make the pitch replacement in. </param>
         /// <param name="mappingSource"> Determines whether the pitches should be selected from the chord arpeggio notes or from a scale mapped to the chord.</param>
-        /// <param name="octaveRadius"> Determines how many octaves at most could the new pitch be from the old pitch (excluding the note itself, i.e, one octave is 11 semi-tones).</param>
+        /// <param name="semitoneRadius"> Determines how many semitones at most could the new pitch be from the exisiting one.</param>
         /// <returns> True if a change has been made, or false if no change has been made, see remarks.</returns>
-        private protected virtual bool ChangePitchForARandomNote(IBar bar, ChordNoteMappingSource mappingSource = ChordNoteMappingSource.Chord, byte octaveRadius = 1)
+        private protected virtual bool ChangePitchForARandomNote(IBar bar, ChordNoteMappingSource mappingSource = ChordNoteMappingSource.Chord, byte semitoneRadius = 7)
         {
             // initialize random number generator 
             Random randomizer = new Random();
@@ -104,9 +104,9 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
                 candidateNotes = chord.GetArpeggioNotes(MinOctave, MaxOctave);
             else candidateNotes = chord.GetScaleNotes(MinOctave, MaxOctave);
 
-            // filter candidats according to specified octave radius
-            int pitchUpperBound = oldPitch + MusicTheoryServices.SemitonesInOctave - 1;
-            int pitchLowerBound = oldPitch - (MusicTheoryServices.SemitonesInOctave - 1);
+            // filter candidats according to specified semitone radius
+            int pitchUpperBound = oldPitch + semitoneRadius;
+            int pitchLowerBound = oldPitch - semitoneRadius;
             NotePitch[] filteredPitches = candidateNotes
                 .Where(pitch => pitch != oldNote.Pitch && (int)pitch >= pitchLowerBound && (int)pitch <= pitchUpperBound)
                 .ToArray();

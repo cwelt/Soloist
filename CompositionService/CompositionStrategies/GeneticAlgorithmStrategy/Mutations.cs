@@ -21,18 +21,17 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             ChangePitchForARandomNote(bar, mappingSource: ChordNoteMappingSource.Scale);
         }
 
-        // splits a random note into two new notes with same pitch and half the duration 
-        private protected virtual void EqualDurationSplitMutation(IBar bar)
+        private protected virtual void DurationEqualSplitMutation(IBar bar)
         {
             DurationSplitOfARandomNote(bar, DurationSplitRatio.Equal);
         }
 
-        private protected virtual void AnticipationDurationSplitMutation(IBar bar)
+        private protected virtual void DurationAnticipationSplitMutation(IBar bar)
         {
             DurationSplitOfARandomNote(bar, DurationSplitRatio.Anticipation);
         }
 
-        private protected virtual void DelayDurationSplitMutation(IBar bar)
+        private protected virtual void DurationDelaySplitMutation(IBar bar)
         {
             DurationSplitOfARandomNote(bar, DurationSplitRatio.Delay);
         }
