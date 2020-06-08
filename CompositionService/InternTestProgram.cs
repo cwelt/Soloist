@@ -11,16 +11,16 @@ namespace CW.Soloist.CompositionService
     {
         public static void Main()
         {
-            IDuration durationHalf = new Duration(1, 2);
-            IDuration durationQuarter = new Duration(1, 4);
-            INote noteA = new Note(NotePitch.A4, durationHalf);
-            Console.WriteLine(noteA);
-            Console.WriteLine(durationQuarter);
-            var chord = new Chord(NoteName.C, ChordType.Major7, durationHalf);
-            Console.WriteLine(chord);
-
-            var bar = new Bar(new Duration(4, 4), new List<IChord>() { chord, new Chord(NoteName.ASharp, ChordType.Dominant7Suspended4, new Duration()) });
-            Console.WriteLine(bar);
+            foreach (var chordType in Enum.GetValues(typeof(ChordType)))
+            {
+                IChord chord = new Chord(NoteName.C, (ChordType)chordType, new Duration());
+                Console.Write($"{chordType}: ");
+                foreach (var note in chord.GetScaleNotes(4, 4))
+                {
+                    Console.Write(note);
+                }
+                Console.WriteLine();
+            }
 
         }
     }

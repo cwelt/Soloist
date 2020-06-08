@@ -38,7 +38,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         public byte MinOctave { get; } = 4;
 
         /// <summary> Maximum octave of note pitch range for the composition. </summary>
-        public byte MaxOctave { get; } = 6;
+        public byte MaxOctave { get; } = 5;
 
         /// <summary> Compose a solo-melody over a given playback. </summary>
         /// <param name="chordProgression"> The chords of the song in the playback. </param>
@@ -124,6 +124,9 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
             int indexOfOldNoteInBar = bar.Notes.IndexOf(oldNote);
             bar.Notes.RemoveAt(indexOfOldNoteInBar);
             bar.Notes.Insert(indexOfOldNoteInBar, newNote);
+
+            // print to log 
+            Console.WriteLine($"chord {chord.ChordRoot}{chord.ChordType} - old: {oldNote.Pitch}, new: {newPitch}");
 
             // indicate that a change has been made
             return true;

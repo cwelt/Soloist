@@ -100,7 +100,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
                     if (mappingSource == ChordNoteMappingSource.Chord)
                         scale = new Scale(new Interval[] { Interval.Four, Interval.Three, Interval.Three, Interval.Three, Interval.FromHalfSteps(-1) }, rootNote);
                     else // harmonic minor v scale with 6th omitted
-                        scale = new Scale(new Interval[] { Interval.One, Interval.Three, Interval.One, Interval.Two, Interval.Three }, rootNote);
+                        scale = new Scale(new Interval[] { Interval.One, Interval.Three, Interval.One, Interval.Two, Interval.Three, Interval.Two }, rootNote);
                     break;
                 case ChordType.Dominant7Suspended4:
                     if (mappingSource == ChordNoteMappingSource.Chord)
@@ -129,8 +129,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 case ChordType.Major:
                     if (mappingSource == ChordNoteMappingSource.Chord)
                         scale = new Scale(new Interval[] { Interval.Four, Interval.Three, Interval.Five }, rootNote);
-                    else // dorian major scale with omitted 4th, 6th and 7th
-                        scale = new Scale(new Interval[] { Interval.Two, Interval.Two, Interval.Three, Interval.Five }, rootNote);
+                    else // dorian major scale with omitted 4th and 7th 
+                        scale = new Scale(new Interval[] { Interval.Two, Interval.Two, Interval.Three, Interval.Two, Interval.Three }, rootNote);
                     break;
                 case ChordType.Major7:
                     if (mappingSource == ChordNoteMappingSource.Chord)

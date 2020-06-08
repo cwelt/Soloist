@@ -51,6 +51,23 @@ namespace CW.Soloist.CompositionService
             {
                 throw;
             }
+
+
+
+            foreach (var chordType in Enum.GetValues(typeof(ChordType)))
+            {
+                IChord chord = new Chord(NoteName.C, (ChordType)chordType, new Duration());
+                Console.Write($"{chordType}: ");
+                foreach (var note in chord.GetScaleNotes(4, 5))
+                {
+                    Console.Write(note + " ");
+                }
+                Console.WriteLine();
+            }
+
+
+
+
         }
         #endregion
 
