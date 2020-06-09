@@ -53,7 +53,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (i++ == 1)
+                if (i++ == 36)
                     terminateCondition = true;
             }
 
@@ -89,9 +89,13 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
 
             foreach (var bar in melody)
             {
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 7);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 5);
+                DurationDelaySplitMutation(bar);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 5);
                 DurationEqualSplitMutation(bar);
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 7);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 5);
+                DurationAnticipationSplitMutation(bar);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 5);
             }
         }
 

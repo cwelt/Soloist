@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleClient", "ConsoleCli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompositionService", "CompositionService\CompositionService.csproj", "{0C3D2A16-DD1E-46E7-ADE6-A1A42C9BBC63}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopClient", "DesktopClient\DesktopClient.csproj", "{02C6D484-1038-46DF-B866-86BA69198FBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0C3D2A16-DD1E-46E7-ADE6-A1A42C9BBC63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C3D2A16-DD1E-46E7-ADE6-A1A42C9BBC63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C3D2A16-DD1E-46E7-ADE6-A1A42C9BBC63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02C6D484-1038-46DF-B866-86BA69198FBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02C6D484-1038-46DF-B866-86BA69198FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02C6D484-1038-46DF-B866-86BA69198FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02C6D484-1038-46DF-B866-86BA69198FBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

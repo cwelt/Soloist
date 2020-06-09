@@ -34,7 +34,7 @@ namespace ConsoleClient
 
             // create a new composition with injected strategy
             var composition = new Composition(filePath2, chordsFilePath);
-            var newMidiFile = composition.Compose();
+            var newMidiFile = composition.Compose(compositor);
 
             newMidiFile.Play();
             //newMidiFile.Stop();

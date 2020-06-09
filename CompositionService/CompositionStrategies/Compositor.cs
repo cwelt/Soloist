@@ -29,16 +29,16 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         internal IEnumerable<IBar> ChordProgression { get; }
 
         /// <summary> Default duration denominator for a single note. </summary>
-        internal byte DefaultDuration { get; set; } = 8;
+        internal byte DefaultDuration { get; set; } = 16;
 
         internal byte ShortestDuration { get; } = 16;
 
 
         /// <summary> Minimum octave of note pitch range for the composition. </summary>
-        public byte MinOctave { get; } = 4;
+        public byte MinOctave { get; } = 3;
 
         /// <summary> Maximum octave of note pitch range for the composition. </summary>
-        public byte MaxOctave { get; } = 5;
+        public byte MaxOctave { get; } = 6;
 
         /// <summary> Compose a solo-melody over a given playback. </summary>
         /// <param name="chordProgression"> The chords of the song in the playback. </param>
