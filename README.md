@@ -11,3 +11,6 @@ this application would create a new midi file, including the original playback t
 
 This appliation implements a genetic algorithm to carry out the composition process. 
 
+## Initial Prototype Sample 
+![Initial Prototype Sample](Design/prototype-screenshot.png)
+
