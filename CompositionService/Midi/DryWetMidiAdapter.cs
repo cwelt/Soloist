@@ -109,10 +109,10 @@ namespace CW.Soloist.CompositionService.Midi
 
         #region EmbedMelody
         /// <inheritdoc/>
-        public void EmbedMelody(IList<IBar> melody, string melodyTrackName = "Melody", byte instrumentId = 64, byte? trackNumber = null)
+        public void EmbedMelody(IList<IBar> melody, string melodyTrackName = "Melody", MusicalInstrument instrument = MusicalInstrument.Sitar, byte? trackNumber = null)
         {
             // use utility private helper method to convert the melody into a midi track 
-            TrackChunk melodyTrack = ConvertMelodyToTrackChunk(melody, melodyTrackName, instrumentId);
+            TrackChunk melodyTrack = ConvertMelodyToTrackChunk(melody, melodyTrackName, instrument);
 
             // assemble the midi file with new track which contains the melody's midi events 
             int indexOfNewTrack = trackNumber ?? _midiFile.Chunks.Count;
@@ -126,10 +126,10 @@ namespace CW.Soloist.CompositionService.Midi
         /// </summary>
         /// <param name="melodyBars"> The bars & notes which are to be converted. </param>
         /// <param name="trackName"> The name that would be given to the newly created midi track. </param>
-        /// <param name="instrumentId"> Midi <a href="https://en.wikipedia.org/wiki/General_MIDI">program number</a> which represents a musical instrument. </param>
+        /// <param name="instrument"> Midi <a href="https://bit.ly/30pmSzP">program number</a> which represents a musical instrument. </param>
         /// <param name="channel"> The channel number in which the new track would be assigned to. </param>
         /// <returns> A Midi track which contains the melody encapsulated as midi events data. </returns>
-        private TrackChunk ConvertMelodyToTrackChunk(IList<IBar> melodyBars, string trackName, byte instrumentId, byte channel = 15)
+        private TrackChunk ConvertMelodyToTrackChunk(IList<IBar> melodyBars, string trackName, MusicalInstrument instrument, byte channel = 15)
         {
             // initialization 
             IBar bar = null;
@@ -138,7 +138,7 @@ namespace CW.Soloist.CompositionService.Midi
             PatternBuilder melodyTrackBuilder = new PatternBuilder();
 
             // set instrument  
-            melodyTrackBuilder.ProgramChange((SevenBitNumber)instrumentId);
+            melodyTrackBuilder.ProgramChange((SevenBitNumber)(byte)instrument);
 
             // set default velocity (volume)
             melodyTrackBuilder.SetVelocity((SevenBitNumber)100);

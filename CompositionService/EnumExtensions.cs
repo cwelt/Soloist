@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.MusicTheory
+namespace CW.Soloist.CompositionService
 {
     internal static class EnumExtensions
     {

@@ -60,9 +60,9 @@ namespace CW.Soloist.CompositionService.Midi
         ///  into a midi track and adds it to the midi file. </summary>
         /// <param name="melody"> List of notes divided into bars. </param>
         /// <param name="melodyTrackName"> Name that would be given to the new midi track. </param>
-        /// <param name="instrumentId"> Midi <a href="https://en.wikipedia.org/wiki/General_MIDI">program number</a>  which represents a musical instrument.</param>
+        /// <param name="instrument"> Midi <a href="https://bit.ly/30pmSzP">program number</a>  which represents a musical instrument.</param>
         /// <param name="trackIndex"> If specified, the new track would be inserted in this index position. </param>
-        void EmbedMelody(IList<IBar> melody, string melodyTrackName = "Melody", byte instrumentId = 64, byte? trackIndex = null);
+        void EmbedMelody(IList<IBar> melody, string melodyTrackName = "Melody", MusicalInstrument instrument = MusicalInstrument.JazzGuitar, byte? trackIndex = null);
 
 
         /// <summary> Save midi file on local device. </summary>

@@ -53,7 +53,7 @@ namespace CW.Soloist.CompositionService
             }
 
 
-
+            // test chord-note mapping
             foreach (var chordType in Enum.GetValues(typeof(ChordType)))
             {
                 IChord chord = new Chord(NoteName.C, (ChordType)chordType, new Duration());
@@ -101,7 +101,7 @@ namespace CW.Soloist.CompositionService
             IEnumerable<IBar> melody = Compositor.Compose(_chordProgression);
 
             // Embed the new generated melody into the midi file
-            _midiOutputFile.EmbedMelody(melody: melody.ToList(), melodyTrackName: "new melody", instrumentId: 53);
+            _midiOutputFile.EmbedMelody(melody: melody.ToList(), melodyTrackName: "new melody", instrument: MusicalInstrument.Clarinet);
 
             // save output
             _midiOutputFile.SaveFile(fileNamePrefix: _midiInputFileName);
