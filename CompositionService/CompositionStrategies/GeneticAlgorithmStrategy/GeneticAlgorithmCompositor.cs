@@ -84,7 +84,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             int NumberOfBars = melody.Count();
             int randomBarIndex = randomizer.Next(NumberOfBars);
 
-            ToggleHoldNote(new MelodyCandidate { Bars = melody.ToList() }, 0); 
+            ToggleFromHoldNoteMutation(new MelodyCandidate { Bars = melody.ToList() }); 
 
 
             foreach (var bar in melody)

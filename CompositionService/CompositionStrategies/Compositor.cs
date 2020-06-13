@@ -231,67 +231,73 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         }
         #endregion
 
-        #region GetPredecessorNotePitch()
+
+        #region GetPredecessorNote()
         /// <summary> 
-        /// <para>Gets the musical pitch of the predecessor note of the given note.</para>
-        /// This method seeks the first note on the given melody which is not 
-        /// a rest note and not a hold note, and returns it's pitch. 
-        /// This could be useful for example when there is a need to toggle a hold
-        /// note back to a played note, and we want to replace the hold note pitch 
-        /// (<see cref="NotePitch.HoldNote"/>) with the actual pitch it is holding. 
-        /// This method scans the melody notes from the given bar and note indices backwards
-        /// untill a relevant preceding note is found. If the given note has no preceding 
-        /// notes null is returned. This could happen for example, 
-        /// if all the preceding notes are rest notes.
+        /// <para>Gets the note in the melody which preceds the note at the given indices.</para>
+        /// If <paramref name="excludeRestHoldNotes"/> is set, then hold and rest notes  
+        /// would be bypassed, and the first preceding note which is not a rest or hold note 
+        /// would be returned. If no preceding note is found then null is returned. 
         /// </summary>
         /// <param name="melodyBars"> The bar sequence which contains the melody notes. </param>
+        /// <param name="excludeRestHoldNotes">If set, rest notes and hold notes would be discarded during search for a preceding note.</param>
         /// <param name="barIndex"> Index of the bar containing the given note. </param>
-        /// <param name="noteIndex"> Index of the note of which it's predecessor is wanted. </param>
-        /// <returns></returns>
-        private protected NotePitch? GetPredecessorNotePitch(IList<IBar> melodyBars, int barIndex, int noteIndex)
+        /// <param name="noteIndex"> Index of the note of whom it's predecessor is wanted. </param>
+        /// <param name="precedingNoteBarIndex"> Index of the bar which contains the preceding note.</param>
+        /// <param name="precedingNoteIndex">Index of the preceding note inside his containing note sequence.</param>
+        /// <returns> Preceding note in the melody, or null if no predecessor note is found. </returns>
+        private protected INote GetPredecessorNote(IList<IBar> melodyBars, bool excludeRestHoldNotes, int barIndex, int noteIndex, out int precedingNoteBarIndex, out int precedingNoteIndex)
         {
             // initialization 
-            NotePitch? currentPitch = null;
+            INote note = null;
             int startingNoteIndex = 0;
 
             /* start scanning backwards from current bar & current note:
-             * outer loop is for bars, inner loop for notes in individual bars */
+             * outer loop is for bars, inner loop for notes in the individual bars */
             for (int i = barIndex; i >= 0; i--)
             {
                 /* in current bar start searching right before the given note.
-                 * in the rest of the bars start from the right edge of the bar. */
+                 * in the rest of the bars start from the right edge end of the bar. */
                 startingNoteIndex = ((i == barIndex) ? (noteIndex - 1) : (melodyBars[i].Notes.Count));
                 for (int j = startingNoteIndex; j >= 0; j--)
                 {
-                    currentPitch = melodyBars[i].Notes[noteIndex].Pitch;
-                    if (currentPitch != NotePitch.RestNote && currentPitch != NotePitch.HoldNote)
-                        return currentPitch;
+                    note = melodyBars[i].Notes[j];
+                    if (excludeRestHoldNotes || (note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote))
+                    {
+                        // set out params with the indices values and return the preceding note 
+                        precedingNoteBarIndex = i;
+                        precedingNoteIndex = j;
+                        return note;
+                    }
                 }
             }
+
+            // incase no preceding note is found, set the output accordingly 
+            precedingNoteBarIndex = -1;
+            precedingNoteIndex = -1;
             return null;
         }
         #endregion
 
-        #region GetSuccessorNotePitch()
+
+
+        #region GetSuccessorNote()
         /// <summary> 
-        /// <para>Gets the musical pitch of the successor note of the given note.</para>
-        /// This method seeks the first succeeding note on the given melody which is not 
-        /// a rest note and not a hold note, and returns it's pitch. 
-        /// This could be useful for example when there is a need to connect two consecutive
-        /// notes by inserting new notes which are ascending towards the succeeding note's pitch.
-        /// This method scans the melodie's notes from the given bar and note indices
-        /// untill a relevant succeeding note is found. If the given note has no succeeding 
-        /// notes, then null is returned. This could happen for example, 
-        /// if all the succeeding notes are rest notes.
+        /// <para>Gets the note in the melody which succeeds the note at the given indices.</para>
+        /// If <paramref name="excludeRestHoldNotes"/> is set, then hold and rest notes  
+        /// would be bypassed, and the first succeeding note which is not a rest or hold note 
+        /// would be returned. If no succeeding note is found then null is returned. 
         /// </summary>
         /// <param name="melodyBars"> The bar sequence which contains the melody notes. </param>
+        /// <param name="excludeRestHoldNotes">If set, rest notes and hold notes would be discarded during search for a preceding note. </param>
         /// <param name="barIndex"> Index of the bar containing the given note. </param>
         /// <param name="noteIndex"> Index of the note of which it's predecessor is wanted. </param>
-        /// <returns></returns>
-        private protected NotePitch? GetSuccessorNotePitch(IList<IBar> melodyBars, int barIndex, int noteIndex)
+        /// <param name="succeedingNoteBarIndex">Index of the bar which contains the successor note. </param>
+        /// <param name="succeedingNoteIndex">Index of the successor note inside his containing note sequence. </param>
+        private protected INote GetSuccessorNote(IList<IBar> melodyBars, bool excludeRestHoldNotes, int barIndex, int noteIndex, out int succeedingNoteBarIndex, out int succeedingNoteIndex)
         {
             // initialization 
-            NotePitch? currentPitch = null;
+            INote note = null;
             int startingNoteIndex = 0;
 
             // start scanning forwards from current bar & current note 
@@ -302,14 +308,21 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
                 startingNoteIndex = ((i == barIndex) ? (noteIndex + 1) : 0);
                 for (int j = startingNoteIndex; j < melodyBars[i].Notes.Count; j++)
                 {
-                    currentPitch = melodyBars[barIndex].Notes[noteIndex].Pitch;
-                    if (currentPitch != NotePitch.RestNote && currentPitch != NotePitch.HoldNote)
-                        return currentPitch;
+                    note = melodyBars[i].Notes[j];
+                    if (excludeRestHoldNotes || (note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote))
+                    {
+                        // set out params with the indices values and return the succeeding note 
+                        succeedingNoteBarIndex = i;
+                        succeedingNoteIndex = j;
+                        return note;
+                    }
                 }
             }
+            // incase no succeeding note is found, set the output accordingly 
+            succeedingNoteBarIndex = -1;
+            succeedingNoteIndex = -1;
             return null;
         }
         #endregion
-
     }
 }

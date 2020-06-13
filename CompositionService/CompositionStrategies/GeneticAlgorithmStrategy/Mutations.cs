@@ -36,7 +36,11 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Delay);
         }
 
-        private protected virtual void ToggleHoldNote(MelodyCandidate melody, int barIndex)
+        /// <summary>
+        /// Replaces a random hole note with a concrete note pitch. 
+        /// </summary>
+        /// <param name="melody"></param>
+        private protected virtual void ToggleFromHoldNoteMutation(MelodyCandidate melody)
         {
             // find all bars which contain hold notes 
             IList<IBar> barsWithHoldNotes = melody.Bars
@@ -54,17 +58,48 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             INote holdNote = selectedBar.Notes.First();
             int holdNoteIndex = selectedBar.Notes.IndexOf(holdNote);
 
-            // find the real pitch of the note that this hold note holds
-            NotePitch? notePitch = GetPredecessorNotePitch(melody.Bars, selectedBarIndex, holdNoteIndex);
+            // find adjacent preceding or succeeding sounded note (not a rest or a hold note)
+            int adjacentNoteIndex, adjacentNoteBarIndex;
+            INote adjacentNote = 
+                GetPredecessorNote(melody.Bars, excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex)
+                ??
+                GetSuccessorNote(melody.Bars, excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex);
+                
+            // assure an adjacent note has been found   
+            if (adjacentNote != null)
+            {
+                // replace the hold note with the pitch found 
+                INote newNote = new Note(adjacentNote.Pitch, holdNote.Duration);
+                selectedBar.Notes.RemoveAt(holdNoteIndex);
+                selectedBar.Notes.Insert(holdNoteIndex, newNote);
+            }
+        }
 
-            // if no preceding notes, get pitch from succeeding note or default to silent rest note 
-            if(!notePitch.HasValue)
-                notePitch = GetSuccessorNotePitch(melody.Bars, selectedBarIndex, holdNoteIndex) ?? NotePitch.RestNote;
+        private protected virtual void SyncopedNoteMutation(MelodyCandidate melody, int? barIndex)
+        {
+            // initialize random number generator 
+            Random randomizer = new Random();
+            
+            // if no specific bar index is requested then set it randomly 
+            barIndex = barIndex ?? randomizer.Next(melody.Bars.Count);
 
-            // replace the hold note with the pitch found 
-            INote newNote = new Note((NotePitch)notePitch, holdNote.Duration);
-            selectedBar.Notes.RemoveAt(holdNoteIndex);
-            selectedBar.Notes.Insert(holdNoteIndex, newNote);
+            // fetch the bar 
+            IBar bar = melody.Bars[(int)barIndex];
+
+            // get all notes from bar which are not silent rest notes or hold notes
+            IList<INote> notes = bar.Notes.Where(note =>
+            {
+                return note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote;
+            }).ToList();
+
+            // select a random note from within the notes found  
+            int noteIndex = randomizer.Next(bar.Notes.Count);
+            INote selectedNote = bar.Notes[noteIndex];
+
+            // find the note preceding 
+            ;
+
+
         }
     }
 }
