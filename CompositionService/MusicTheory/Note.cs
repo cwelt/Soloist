@@ -20,17 +20,19 @@ namespace CW.Soloist.CompositionService.MusicTheory
         #endregion
 
         #region Public Properties 
-        public IDuration Duration { get; set; }
+        public IDuration Duration { get; }
         public NoteName? Name => _name;
 
         public NotePitch Pitch
         {
+            get; 
+            /*
             get => _pitch;
             set
             {
                 _pitch = value;
                 _name = GetNoteNameByNotePitch(value);
-            }
+            }*/
         }
         #endregion
 
