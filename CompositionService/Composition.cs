@@ -51,24 +51,9 @@ namespace CW.Soloist.CompositionService
             }
             catch (FormatException ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
-
-
-            // test chord-note mapping
-            foreach (var chordType in Enum.GetValues(typeof(ChordType)))
-            {
-                IChord chord = new Chord(NoteName.C, (ChordType)chordType, new Duration());
-                Console.Write($"{chordType}: ");
-                foreach (var note in chord.GetScaleNotes(4, 5))
-                {
-                    Console.Write(note + " ");
-                }
-                Console.WriteLine();
-            }
-
-
-
 
         }
         #endregion
@@ -80,7 +65,7 @@ namespace CW.Soloist.CompositionService
         /// <returns> A new midi file containing the composed solo-melody. </returns>
         public IMidiFileService Compose(MusicalInstrument instrument = MusicalInstrument.OverdrivenGuitar)
         {
-            return Compose(new GeneticAlgorithmCompositor(), instrument);
+            return Compose(CompositionStrategy.GeneticAlgorithmStrategy, instrument);
         }
 
         /// <summary>
@@ -88,10 +73,10 @@ namespace CW.Soloist.CompositionService
         /// </summary>
         /// <param name="CompositionStrategy"> The strategy to use to compose the melody. </param>
         /// <returns> A new midi file containing the composed solo-melody. </returns>
-        public IMidiFileService Compose(Compositor CompositionStrategy, MusicalInstrument instrument = MusicalInstrument.OverdrivenGuitar)
+        public IMidiFileService Compose(CompositionStrategy strategy, MusicalInstrument instrument = MusicalInstrument.OverdrivenGuitar)
         {
             // set composition strategy
-            Compositor = CompositionStrategy;
+            Compositor = Compositor.CreateCompositor(strategy);
 
             // create adapter handle for the newly created midi file 
             _midiOutputFile = new DryWetMidiAdapter(_midiInputFilePath);
@@ -239,5 +224,21 @@ namespace CW.Soloist.CompositionService
             }
         }
         #endregion
+
+
+        public static void TestChordNoteMapping()
+        {
+            // test chord-note mapping
+            foreach (var chordType in Enum.GetValues(typeof(ChordType)))
+            {
+                IChord chord = new Chord(NoteName.C, (ChordType)chordType, new Duration());
+                Console.Write($"{chordType}: ");
+                foreach (var note in chord.GetScaleNotes(4, 5))
+                {
+                    Console.Write(note + " ");
+                }
+                Console.WriteLine();
+            }
+        }
     }
 }

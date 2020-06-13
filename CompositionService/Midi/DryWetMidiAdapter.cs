@@ -328,7 +328,7 @@ namespace CW.Soloist.CompositionService.Midi
             string fileName = fileNamePrefix + $"_output_{timeStamp}.mid";
 
             // set full path: if no path is specified then set desktop as the default path
-            path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\midioutput";
             string fullPath = path + Path.DirectorySeparatorChar + fileName;
 
             // save file 

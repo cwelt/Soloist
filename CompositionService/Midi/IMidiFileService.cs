@@ -43,9 +43,9 @@ namespace CW.Soloist.CompositionService.Midi
         /// and return it's content in a music-theory enumerable bar collection representation.
         /// </para>
         /// This can be useful when the midi file already contains a melody which we would
-        /// like to replace with a new one: the original one is removed and returned,
+        /// like to replace with a new one: the original one is removed from file and returned to caller,
         /// so it could be further processed if necessary and serve as a seed for generation of new melodies. 
-        /// Inorder to embed a new melody track instead of the removed one, <see cref="EmbedMelody(IList{IBar}, string, byte, byte?)"/>
+        /// Inorder to later embed a new melody track instead of the one removed, <see cref="EmbedMelody(IList{IBar}, string, byte, byte?)"/>
         /// </summary>
         /// <param name="trackNumber"> The number of the melody track in the midi file.</param>
         /// <param name="melodyBars"> The melody contained in the specified track is returned 
@@ -60,13 +60,13 @@ namespace CW.Soloist.CompositionService.Midi
         ///  into a midi track and adds it to the midi file. </summary>
         /// <param name="melody"> List of notes divided into bars. </param>
         /// <param name="melodyTrackName"> Name that would be given to the new midi track. </param>
-        /// <param name="instrument"> Midi <a href="https://bit.ly/30pmSzP">program number</a>  which represents a musical instrument.</param>
-        /// <param name="trackIndex"> If specified, the new track would be inserted in this index position. </param>
+        /// <param name="instrument">"> If specified, the new track would be inserted in this index position. </param>
         void EmbedMelody(IList<IBar> melody, string melodyTrackName = "Melody", MusicalInstrument instrument = MusicalInstrument.JazzGuitar, byte? trackIndex = null);
 
 
         /// <summary> Save midi file on local device. </summary>
-        /// <param name="outputPath"> The path in which to save the midi file. </param>
+        /// <param name="outputP Midi <a href="https://bit.ly/30pmSzP">program number</a>  which represents a musical instrument.</param>
+        /// <param name="trackIndexath"> The path in which to save the midi file. </param>
         /// <param name="fileNamePrefix"> Optional prefix for the new midi file. </param>
         void SaveFile(string outputPath = null, string fileNamePrefix = "");
 

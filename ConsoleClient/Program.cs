@@ -1,6 +1,9 @@
 ﻿using CW.Soloist.CompositionService;
+using CW.Soloist.CompositionService.CompositionStrategies;
 using CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy;
+using CW.Soloist.CompositionService.Midi;
 using System;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -20,21 +23,18 @@ namespace ConsoleClient
             Console.WriteLine("Testing Composition Services...");
 
             // midi (playback) file path 
-            string filePath = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\after_20_years_playback.mid";
-            string filePath2 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\‏‏after_20_years.mid";
-            string filePath3 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\testbug.mid";
-            string filePath4 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\debug2.mid";
-            string filePath5 = @"C:\Users\chwel\source\repos\CW.Soloist\CompositionService\obj\Debug\test.mid";
+            string filePath = ConfigurationManager.AppSettings["midiFile"];
+            string playbackOnlyfilePath = ConfigurationManager.AppSettings["midiFilePlayback"];
 
             // get chords from file... 
-            string chordsFilePath = @"C:\Users\chwel\OneDrive\שולחן העבודה\twenty_years_chords.txt";
+            string chordsFilePath = ConfigurationManager.AppSettings["chordsFile"];
 
             // set the strategy compositor 
-            var compositor = new GeneticAlgorithmCompositor();
+            CompositionStrategy compositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy;
 
             // create a new composition with injected strategy
-            var composition = new Composition(filePath2, chordsFilePath);
-            var newMidiFile = composition.Compose(compositor);
+            var composition = new Composition(filePath, chordsFilePath);
+            var newMidiFile = composition.Compose(compositionStrategy, MusicalInstrument.ElectricGuitar);
 
             newMidiFile.Play();
             //newMidiFile.Stop();

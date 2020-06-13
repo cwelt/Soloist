@@ -1,4 +1,6 @@
-﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
+﻿using CW.Soloist.CompositionService.CompositionStrategies.ArpeggiatorStrategy;
+using CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy;
+using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
 using CW.Soloist.CompositionService.MusicTheory;
 using System;
 using System.Collections.Generic;
@@ -20,31 +22,55 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
     public abstract class Compositor
     {
         /// <summary> Melody seed to base on the composition of the new melody. </summary>
-        internal IEnumerable<INote> Seed { get; }
+        internal IEnumerable<IBar> Seed { get; }
 
         /// <summary> The outcome of the <see cref="Compose"/> method. </summary>
-        internal IEnumerable<INote> ComposedMelody { get; private set; }
+        internal IEnumerable<IBar> ComposedMelody { get; private set; }
 
         /// <summary> The playback's harmony. </summary>
         internal IEnumerable<IBar> ChordProgression { get; }
 
         /// <summary> Default duration denominator for a single note. </summary>
-        internal byte DefaultDuration { get; set; } = 16;
+        internal byte DefaultDuration { get; set; } = 8;
 
         internal byte ShortestDuration { get; } = 16;
 
 
         /// <summary> Minimum octave of note pitch range for the composition. </summary>
-        public byte MinOctave { get; } = 3;
+        public byte MinOctave { get; } = 4;
 
         /// <summary> Maximum octave of note pitch range for the composition. </summary>
-        public byte MaxOctave { get; } = 6;
+        public byte MaxOctave { get; } = 5;
+
+        /// <summary> Minimum octave of note pitch range for the composition. </summary>
+        public byte MinPitch { get; } = 40; //E2
+
+        /// <summary> Maximum octave of note pitch range for the composition. </summary>
+        public byte MaxPitch{ get; } = 88; // E6
+
 
         /// <summary> Compose a solo-melody over a given playback. </summary>
         /// <param name="chordProgression"> The chords of the song in the playback. </param>
         /// <param name="seed"> Optional existing melody on which to base the composition on.</param>
         /// <returns> The composition of solo-melody</returns>
         internal abstract IEnumerable<IBar> Compose(IEnumerable<IBar> chordProgression, IEnumerable<IBar> seed = null);
+
+        internal static Compositor CreateCompositor(CompositionStrategy strategy = CompositionStrategy.GeneticAlgorithmStrategy)
+        {
+            switch (strategy)
+            {
+                case CompositionStrategy.GeneticAlgorithmStrategy:
+                    return new GeneticAlgorithmCompositor();
+                case CompositionStrategy.ArpeggiatorStrategy:
+                    return new ArpeggiatorCompositor();
+                case CompositionStrategy.ScaleStrategy:
+                    throw new NotImplementedException();
+                case CompositionStrategy.CustomStrategy:
+                    throw new NotImplementedException();
+                default:
+                    throw new NotImplementedException();
+            }
+        }
 
         #region ChangePitchForARandomNote() 
         /// <summary>
@@ -75,7 +101,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         /// <param name="mappingSource"> Determines whether the pitches should be selected from the chord arpeggio notes or from a scale mapped to the chord.</param>
         /// <param name="semitoneRadius"> Determines how many semitones at most could the new pitch be from the exisiting one.</param>
         /// <returns> True if a change has been made, or false if no change has been made, see remarks.</returns>
-        private protected virtual bool ChangePitchForARandomNote(IBar bar, ChordNoteMappingSource mappingSource = ChordNoteMappingSource.Chord, byte semitoneRadius = 7)
+        private protected virtual bool ChangePitchForARandomNote(IBar bar, ChordNoteMappingSource mappingSource = ChordNoteMappingSource.Chord, byte semitoneRadius = 5)
         {
             // initialize random number generator 
             Random randomizer = new Random();

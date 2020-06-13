@@ -14,18 +14,19 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
     /// for use by a <see cref="Composition"/> context instance. </summary>
     public partial class GeneticAlgorithmCompositor : Compositor
     {
-        internal IList<MelodyGenome> Candidates { get; private set; }
-        private protected Action<IBar>[] _mutations;
+        
+
+        private IList<MelodyGenome> _candidates;
+
+        private protected Action<MelodyGenome, int?>[] _mutations;
+
 
 
         public GeneticAlgorithmCompositor()
         {
-            _mutations = new Action<IBar>[]
-            {
-                ChordPitchMutation,
-                ScalePitchMutation,
-                
-            };
+            
+            _mutations = new Action<MelodyGenome, int?>[10];
+
         }
 
 
@@ -53,7 +54,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (i++ == 36)
+                if (i++ == 1)
                     terminateCondition = true;
             }
 
@@ -87,15 +88,42 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             int NumberOfBars = melody.Count();
             int randomBarIndex = randomizer.Next(NumberOfBars);
 
+            
+
+
             foreach (var bar in melody)
             {
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 5);
-                DurationDelaySplitMutation(bar);
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 5);
-                DurationEqualSplitMutation(bar);
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 5);
-                DurationAnticipationSplitMutation(bar);
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 5);
+                int random = randomizer.Next(7);
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 4);
+
+
+                switch (random)
+                {
+                    case 0:
+                        ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 3);
+                        break;
+                    case 1:
+                        DurationDelaySplitMutation(bar);
+                        break;
+                    case 2:
+                        ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 3);
+                        break;
+                    case 3:
+                        DurationEqualSplitMutation(bar);
+                        break;
+                    case 4:
+                        DurationAnticipationSplitMutation(bar);
+                        break;
+                    case 5:
+                        ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 3);
+                        break;
+                    case 6:
+                        ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 3);
+                        break;
+                    default:
+                        break;
+                }
+                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 4);
             }
         }
 
