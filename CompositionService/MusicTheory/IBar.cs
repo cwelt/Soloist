@@ -33,11 +33,11 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
         /// <summary>
         /// Returns a sublist of the bar's notes which overlap the time interval of the given chord,
-        /// i.e, all the notes from <see cref="IBar.Notes"/> that are played in parallel to 
+        /// i.e, all the notes from <see cref="IBar.Notes"/> that are played in parallel time to 
         /// the given chord.
         /// </summary>
         /// <param name="chordIndex"> Index to the requested chord in this <see cref="IBar.Chords"/> chord list property.</param>
-        /// <returns> List of notes which are playd in parallel to the given chord.</returns>
+        /// <returns> List of notes which are played in parallel time to the given chord.</returns>
         IList<INote> GetOverlappingNotesForChord(int chordIndex);
 
 
@@ -47,5 +47,18 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <param name="chord"> Chord from within this bar's <see cref="IBar.Chords"/>  chord list.</param>
         /// <returns> <inheritdoc cref="GetOverlappingNotesForChord(int)"/> </returns>
         IList<INote> GetOverlappingNotesForChord(IChord chord);
+
+
+
+
+        /// <summary>
+        /// Returns a sublist of the bar's chords which overlap the time interval of the given note,
+        /// i.e, all the chords from <see cref="IBar.Chords"/> that are played in parallel time to 
+        /// the given note.
+        /// </summary>
+        /// <param name="noteIndex"> Index to the requested note in this <see cref="IBar.Notes"/> note list property.</param>
+        /// <returns> List of chords which are played in parallel time to the given note.</returns>
+        IList<IChord> GetOverlappingChordsForNote(int noteIndex);
+
     }
 }

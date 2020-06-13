@@ -131,6 +131,38 @@ namespace CW.Soloist.CompositionService.MusicTheory
             return GetOverlappingNotesForChord(Chords.IndexOf(chord));
         }
 
+        /// <inheritdoc cref="IBar.GetOverlappingChordsForNote(int)"/>
+        public IList<IChord> GetOverlappingChordsForNote(int noteIndex)
+        {
+            // initialize empty result list 
+            IList<IChord> noteChords = new List<IChord>();
+
+            // initialize start & end time trackers as a fraction relative to this bar's duration 
+            float noteStartTime = 0, noteEndTime = 0;
+            float chordStartTime = 0, chordEndTime = 0;
+
+            // calculate starting point for the given note inside this bar instance  
+            for (int i = 0; i < noteIndex; i++)
+                noteStartTime += (float)Notes[i].Duration.Numerator / Notes[i].Duration.Denominator;
+
+            // calcualte the ending point for the given note inside this bar instance   
+            noteEndTime = noteEndTime + ((float)Notes[noteIndex].Duration.Numerator / Notes[noteIndex].Duration.Denominator);
+
+            // add all notes that overlap the chord's time interval 
+            foreach (IChord chord in Chords)
+            {
+                chordStartTime = chordEndTime;
+                chordEndTime = chordEndTime + ((float)chord.Duration.Numerator / chord.Duration.Denominator);
+                if (chordStartTime < noteEndTime && chordEndTime > noteStartTime)
+                    noteChords.Add(chord);
+            }
+
+            // return overlapping chords 
+            return noteChords;
+        }
+
+
+
         public override string ToString()
         {
             // time signature 

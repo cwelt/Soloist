@@ -28,7 +28,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         internal IEnumerable<IBar> ComposedMelody { get; private set; }
 
         /// <summary> The playback's harmony. </summary>
-        internal IEnumerable<IBar> ChordProgression { get; }
+        internal IEnumerable<IBar> ChordProgression { get; private set; }
 
         /// <summary> Default duration denominator for a single note. </summary>
         internal byte DefaultDuration { get; set; } = 8;

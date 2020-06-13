@@ -50,7 +50,7 @@
     <Compile Include="CompositionStrategies\CompositionStrategy.cs" />
     <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\GeneticAlgorithmCompositor.cs" />
     <Compile Include="CompositionStrategies\Compositor.cs" />
-    <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\MelodyGenome.cs" />
+    <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\MelodyCandidate.cs" />
     <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\Mutations.cs" />
     <Compile Include="CompositionStrategies\UtilEnums\DurationSplitRatio.cs" />
     <Compile Include="Midi\DryWetMidiAdapter.cs" />

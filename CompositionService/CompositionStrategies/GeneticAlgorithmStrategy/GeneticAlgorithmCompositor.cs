@@ -14,15 +14,14 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
     /// for use by a <see cref="Composition"/> context instance. </summary>
     public partial class GeneticAlgorithmCompositor : Compositor
     {
-        private IList<MelodyGenome> _candidates;
-        private protected Action<MelodyGenome, int?>[] _mutations;
+        private IList<MelodyCandidate> _candidates;
+        private protected Action<MelodyCandidate, int?>[] _mutations;
 
 
 
         public GeneticAlgorithmCompositor()
         {
-            
-            _mutations = new Action<MelodyGenome, int?>[10];
+            _mutations = new Action<MelodyCandidate, int?>[10];
 
         }
 

@@ -11,29 +11,31 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
     public partial class GeneticAlgorithmCompositor
     {
         
-        private protected virtual void ChordPitchMutation(IBar bar)
+        private protected virtual void ChordPitchMutation(MelodyCandidate melody, int barIndex)
         {
-            ChangePitchForARandomNote(bar, mappingSource: ChordNoteMappingSource.Chord);
+            ChangePitchForARandomNote(melody.Bars[barIndex], mappingSource: ChordNoteMappingSource.Chord);
         }
 
-        private protected virtual void ScalePitchMutation(IBar bar)
+        private protected virtual void ScalePitchMutation(MelodyCandidate melody, int barIndex)
         {
-            ChangePitchForARandomNote(bar, mappingSource: ChordNoteMappingSource.Scale);
+            ChangePitchForARandomNote(melody.Bars[barIndex], mappingSource: ChordNoteMappingSource.Scale);
         }
 
-        private protected virtual void DurationEqualSplitMutation(IBar bar)
+        private protected virtual void DurationEqualSplitMutation(MelodyCandidate melody, int barIndex)
         {
-            DurationSplitOfARandomNote(bar, DurationSplitRatio.Equal);
+            DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Equal);
         }
 
-        private protected virtual void DurationAnticipationSplitMutation(IBar bar)
+        private protected virtual void DurationAnticipationSplitMutation(MelodyCandidate melody, int barIndex)
         {
-            DurationSplitOfARandomNote(bar, DurationSplitRatio.Anticipation);
+            DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Anticipation);
         }
 
-        private protected virtual void DurationDelaySplitMutation(IBar bar)
+        private protected virtual void DurationDelaySplitMutation(MelodyCandidate melody, int barIndex)
         {
-            DurationSplitOfARandomNote(bar, DurationSplitRatio.Delay);
+            DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Delay);
         }
+
+
     }
 }
