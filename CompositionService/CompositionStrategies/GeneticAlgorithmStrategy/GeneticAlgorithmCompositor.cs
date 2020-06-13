@@ -91,35 +91,6 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             {
                 int random = randomizer.Next(7);
                 ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 4);
-
-
-                switch (random)
-                {
-                    case 0:
-                        ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 3);
-                        break;
-                    case 1:
-                        DurationDelaySplitMutation(bar);
-                        break;
-                    case 2:
-                        ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 3);
-                        break;
-                    case 3:
-                        DurationEqualSplitMutation(bar);
-                        break;
-                    case 4:
-                        DurationAnticipationSplitMutation(bar);
-                        break;
-                    case 5:
-                        ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 3);
-                        break;
-                    case 6:
-                        ChangePitchForARandomNote(bar, ChordNoteMappingSource.Scale, semitoneRadius: 3);
-                        break;
-                    default:
-                        break;
-                }
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 4);
             }
         }
 

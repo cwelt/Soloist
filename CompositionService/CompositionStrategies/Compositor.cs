@@ -231,5 +231,84 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         }
         #endregion
 
+        #region GetPredecessorNotePitch()
+        /// <summary> 
+        /// <para>Gets the musical pitch of the predecessor note of the given note.</para>
+        /// This method seeks the first note on the given melody which is not 
+        /// a rest note and not a hold note, and returns it's pitch. 
+        /// This could be useful for example when there is a need to toggle a hold
+        /// note back to a played note, and we want to replace the hold note pitch 
+        /// (<see cref="NotePitch.HoldNote"/>) with the actual pitch it is holding. 
+        /// This method scans the melody notes from the given bar and note indices backwards
+        /// untill a relevant preceding note is found. If the given note has no preceding 
+        /// notes null is returned. This could happen for example, 
+        /// if all the preceding notes are rest notes.
+        /// </summary>
+        /// <param name="melodyBars"> The bar sequence which contains the melody notes. </param>
+        /// <param name="barIndex"> Index of the bar containing the given note. </param>
+        /// <param name="noteIndex"> Index of the note of which it's predecessor is wanted. </param>
+        /// <returns></returns>
+        private protected NotePitch? GetPredecessorNotePitch(IList<IBar> melodyBars, int barIndex, int noteIndex)
+        {
+            // initialization 
+            NotePitch? currentPitch = null;
+            int startingNoteIndex = 0;
+
+            // start scanning backwards from current bar & current note 
+            for (int i = barIndex; i >= 0; i--)
+            {
+                /* in current bar start searching right before the given note.
+                 * in the rest of the bars start from the right edge of the bar. */
+                startingNoteIndex = ((i == barIndex) ? (noteIndex - 1) : (melodyBars[i].Notes.Count));
+                for (int j = startingNoteIndex; j >= 0; j--)
+                {
+                    currentPitch = melodyBars[barIndex].Notes[noteIndex].Pitch;
+                    if (currentPitch != NotePitch.RestNote && currentPitch != NotePitch.HoldNote)
+                        return currentPitch;
+                }
+            }
+            return null;
+        }
+        #endregion
+
+        #region GetSuccessorNotePitch()
+        /// <summary> 
+        /// <para>Gets the musical pitch of the successor note of the given note.</para>
+        /// This method seeks the first succeeding note on the given melody which is not 
+        /// a rest note and not a hold note, and returns it's pitch. 
+        /// This could be useful for example when there is a need to connect two consecutive
+        /// notes by inserting new notes which are ascending towards the succeeding note's pitch.
+        /// This method scans the melodie's notes from the given bar and note indices
+        /// untill a relevant succeeding note is found. If the given note has no succeeding 
+        /// notes, then null is returned. This could happen for example, 
+        /// if all the succeeding notes are rest notes.
+        /// </summary>
+        /// <param name="melodyBars"> The bar sequence which contains the melody notes. </param>
+        /// <param name="barIndex"> Index of the bar containing the given note. </param>
+        /// <param name="noteIndex"> Index of the note of which it's predecessor is wanted. </param>
+        /// <returns></returns>
+        private protected NotePitch? GetSuccessorNotePitch(IList<IBar> melodyBars, int barIndex, int noteIndex)
+        {
+            // initialization 
+            NotePitch? currentPitch = null;
+            int startingNoteIndex = 0;
+
+            // start scanning forwards from current bar & current note 
+            for (int i = barIndex; i < melodyBars.Count; i++)
+            {
+                /* in current bar start searching right after the given note.
+                 * in the rest of the bars start from the right beginning of the bar. */
+                startingNoteIndex = ((i == barIndex) ? (noteIndex + 1) : 0);
+                for (int j = startingNoteIndex; j < melodyBars[i].Notes.Count; j++)
+                {
+                    currentPitch = melodyBars[barIndex].Notes[noteIndex].Pitch;
+                    if (currentPitch != NotePitch.RestNote && currentPitch != NotePitch.HoldNote)
+                        return currentPitch;
+                }
+            }
+            return null;
+        }
+        #endregion
+
     }
 }
