@@ -40,10 +40,10 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         {
             // find all bars which contain hold notes 
             IList<IBar> barsWithHoldNotes = melody.Bars
-                .Where(bar => bar.Notes.FirstOrDefault(note => note.Pitch == NotePitch.HoldNote) != null).ToList();
+                .Where(bar => bar.Notes.Any(note => note.Pitch == NotePitch.HoldNote)).ToList();
 
             // assure there at least one bar found 
-            if (barsWithHoldNotes.Count() == 0)
+            if (barsWithHoldNotes.Count == 0)
                 return;
 
             // select a random bar from the collection found

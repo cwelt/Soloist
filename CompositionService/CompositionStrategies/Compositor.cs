@@ -254,7 +254,8 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
             NotePitch? currentPitch = null;
             int startingNoteIndex = 0;
 
-            // start scanning backwards from current bar & current note 
+            /* start scanning backwards from current bar & current note:
+             * outer loop is for bars, inner loop for notes in individual bars */
             for (int i = barIndex; i >= 0; i--)
             {
                 /* in current bar start searching right before the given note.
@@ -262,7 +263,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
                 startingNoteIndex = ((i == barIndex) ? (noteIndex - 1) : (melodyBars[i].Notes.Count));
                 for (int j = startingNoteIndex; j >= 0; j--)
                 {
-                    currentPitch = melodyBars[barIndex].Notes[noteIndex].Pitch;
+                    currentPitch = melodyBars[i].Notes[noteIndex].Pitch;
                     if (currentPitch != NotePitch.RestNote && currentPitch != NotePitch.HoldNote)
                         return currentPitch;
                 }

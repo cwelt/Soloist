@@ -50,7 +50,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (i++ == 1)
+                if (i++ == 10)
                     terminateCondition = true;
             }
 
@@ -84,13 +84,13 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             int NumberOfBars = melody.Count();
             int randomBarIndex = randomizer.Next(NumberOfBars);
 
-            
+            ToggleHoldNote(new MelodyCandidate { Bars = melody.ToList() }, 0); 
 
 
             foreach (var bar in melody)
             {
                 int random = randomizer.Next(7);
-                ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 4);
+                //ChangePitchForARandomNote(bar, ChordNoteMappingSource.Chord, semitoneRadius: 4);
             }
         }
 
