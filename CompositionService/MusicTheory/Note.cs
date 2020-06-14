@@ -21,7 +21,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
         #region Public Properties 
         public IDuration Duration { get; }
-        public NoteName? Name => _name;
+        public NoteName? Name { get; }
 
         public NotePitch Pitch
         {
@@ -47,6 +47,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         public Note(NotePitch pitch, IDuration duration)
         {
             Pitch = pitch;
+            Name = GetNoteNameByNotePitch(pitch);
             Duration = new Duration(duration.Numerator, duration.Denominator);
         }
 
@@ -123,8 +124,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <returns> A string representing the note's instance. </returns>
         public override string ToString()
         {
-            string name = _name?.GetDescription() ?? "NIL";
-            string pitch = _pitch.GetDescription() ?? _pitch.ToString();
+            string name = Name?.GetDescription() ?? "NIL";
+            string pitch = Pitch.GetDescription() ?? Pitch.ToString();
             return $"{{Name={name}; Pitch={pitch}; Duration={Duration}}}";
         }
         #endregion

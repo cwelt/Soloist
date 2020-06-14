@@ -1,5 +1,6 @@
 ﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
 using Melanchall.DryWetMidi.Common;
+using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.MusicTheory;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
     {
 
         internal static readonly byte SemitonesInOctave = 12;
+
+        internal enum AritmeticOperation { Add, Subtract };
 
         private static NoteName GetNoteName(NotePitch notePitch)
         {
@@ -192,6 +195,25 @@ namespace CW.Soloist.CompositionService.MusicTheory
                          select (NotePitch)(int)note.NoteNumber;
 
             return result;
+        }
+
+        internal static IDuration DurationAritmetic(AritmeticOperation operation, IDuration duration1, IDuration duration2)
+        {
+            MusicalTimeSpan timeSpan1 = new MusicalTimeSpan(duration1.Numerator, duration1.Denominator, true);
+            MusicalTimeSpan timeSpan2 = new MusicalTimeSpan(duration2.Numerator, duration2.Denominator, true);
+            MusicalTimeSpan newTimeSpan = null;
+            switch (operation)
+            {
+                case AritmeticOperation.Add:
+                    newTimeSpan = timeSpan1.Add(timeSpan2, TimeSpanMode.LengthLength) as MusicalTimeSpan;
+                    break;
+                case AritmeticOperation.Subtract:
+                    newTimeSpan = timeSpan1.Subtract(timeSpan2, TimeSpanMode.LengthLength) as MusicalTimeSpan;
+                    break;
+                default:
+                    throw new NotSupportedException($"{nameof(operation)} is currently unsupported");
+            }
+            return new Duration((byte)newTimeSpan?.Numerator, (byte)newTimeSpan?.Denominator);
         }
     }
 }

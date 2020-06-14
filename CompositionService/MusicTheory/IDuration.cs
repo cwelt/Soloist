@@ -23,5 +23,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
     {
         byte Numerator { get; set; }
         byte Denominator { get; set; }
+
+        IDuration Subtract(IDuration duration);
+        IDuration Add(IDuration duration);
     }
 }

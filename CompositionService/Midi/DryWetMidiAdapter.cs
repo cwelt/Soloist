@@ -322,7 +322,7 @@ namespace CW.Soloist.CompositionService.Midi
         public void SaveFile(string path = null, string fileNamePrefix = "")
         {
             // get time stamp 
-            string timeStamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
+            string timeStamp = DateTime.Now.ToString("dd-MM-yyyy_HHmmss");
 
             // set file name 
             string fileName = fileNamePrefix + $"_output_{timeStamp}.mid";

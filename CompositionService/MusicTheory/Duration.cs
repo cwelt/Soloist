@@ -20,6 +20,15 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// </remarks>
     internal class Duration : IDuration
     {
+        internal const float WholeNote = 1F;
+        internal const float HalfNote = 0.5F;
+        internal const float QuaterNote = 0.25F;
+        internal const float EighthNote = 0.125F;
+        internal const float SixteenthNote = 0.0625F;
+        internal const float ThirtySecondNote = 0.03125F;
+        internal const float TripletEighthNote = 1 / 12;
+        internal const float TripletSixteenthNote = 1 / 24;
+
         /// <summary> Number of beats </summary>
         public byte Numerator { get; set; }
 
@@ -46,8 +55,19 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <param name="duration"></param>
         public Duration(IDuration duration)
             : this(duration.Numerator, duration.Denominator) { }
-
         #endregion
+
+
+        public IDuration Subtract(IDuration duration)
+        {
+            return MusicTheoryServices.DurationAritmetic(MusicTheoryServices.AritmeticOperation.Subtract, this, duration);
+        }
+
+
+        public IDuration Add(IDuration duration)
+        {
+            return MusicTheoryServices.DurationAritmetic(MusicTheoryServices.AritmeticOperation.Add, this, duration);
+        }
 
         public override string ToString() => $"{Numerator}/{Denominator}";
     }

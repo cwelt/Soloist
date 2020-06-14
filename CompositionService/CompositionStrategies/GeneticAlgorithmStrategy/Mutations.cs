@@ -10,7 +10,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
 {
     public partial class GeneticAlgorithmCompositor : Compositor
     {
-        
+
         private protected virtual void ChordPitchMutation(MelodyCandidate melody, int barIndex)
         {
             ChangePitchForARandomNote(melody.Bars[barIndex], mappingSource: ChordNoteMappingSource.Chord);
@@ -60,11 +60,11 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
 
             // find adjacent preceding or succeeding sounded note (not a rest or a hold note)
             int adjacentNoteIndex, adjacentNoteBarIndex;
-            INote adjacentNote = 
+            INote adjacentNote =
                 GetPredecessorNote(melody.Bars, excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex)
                 ??
                 GetSuccessorNote(melody.Bars, excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex);
-                
+
             // assure an adjacent note has been found   
             if (adjacentNote != null)
             {
@@ -75,31 +75,81 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             }
         }
 
-        private protected virtual void SyncopedNoteMutation(MelodyCandidate melody, int? barIndex)
+        private protected virtual void SyncopedNoteMutation(MelodyCandidate melody, int? barIndex = null)
         {
-            // initialize random number generator 
+            // initialization 
             Random randomizer = new Random();
-            
-            // if no specific bar index is requested then set it randomly 
-            barIndex = barIndex ?? randomizer.Next(melody.Bars.Count);
+            IBar selectedBar, precedingBar;
+            int selectedBarIndex;
 
-            // fetch the bar 
-            IBar bar = melody.Bars[(int)barIndex];
-
-            // get all notes from bar which are not silent rest notes or hold notes
-            IList<INote> notes = bar.Notes.Where(note =>
+            // if no specific legal bar index is requested then set it randomly  
+            if (!barIndex.HasValue || barIndex <= 0 || barIndex >= melody.Bars.Count
+                || melody.Bars[(int)barIndex - 1].Notes.Count == 0)
             {
-                return note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote;
-            }).ToList();
+                /* select only bars which don't start with a rest note or a hold note, 
+                 * and succeed a non-empty bar */
+                IBar[] relevantBars = melody.Bars.Where((IBar bar, int index) =>
+                {
+                    return bar.Notes[0].Pitch != NotePitch.RestNote &&
+                           bar.Notes[0].Pitch != NotePitch.HoldNote &&
+                           index > 0 &&
+                           melody.Bars[index - 1].Notes.Count > 0;
+                }).ToArray();
 
-            // select a random note from within the notes found  
-            int noteIndex = randomizer.Next(bar.Notes.Count);
-            INote selectedNote = bar.Notes[noteIndex];
+                int randomIndex = randomizer.Next(relevantBars.Length);
+                selectedBar = relevantBars[randomIndex];
+                selectedBarIndex = melody.Bars.IndexOf(selectedBar);
+            }
+            else
+            {
+                selectedBarIndex = (int)barIndex;
+                selectedBar = melody.Bars[selectedBarIndex];
+            }
 
-            // find the note preceding 
-            ;
+            // fetch the first note from within the selected bar    
+            INote originalNote = selectedBar.Notes[0];
 
+            // fetch the preceding note (last note from the preceding bar)
+            int precedingBarIndex = selectedBarIndex - 1;
+            precedingBar = melody.Bars[precedingBarIndex];
+            int precedingNoteIndex = melody.Bars[precedingBarIndex].Notes.Count - 1;
+            INote precedingNote = melody.Bars[precedingBarIndex].Notes[precedingNoteIndex];
 
+            /* replace bar's first note with a new hold syncoped note which will hold the 
+             * pitch that would now be started early from the preceding bar */
+            INote newNote = new Note(NotePitch.HoldNote, originalNote.Duration);
+            selectedBar.Notes.RemoveAt(0);
+            selectedBar.Notes.Insert(0, newNote);
+
+            /* replace last note from preceding bar with new note that has the original's
+             * note pitch: if the preceding note is short enough (shorter than 1/8 beat),
+             * replace it directly, otherwise, split preceding note accordingly. */
+
+            // case 1: preceding note's length is short enough (8th note or shorter)
+            if ((precedingNote.Duration.Numerator / (float)precedingNote.Duration.Denominator) <= 0.125)
+            {
+                INote newPrecedingNote = new Note(originalNote.Pitch, precedingNote.Duration);
+                precedingBar.Notes.RemoveAt(precedingNoteIndex);
+                precedingBar.Notes.Insert(precedingNoteIndex, newPrecedingNote);
+                return;
+            }
+
+            /* case 2: split preceding note into two new notes:
+             * the first would contain the original pitch, and the second 
+             * would contain the selected note's pitch to cause a syncope.
+             * The duration of the second note would be set to an 8th note, 
+              * The duration of the first note would set to the remainder.   */
+            else
+            {
+                Duration eigthDuration = new Duration(1, 8);
+                INote newPrecedingNote1 = new Note(precedingNote.Pitch, precedingNote.Duration.Subtract(eigthDuration));
+                INote newPrecedingNote2 = new Note(originalNote.Pitch, eigthDuration);
+
+                // replace the old preceding note with the two new preceding notes 
+                precedingBar.Notes.RemoveAt(precedingNoteIndex);
+                precedingBar.Notes.Insert(precedingNoteIndex, newPrecedingNote1);
+                precedingBar.Notes.Insert(precedingNoteIndex + 1, newPrecedingNote2);
+            }
         }
     }
 }

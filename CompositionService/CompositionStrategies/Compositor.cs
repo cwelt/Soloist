@@ -258,7 +258,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
             {
                 /* in current bar start searching right before the given note.
                  * in the rest of the bars start from the right edge end of the bar. */
-                startingNoteIndex = ((i == barIndex) ? (noteIndex - 1) : (melodyBars[i].Notes.Count));
+                startingNoteIndex = ((i == barIndex) ? (noteIndex - 1) : (melodyBars[i].Notes.Count - 1));
                 for (int j = startingNoteIndex; j >= 0; j--)
                 {
                     note = melodyBars[i].Notes[j];
