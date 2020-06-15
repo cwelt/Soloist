@@ -33,7 +33,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
                 // swap current element's position with the random generated position 
                 temp = list[i];
                 list[i] = list[j];
-                list[i] = temp;
+                list[j] = temp;
             }
         }
     }

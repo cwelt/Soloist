@@ -36,11 +36,13 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Delay);
         }
 
-
         #region ReverseChordNotesMutation()
         /// <summary>
         /// Reverses the order of a sequence of notes for a randomly selected
         /// chord in the given bar, or in a randomly selected bar if <paramref name="barIndex"/> is null.
+        /// <para> The revese operation is made in place locally to the selected chord. 
+        /// The chord notes are determined by the logic in 
+        /// <see cref="Bar.GetOverlappingNotesForChord(IChord, out IList{int})"/>.</para>
         /// </summary>
         /// <param name="melody"> The candidate melody to operate on.</param>
         /// <param name="barIndex"> Index of the bar to do the reverse in. If no bar index supplied, then a random bar would be selected. </param>
@@ -58,10 +60,49 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             IChord selectedChord = selectedBar.Chords[randomChordIndex];
 
             // create a single chord element sequence 
-            IChord[] chordsToReverse = new [] { selectedChord };
+            IChord[] chordsToReverse = new[] { selectedChord };
 
             // delegate reverse operation to superclass 
-            PermutateNotes(selectedBar, chordsToReverse, Permutation.Shuffled);
+            PermutateNotes(selectedBar, chordsToReverse, Permutation.Reversed);
+        }
+        #endregion
+
+        #region ReverseBarNotesMutation()
+        /// <summary>
+        /// Reverses the order of the note sequence in the given bar, 
+        /// or in a randomly selected bar if <paramref name="barIndex"/> is null.
+        /// <para> The revese operation is made in place locally to each chord. 
+        /// The chord notes are determined by the logic in 
+        /// <see cref="Bar.GetOverlappingNotesForChord(IChord, out IList{int})"/>.</para>
+        /// </summary>
+        /// <param name="melody"> The candidate melody to operate on.</param>
+        /// <param name="barIndex"> Index of the bar to do the reverse in. If no bar index supplied, then a random bar would be selected. </param>
+        private protected virtual void ReverseBarNotesMutation(MelodyCandidate melody, int? barIndex = null)
+        {
+            // if no specific bar has been requested then set it randomly 
+            int selectedBarIndex = barIndex ?? new Random().Next(melody.Bars.Count);
+            IBar selectedBar = melody.Bars[selectedBarIndex];
+
+            // delegate reverse operation to superclass 
+            PermutateNotes(selectedBar, permutation: Permutation.Reversed);
+        }
+        #endregion
+
+        #region ReverseAllNotesMutation()
+        /// <summary>
+        /// Reverses the order of all note sequences in the given melody.
+        /// <para> The revese operation is made in place locally to each chord. 
+        /// The chord notes are determined by the logic in 
+        /// <see cref="Bar.GetOverlappingNotesForChord(IChord, out IList{int})"/>.</para>
+        /// </summary>
+        /// <param name="melody"> The candidate melody to operate on.</param>
+        private protected virtual void ReverseAllNotesMutation(MelodyCandidate melody)
+        {
+            // delegate reverse operation to superclass 
+            foreach (IBar bar in melody.Bars)
+            {
+                PermutateNotes(bar, permutation: Permutation.Reversed);
+            }
         }
         #endregion
 

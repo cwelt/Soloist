@@ -84,13 +84,13 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             int NumberOfBars = melody.Count();
             int randomBarIndex = randomizer.Next(NumberOfBars);
 
-            var melodyCandidates = new MelodyCandidate
+            var melodyCandidate = new MelodyCandidate
             {
                 Bars = melody.ToList()
             };
 
-
-            ReverseChordNotesMutation(melodyCandidates);
+            ReverseAllNotesMutation(melodyCandidate);
+            //ReverseChordNotesMutation(melodyCandidates);
             //SyncopedNoteMutation(melodyCandidates, 3);
             //ToggleFromHoldNoteMutation(melodyCandidates); 
 
