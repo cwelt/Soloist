@@ -36,6 +36,21 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Delay);
         }
 
+        private protected virtual void ReverseChordNotesMutation(MelodyCandidate melody, int? barIndex = null)
+        {
+            Random randomizer = new Random();
+
+            int selectedBarIndex = barIndex ?? randomizer.Next(melody.Bars.Count);
+
+            IBar selectedBar = melody.Bars[selectedBarIndex];
+
+            int randomChordIndex = randomizer.Next(selectedBar.Chords.Count);
+            IChord selectedChord = selectedBar.Chords[randomChordIndex];
+            IList<INote> chordNotes = selectedBar.GetOverlappingNotesForChord(selectedChord);
+            chordNotes.Reverse();
+
+        }
+
         #region ToggleFromHoldNoteMutation()
         /// <summary>
         /// Replaces a random hold note with a concrete note pitch. 
