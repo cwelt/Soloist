@@ -36,42 +36,6 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Delay);
         }
 
-        #region ReverseChordNotesMutation()
-        /// <summary>
-        /// Reverses the order of a sequence of notes for a randomly selected
-        /// chord in the given bar, or in a randomly selected bar if <paramref name="barIndex"/> is null.
-        /// </summary>
-        /// <param name="melody"> The candidate melody to operate on.</param>
-        /// <param name="barIndex"> Index of the bar to do the reverse in. If no index supplied, then a random bar would be selected. </param>
-        private protected virtual void ReverseChordNotesMutation(MelodyCandidate melody, int? barIndex = null)
-        {
-            // initialize random generator 
-            Random randomizer = new Random();
-
-            // if not specific bar has been requested then set it randomly 
-            int selectedBarIndex = barIndex ?? randomizer.Next(melody.Bars.Count);
-            IBar selectedBar = melody.Bars[selectedBarIndex];
-
-            // select a tandom chrod from within the selected bar 
-            int randomChordIndex = randomizer.Next(selectedBar.Chords.Count);
-            IChord selectedChord = selectedBar.Chords[randomChordIndex];
-
-            // get selected chord's notes and their indices 
-            IList<INote> chordNotes = selectedBar.GetOverlappingNotesForChord(selectedChord, out IList<int> chordNotesIndices);
-
-            // get the chord's notes in reverse order 
-            IList<INote> reversedChordNotes = chordNotes.Ord
-
-            // reverse the chord's notes inside the bar
-            int noteIndex;
-            for (int i = 0; i < chordNotesIndices.Count; i++)
-            {
-                noteIndex = chordNotesIndices[i];
-                selectedBar.Notes.RemoveAt(noteIndex);
-                selectedBar.Notes.Insert(noteIndex, reversedChordNotes[i]);
-            }
-        }
-        #endregion
 
         #region ReverseChordNotesMutation()
         /// <summary>
@@ -79,34 +43,25 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         /// chord in the given bar, or in a randomly selected bar if <paramref name="barIndex"/> is null.
         /// </summary>
         /// <param name="melody"> The candidate melody to operate on.</param>
-        /// <param name="barIndex"> Index of the bar to do the reverse in. If no index supplied, then a random bar would be selected. </param>
+        /// <param name="barIndex"> Index of the bar to do the reverse in. If no bar index supplied, then a random bar would be selected. </param>
         private protected virtual void ReverseChordNotesMutation(MelodyCandidate melody, int? barIndex = null)
         {
             // initialize random generator 
             Random randomizer = new Random();
 
-            // if not specific bar has been requested then set it randomly 
+            // if no specific bar has been requested then set it randomly 
             int selectedBarIndex = barIndex ?? randomizer.Next(melody.Bars.Count);
             IBar selectedBar = melody.Bars[selectedBarIndex];
 
-            // select a tandom chrod from within the selected bar 
+            // select a random chord from within the selected bar 
             int randomChordIndex = randomizer.Next(selectedBar.Chords.Count);
             IChord selectedChord = selectedBar.Chords[randomChordIndex];
 
-            // get selected chord's notes and their indices 
-            IList<INote> chordNotes = selectedBar.GetOverlappingNotesForChord(selectedChord, out IList<int> chordNotesIndices);
+            // create a single chord element sequence 
+            IChord[] chordsToReverse = new [] { selectedChord };
 
-            // get the chord's notes in reverse order 
-            IList<INote> reversedChordNotes = chordNotes.Reverse().ToList();
-
-            // reverse the chord's notes inside the bar
-            int noteIndex;
-            for (int i = 0; i < chordNotesIndices.Count; i++)
-            {
-                noteIndex = chordNotesIndices[i];
-                selectedBar.Notes.RemoveAt(noteIndex);
-                selectedBar.Notes.Insert(noteIndex, reversedChordNotes[i]);
-            }
+            // delegate reverse operation to superclass 
+            PermutateNotes(selectedBar, chordsToReverse, Permutation.Shuffled);
         }
         #endregion
 
@@ -295,32 +250,5 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
 
     }
 
-    internal static class MutationsExtensions
-    {
-        /// <summary>
-        /// Shuffles a list of elements of type <typeparamref name="T"/>
-        /// in place using Durstenfeld implementation of the
-        /// <a href="https://bit.ly/2B5jhfQ"> Fisher-Yates shuffle algorithm.</a>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            // initialization 
-            Random randomizer = new Random();
-            int j; // random index 
-            T temp; // type of elemens in the list 
 
-            for (int i = 0; i < list.Count - 1; i++)
-            {
-                // set a random position from the dynamic decreasing range 
-                j = randomizer.Next(i, list.Count);
-
-                // swap current element's position with the random generated position 
-                temp = list[i];
-                list[i] = list[j];
-                list[i] = temp;
-            }
-        }
-    }
 }

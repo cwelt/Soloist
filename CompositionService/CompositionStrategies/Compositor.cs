@@ -324,5 +324,67 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
             return null;
         }
         #endregion
+
+        #region PermutateNotes()
+        /// <summary>
+        /// Generates a permutation of the bar's note sequence and replaces the original
+        /// sequence with the permutated sequence (for example, shuffled or reversed order).
+        /// <para>The available permutations are defined in <see cref="Permutation"/>, 
+        /// and the requested permutation should be mentioned in the <paramref name="permutation"/>
+        /// input parameter. If no explicit permutation is requested, a default one would take place. </para>
+        /// <para> Inorder to maintain the consonance of the notes under the chords which 
+        /// are played underthem in parallel, the permutation is done for each chord
+        /// individually, i.e., "inplace" in the bounds of the chord associated notes indices. </para>
+        /// <para> The <paramref name="chords"/> defines a subsequence of bar's chord sequence
+        /// to take action on. If no explicit chords are requested then the method will 
+        /// default to permutate the entire bar.</para>
+        /// </summary>
+        /// <param name="bar"> The bar to operate on.</param>
+        /// <param name="chords"> Subsequence of the chords in the bar that are
+        /// the target of the permutation. If not set, then the default is to 
+        /// permutate all chord in the bar, i.e., the notes of all chords in the bar.</param>
+        /// <param name="permutation"> Kind of permutation to apply on the order of the note sequence. </param>
+        private protected virtual void PermutateNotes(IBar bar, IEnumerable<IChord> chords = null, Permutation permutation = Permutation.Shuffled)
+        {
+            /* if no subset of chords has been requested, 
+             * set it to the entire bar chord sequence */ 
+            chords = chords ?? bar.Chords;
+
+            foreach (IChord chord in chords)
+            {
+                // get selected chord's notes and their indices 
+                IList<INote> chordNotes = bar.GetOverlappingNotesForChord(chord, out IList<int> chordNotesIndices);
+
+                // get a permutation of the chord's note sequence 
+                IList<INote> permutatedChordNotes;
+                switch (permutation)
+                {
+                    case Permutation.Shuffled:
+                    default:
+                        chordNotes.Shuffle();
+                        permutatedChordNotes = chordNotes;
+                        break;
+                    case Permutation.Reversed:
+                        permutatedChordNotes = chordNotes.Reverse().ToList();
+                        break;
+                    case Permutation.SortedAscending:
+                        permutatedChordNotes = chordNotes.OrderBy(note => note.Pitch).ToList();
+                        break;
+                    case Permutation.SortedDescending:
+                        permutatedChordNotes = chordNotes.OrderByDescending(note => note.Pitch).ToList();
+                        break;
+                }
+
+                // apply the permutation to the bar's note sequence 
+                int noteIndex;
+                for (int i = 0; i < chordNotesIndices.Count; i++)
+                {
+                    noteIndex = chordNotesIndices[i];
+                    bar.Notes.RemoveAt(noteIndex);
+                    bar.Notes.Insert(noteIndex, permutatedChordNotes[i]);
+                }
+            }
+        }
+        #endregion
     }
 }

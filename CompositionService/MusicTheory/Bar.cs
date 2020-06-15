@@ -131,8 +131,18 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <inheritdoc cref="IBar.GetOverlappingNotesForChord(IChord, out IList{int})"/>
         public IList<INote> GetOverlappingNotesForChord(IChord chord, out IList<int> chordNotesIndices)
         {
-            // Redirect to overloaded version which accepts index of given chord
-            return GetOverlappingNotesForChord(Chords.IndexOf(chord), out chordNotesIndices);
+            // assure the chord argument exists in this bar's instance chord sequence.  
+            int chordIndex = Chords.IndexOf(chord);
+
+            // if valid, redirect to overloaded version which accepts chord's index
+            if (chordIndex >= 0)
+                return GetOverlappingNotesForChord(chordIndex, out chordNotesIndices);
+            
+            else // invalid, return empty note sequence
+            {
+                chordNotesIndices = null;
+                return null;
+            }
         }
 
         /// <inheritdoc cref="IBar.GetOverlappingChordsForNote(int)"/>
