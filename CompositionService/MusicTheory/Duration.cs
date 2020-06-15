@@ -70,5 +70,20 @@ namespace CW.Soloist.CompositionService.MusicTheory
         }
 
         public override string ToString() => $"{Numerator}/{Denominator}";
+
+        public bool IsDenominatorPowerOfTwo()
+        {
+            byte num = this.Denominator;
+            int remainder = 0;
+            while (remainder == 0)
+            {
+               remainder = num % 2;
+               num /= 2;
+            }
+                
+            if (num == 0)
+                return true;
+            else return false; 
+        }
     }
 }

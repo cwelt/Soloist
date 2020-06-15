@@ -24,6 +24,7 @@ namespace ConsoleClient
 
             // midi (playback) file path 
             string filePath = ConfigurationManager.AppSettings["midiFile"];
+            string filePathTest = ConfigurationManager.AppSettings["midiFileTest"];
             string playbackOnlyfilePath = ConfigurationManager.AppSettings["midiFilePlayback"];
 
             // get chords from file... 
@@ -33,8 +34,8 @@ namespace ConsoleClient
             CompositionStrategy compositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy;
 
             // create a new composition with injected strategy
-            var composition = new Composition(filePath, chordsFilePath);
-            var newMidiFile = composition.Compose(compositionStrategy, MusicalInstrument.ElectricGuitar);
+            var composition = new Composition(filePathTest, chordsFilePath);
+            var newMidiFile = composition.Compose(compositionStrategy, MusicalInstrument.AltoSax);
 
             newMidiFile.Play();
             //newMidiFile.Stop();

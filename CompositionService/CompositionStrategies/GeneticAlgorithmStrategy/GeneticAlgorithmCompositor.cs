@@ -50,7 +50,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (i++ == 2)
+                if (++i == 4)
                     terminateCondition = true;
             }
 
@@ -89,7 +89,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 Bars = melody.ToList()
             };
 
-            SyncopedNoteMutation(melodyCandidates);
+            SyncopedNoteMutation(melodyCandidates, 3);
             //ToggleFromHoldNoteMutation(melodyCandidates); 
 
         }

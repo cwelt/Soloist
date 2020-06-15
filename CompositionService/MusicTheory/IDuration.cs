@@ -26,5 +26,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
         IDuration Subtract(IDuration duration);
         IDuration Add(IDuration duration);
+
+        bool IsDenominatorPowerOfTwo();
     }
 }
