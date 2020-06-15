@@ -74,6 +74,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         public bool IsDenominatorPowerOfTwo()
         {
             byte num = this.Denominator;
+
             int remainder = 0;
             while (remainder == 0)
             {
@@ -83,7 +84,11 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 
             if (num == 0)
                 return true;
-            else return false; 
+            else return false;
+
+            /* // alternative implemntation which is more compact but less clear 
+            return (int)Math.Ceiling(Math.Log(Denominator) / Math.Log(2))
+                == (int)Math.Floor(Math.Log(Denominator) / Math.Log(2)); */
         }
     }
 }
