@@ -50,7 +50,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 4)
+                if (++i == 10)
                     terminateCondition = true;
             }
 
@@ -80,16 +80,36 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         /// </summary>
         protected internal void Mutate(IEnumerable<IBar> melody)
         {
-            Random randomizer = new Random();
+            Random random = new Random();
             int NumberOfBars = melody.Count();
-            int randomBarIndex = randomizer.Next(NumberOfBars);
+            int randomBarIndex = random.Next(NumberOfBars);
 
             var melodyCandidate = new MelodyCandidate
             {
                 Bars = melody.ToList()
             };
 
-            ReverseAllNotesMutation(melodyCandidate);
+            
+
+
+            for (int i = 0; i < melodyCandidate.Bars.Count; i++)
+            {
+                SyncopedNoteMutation(melodyCandidate);
+                PermutateNotes(melodyCandidate.Bars[random.Next(NumberOfBars)], permutation: Permutation.Shuffled);
+                ChordPitchMutation(melodyCandidate, random.Next(NumberOfBars));
+                DurationEqualSplitMutation(melodyCandidate, random.Next(NumberOfBars));
+                PermutateNotes(melodyCandidate.Bars[random.Next(NumberOfBars)], permutation: Permutation.Reversed);
+                ToggleFromHoldNoteMutation(melodyCandidate);
+                ScalePitchMutation(melodyCandidate, random.Next(NumberOfBars));
+                PermutateNotes(melodyCandidate.Bars[random.Next(NumberOfBars)], permutation: Permutation.Shuffled);
+                SyncopedNoteMutation(melodyCandidate);
+                DurationDelaySplitMutation(melodyCandidate, random.Next(NumberOfBars));
+                ChordPitchMutation(melodyCandidate, random.Next(NumberOfBars));
+                SyncopedNoteMutation(melodyCandidate);
+                PermutateNotes(melodyCandidate.Bars[random.Next(NumberOfBars)], permutation: Permutation.SortedDescending);
+            }
+
+
             //ReverseChordNotesMutation(melodyCandidates);
             //SyncopedNoteMutation(melodyCandidates, 3);
             //ToggleFromHoldNoteMutation(melodyCandidates); 

@@ -106,6 +106,8 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         }
         #endregion
 
+
+
         #region ToggleFromHoldNoteMutation()
         /// <summary>
         /// Replaces a random hold note with a concrete note pitch. 
