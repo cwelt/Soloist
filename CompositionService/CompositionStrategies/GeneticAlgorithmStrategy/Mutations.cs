@@ -36,25 +36,31 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Delay);
         }
 
+        #region ToggleFromHoldNoteMutation()
         /// <summary>
-        /// Replaces a random hole note with a concrete note pitch. 
+        /// Replaces a random hold note with a concrete note pitch. 
+        /// <para> This method selectes a random bar from within the melody 
+        /// that contains a hold note, and replaces it with a "regular" note 
+        /// by setting the pitch to the adjacent preceding note, if such exists,
+        /// or to the adjacent succeeding note, otherwise. </para>
         /// </summary>
-        /// <param name="melody"></param>
-        private protected virtual void ToggleFromHoldNoteMutation(MelodyCandidate melody)
+        /// <param name="melody"> The candidate melody which contains the bar sequence to operate on. </param>
+        /// <returns> True if a note replacement has been made successfully, false otherwise. </returns>
+        private protected virtual bool ToggleFromHoldNoteMutation(MelodyCandidate melody)
         {
             // find all bars which contain hold notes 
             IList<IBar> barsWithHoldNotes = melody.Bars
                 .Where(bar => bar.Notes.Any(note => note.Pitch == NotePitch.HoldNote)).ToList();
 
             // assure there at least one bar found 
-            if (barsWithHoldNotes.Count == 0)
-                return;
+            if (!barsWithHoldNotes.Any())
+                return false;
 
             // select a random bar from the collection found
             IBar selectedBar = barsWithHoldNotes[new Random().Next(barsWithHoldNotes.Count)];
             int selectedBarIndex = melody.Bars.IndexOf(selectedBar);
 
-            // get the rest note from the selected bar 
+            // get the hold note from the selected bar 
             INote holdNote = selectedBar.Notes.First();
             int holdNoteIndex = selectedBar.Notes.IndexOf(holdNote);
 
@@ -72,9 +78,17 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 INote newNote = new Note(adjacentNote.Pitch, holdNote.Duration);
                 selectedBar.Notes.RemoveAt(holdNoteIndex);
                 selectedBar.Notes.Insert(holdNoteIndex, newNote);
-            }
-        }
 
+                // indicate the change has been made successfully
+                return true;
+            }
+
+            // indicate that no change has been made  
+            else return false;
+        }
+        #endregion
+
+        #region SyncopedNoteMutation()
         /// <summary>
         /// Syncopes a bar's first note by preceding it's start time to it's preceding bar,
         /// on behalf of the duration of it' preceding note (last note from preceding bar).
@@ -203,5 +217,6 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             }
             #endregion
         }
+        #endregion
     }
 }
