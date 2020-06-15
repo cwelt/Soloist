@@ -111,7 +111,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
             IChord chord = bar.Chords[randomChordIndex];
 
             // get non-rest-hold notes in bar that are played in parallel to selected chord 
-            IList<INote> currentNotes = bar.GetOverlappingNotesForChord(chord)
+            IList<INote> currentNotes = bar.GetOverlappingNotesForChord(chord, out IList<int> notesIndices)
                 .Where(note => note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote)
                 .ToList();
 

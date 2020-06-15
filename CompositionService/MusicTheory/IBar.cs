@@ -39,16 +39,16 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <param name="chordIndex"> Index to the requested chord in this <see cref="IBar.Chords"/> sequence.</param>
         /// <param name="chordNotesIndices"> Indices of the chord notes within the bar's <see cref="Notes"/> sequence. </param>
         /// <returns> List of notes which are played in parallel time to the given chord.</returns>
-        IList<INote> GetOverlappingNotesForChord(int chordIndex, out List<int> chordNotesIndices);
+        IList<INote> GetOverlappingNotesForChord(int chordIndex, out IList<int> chordNotesIndices);
 
 
         /// <summary>
-        /// <inheritdoc cref="GetOverlappingNotesForChord(int, out List{int})"/>
+        /// <inheritdoc cref="GetOverlappingNotesForChord(int, out IList{int})"/>
         /// </summary>
         /// <param name="chord"> Chord from within this bar's <see cref="IBar.Chords"/> sequence.</param>
         /// <param name="chordNotesIndices">Indices of the chord notes within the bar's <see cref="Notes"/> sequence.</param>
-        /// <returns> <inheritdoc cref="GetOverlappingNotesForChord(int, out List{int})"/> </returns>
-        IList<INote> GetOverlappingNotesForChord(IChord chord, out List<int> chordNotesIndices);
+        /// <returns> <inheritdoc cref="GetOverlappingNotesForChord(int, out IList{int})"/> </returns>
+        IList<INote> GetOverlappingNotesForChord(IChord chord, out IList<int> chordNotesIndices);
 
 
 

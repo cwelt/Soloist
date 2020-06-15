@@ -89,7 +89,9 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 Bars = melody.ToList()
             };
 
-            SyncopedNoteMutation(melodyCandidates, 3);
+
+            ReverseChordNotesMutation(melodyCandidates);
+            //SyncopedNoteMutation(melodyCandidates, 3);
             //ToggleFromHoldNoteMutation(melodyCandidates); 
 
         }

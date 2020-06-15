@@ -36,20 +36,42 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Delay);
         }
 
+        #region ReverseChordNotesMutation()
+        /// <summary>
+        /// Reverses the order of a sequence of notes for a randomly selected
+        /// chord in the given bar, or in a randomly selected bar if <paramref name="barIndex"/> is null.
+        /// </summary>
+        /// <param name="melody"> The candidate melody to operate on.</param>
+        /// <param name="barIndex"> Index of the bar to do the reverse in. If no index supplied, then a random bar would be selected. </param>
         private protected virtual void ReverseChordNotesMutation(MelodyCandidate melody, int? barIndex = null)
         {
+            // initialize random generator 
             Random randomizer = new Random();
 
+            // if not specific bar has been requested then set it randomly 
             int selectedBarIndex = barIndex ?? randomizer.Next(melody.Bars.Count);
-
             IBar selectedBar = melody.Bars[selectedBarIndex];
 
+            // select a tandom chrod from within the selected bar 
             int randomChordIndex = randomizer.Next(selectedBar.Chords.Count);
             IChord selectedChord = selectedBar.Chords[randomChordIndex];
-            IList<INote> chordNotes = selectedBar.GetOverlappingNotesForChord(selectedChord);
-            chordNotes.Reverse();
 
+            // get selected chord's notes and their indices 
+            IList<INote> chordNotes = selectedBar.GetOverlappingNotesForChord(selectedChord, out IList<int> chordNotesIndices);
+
+            // get the chord's notes in reverse order 
+            IList<INote> reversedChordNotes = chordNotes.Reverse().ToList();
+
+            // reverse the chord's notes inside the bar
+            int noteIndex;
+            for (int i = 0; i < chordNotesIndices.Count; i++)
+            {
+                noteIndex = chordNotesIndices[i];
+                selectedBar.Notes.RemoveAt(noteIndex);
+                selectedBar.Notes.Insert(noteIndex, reversedChordNotes[i]);
+            }
         }
+        #endregion
 
         #region ToggleFromHoldNoteMutation()
         /// <summary>

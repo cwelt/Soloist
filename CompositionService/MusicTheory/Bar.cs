@@ -94,8 +94,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
         #endregion
 
 
-        /// <inheritdoc cref="IBar.GetOverlappingNotesForChord(IChord)"/>
-        public IList<INote> GetOverlappingNotesForChord(int chordIndex, out List<int> chordNotesIndices)
+        /// <inheritdoc cref="IBar.GetOverlappingNotesForChord(int, out IList{int})"/>
+        public IList<INote> GetOverlappingNotesForChord(int chordIndex, out IList<int> chordNotesIndices)
         {
             // initialize empty result list 
             IList<INote> chordNotes = new List<INote>();
@@ -116,7 +116,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
             for (int i = 0; i < Notes.Count; i++)
             {
                 noteStartTime = noteEndTime;
-                noteEndTime = noteStartTime + ((float)note.Duration.Numerator / note.Duration.Denominator);
+                noteEndTime = noteStartTime + ((float)Notes[i].Duration.Numerator / Notes[i].Duration.Denominator);
                 if (noteStartTime < chordEndTime && noteEndTime > chordStartTime)
                 {
                     chordNotes.Add(Notes[i]);
@@ -128,11 +128,11 @@ namespace CW.Soloist.CompositionService.MusicTheory
             return chordNotes;
         }
 
-        /// <inheritdoc cref="IBar.GetOverlappingNotesForChord(int)"/>
-        public IList<INote> GetOverlappingNotesForChord(IChord chord)
+        /// <inheritdoc cref="IBar.GetOverlappingNotesForChord(IChord, out IList{int})"/>
+        public IList<INote> GetOverlappingNotesForChord(IChord chord, out IList<int> chordNotesIndices)
         {
             // Redirect to overloaded version which accepts index of given chord
-            return GetOverlappingNotesForChord(Chords.IndexOf(chord));
+            return GetOverlappingNotesForChord(Chords.IndexOf(chord), out chordNotesIndices);
         }
 
         /// <inheritdoc cref="IBar.GetOverlappingChordsForNote(int)"/>
