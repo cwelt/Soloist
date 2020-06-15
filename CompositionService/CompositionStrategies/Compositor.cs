@@ -368,10 +368,10 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
                         permutatedChordNotes = chordNotes.Reverse().ToList();
                         break;
                     case Permutation.SortedAscending:
-                        permutatedChordNotes = chordNotes.OrderBy(note => note.Pitch).ToList();
+                        permutatedChordNotes = chordNotes.Sort(SortOrder.Ascending);
                         break;
                     case Permutation.SortedDescending:
-                        permutatedChordNotes = chordNotes.OrderByDescending(note => note.Pitch).ToList();
+                        permutatedChordNotes = chordNotes.Sort(SortOrder.Descending);
                         break;
                 }
 

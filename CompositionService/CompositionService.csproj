@@ -55,6 +55,7 @@
     <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\Mutations.cs" />
     <Compile Include="CompositionStrategies\UtilEnums\DurationSplitRatio.cs" />
     <Compile Include="CompositionStrategies\UtilEnums\Permutation.cs" />
+    <Compile Include="CompositionStrategies\UtilEnums\SortDirection.cs" />
     <Compile Include="Midi\DryWetMidiAdapter.cs" />
     <Compile Include="Midi\DryWetTrackAdapter.cs" />
     <Compile Include="Midi\IMidiFileService.cs" />
