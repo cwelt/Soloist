@@ -1,14 +1,12 @@
-﻿using CW.Soloist.CompositionService.CompositionStrategies.ArpeggiatorStrategy;
-using CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy;
-using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
+﻿using CW.Soloist.CompositionService.Compositors.ArpeggiatorStrategy;
+using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.MusicTheory;
+using CW.Soloist.CompositionService.UtilEnums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.CompositionStrategies
+namespace CW.Soloist.CompositionService.Compositors
 {
 
     /// <summary>
@@ -42,10 +40,10 @@ namespace CW.Soloist.CompositionService.CompositionStrategies
         /// <summary> Maximum octave of note pitch range for the composition. </summary>
         public byte MaxOctave { get; } = 5;
 
-        /// <summary> Minimum octave of note pitch range for the composition. </summary>
+        /// <summary> Lowest bound of a note pitch for the composition. </summary>
         public byte MinPitch { get; } = 40; //E2
 
-        /// <summary> Maximum octave of note pitch range for the composition. </summary>
+        /// <summary> Upper bound of a  note pitch for the composition. </summary>
         public byte MaxPitch{ get; } = 88; // E6
 
 

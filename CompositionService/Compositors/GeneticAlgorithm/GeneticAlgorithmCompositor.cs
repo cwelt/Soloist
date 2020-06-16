@@ -1,21 +1,20 @@
-﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
-using CW.Soloist.CompositionService.MusicTheory;
-using Melanchall.DryWetMidi.Tools;
+﻿using CW.Soloist.CompositionService.MusicTheory;
+using CW.Soloist.CompositionService.UtilEnums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy
+namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 {
     /// <summary> <para> Compose a solo-melody over a given playback by implementing a genetic algorithm. </para>
     /// This class implements a concrete composition strategy (<see cref="Compositor"/>)
     /// for use by a <see cref="Composition"/> context instance. </summary>
-    public partial class GeneticAlgorithmCompositor : Compositor
+    internal partial class GeneticAlgorithmCompositor : Compositor
     {
         private IList<MelodyCandidate> _candidates;
         private protected Action<MelodyCandidate, int?>[] _mutations;
+
+        
 
 
 
@@ -50,7 +49,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 10)
+                if (++i == 1)
                     terminateCondition = true;
             }
 
@@ -80,6 +79,9 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
         /// </summary>
         protected internal void Mutate(IEnumerable<IBar> melody)
         {
+            ArppegiateUp(melody);
+            
+            
             Random random = new Random();
             int NumberOfBars = melody.Count();
             int randomBarIndex = random.Next(NumberOfBars);
@@ -92,7 +94,7 @@ namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmSt
             
 
 
-            for (int i = 0; i < melodyCandidate.Bars.Count; i++)
+            for (int i = 0; i < melodyCandidate.Bars.Count && false; i++)
             {
                 SyncopedNoteMutation(melodyCandidate);
                 PermutateNotes(melodyCandidate.Bars[random.Next(NumberOfBars)], permutation: Permutation.Shuffled);

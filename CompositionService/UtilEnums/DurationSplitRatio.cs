@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.CompositionStrategies.UtilEnums
+namespace CW.Soloist.CompositionService.UtilEnums
 {
     /// <summary>
     /// Represents a way to split a note's durtaion into two new durations 

@@ -1,7 +1,7 @@
 ﻿using CW.Soloist.CompositionService.MusicTheory;
 using System.Collections.Generic;
 
-namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy
+namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 {
     // TODO: Use abstraction -> Implement interface of  melody genome 
     internal class MelodyCandidate

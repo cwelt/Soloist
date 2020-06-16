@@ -1,6 +1,6 @@
 ﻿using CW.Soloist.CompositionService;
-using CW.Soloist.CompositionService.CompositionStrategies;
-using CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy;
+using CW.Soloist.CompositionService.Compositors;
+using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Midi;
 using System;
 using System.Configuration;

@@ -1,12 +1,10 @@
-﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
-using CW.Soloist.CompositionService.MusicTheory;
+﻿using CW.Soloist.CompositionService.MusicTheory;
+using CW.Soloist.CompositionService.UtilEnums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.CompositionStrategies
+namespace CW.Soloist.CompositionService.Compositors
 {
     /// <summary>
     /// Extension methods for compositors usage. 

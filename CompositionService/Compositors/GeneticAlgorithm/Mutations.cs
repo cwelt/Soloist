@@ -1,14 +1,12 @@
-﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
-using CW.Soloist.CompositionService.MusicTheory;
+﻿using CW.Soloist.CompositionService.MusicTheory;
+using CW.Soloist.CompositionService.UtilEnums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy
+namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 {
-    public partial class GeneticAlgorithmCompositor : Compositor
+    internal partial class GeneticAlgorithmCompositor : Compositor
     {
 
         private protected virtual void ChordPitchMutation(MelodyCandidate melody, int barIndex)

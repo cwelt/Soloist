@@ -1,10 +1,5 @@
-﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
-using System;
+﻿using CW.Soloist.CompositionService.UtilEnums;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace CW.Soloist.CompositionService.MusicTheory
 {

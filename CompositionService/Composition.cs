@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using CW.Soloist.CompositionService.CompositionStrategies;
-using CW.Soloist.CompositionService.CompositionStrategies.GeneticAlgorithmStrategy;
+using CW.Soloist.CompositionService.Compositors;
+using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using System.Linq;
@@ -69,7 +69,7 @@ namespace CW.Soloist.CompositionService
         }
 
         /// <summary>
-        /// Composes a solo-melody over this composition's midi playback file & chord progression. 
+        /// Composes a solo-melody over this composition's midi playback file and chord progression. 
         /// </summary>
         /// <param name="CompositionStrategy"> The strategy to use to compose the melody. </param>
         /// <returns> A new midi file containing the composed solo-melody. </returns>

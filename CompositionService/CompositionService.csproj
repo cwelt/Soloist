@@ -46,16 +46,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Composition.cs" />
-    <Compile Include="CompositionStrategies\ArpeggiatorStrategy\ArpeggiatorCompositor.cs" />
-    <Compile Include="CompositionStrategies\CompositionStrategy.cs" />
-    <Compile Include="CompositionStrategies\CompositorExtensions.cs" />
-    <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\GeneticAlgorithmCompositor.cs" />
-    <Compile Include="CompositionStrategies\Compositor.cs" />
-    <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\MelodyCandidate.cs" />
-    <Compile Include="CompositionStrategies\GeneticAlgorithmStrategy\Mutations.cs" />
-    <Compile Include="CompositionStrategies\UtilEnums\DurationSplitRatio.cs" />
-    <Compile Include="CompositionStrategies\UtilEnums\Permutation.cs" />
-    <Compile Include="CompositionStrategies\UtilEnums\SortDirection.cs" />
+    <Compile Include="Compositors\CompositionStrategy.cs" />
+    <Compile Include="Compositors\CompositorExtensions.cs" />
+    <Compile Include="Compositors\GeneticAlgorithm\GeneticAlgorithmCompositor.cs" />
+    <Compile Include="Compositors\Compositor.cs" />
+    <Compile Include="Compositors\GeneticAlgorithm\Initializers.cs" />
+    <Compile Include="Compositors\GeneticAlgorithm\MelodyCandidate.cs" />
+    <Compile Include="Compositors\GeneticAlgorithm\Mutations.cs" />
+    <Compile Include="UtilEnums\DurationSplitRatio.cs" />
+    <Compile Include="UtilEnums\Permutation.cs" />
+    <Compile Include="UtilEnums\SortDirection.cs" />
+    <Compile Include="ICompositionParamsDTO.cs" />
     <Compile Include="Midi\DryWetMidiAdapter.cs" />
     <Compile Include="Midi\DryWetTrackAdapter.cs" />
     <Compile Include="Midi\IMidiFileService.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="Midi\MusicalInstrument.cs" />
     <Compile Include="MusicTheory\Bar.cs" />
     <Compile Include="MusicTheory\Chord.cs" />
-    <Compile Include="CompositionStrategies\UtilEnums\ChordNoteMappingSource.cs" />
+    <Compile Include="UtilEnums\ChordNoteMappingSource.cs" />
     <Compile Include="MusicTheory\ChordType.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="MusicTheory\IBar.cs" />

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.CompositionStrategies
+namespace CW.Soloist.CompositionService.Compositors
 {
     public enum CompositionStrategy
     {

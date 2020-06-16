@@ -1,12 +1,10 @@
-﻿using CW.Soloist.CompositionService.CompositionStrategies.UtilEnums;
+﻿using CW.Soloist.CompositionService.UtilEnums;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.MusicTheory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CW.Soloist.CompositionService.MusicTheory
 {
