@@ -55,6 +55,7 @@
     <Compile Include="Compositors\GeneticAlgorithm\Mutations.cs" />
     <Compile Include="UtilEnums\DurationSplitRatio.cs" />
     <Compile Include="UtilEnums\Permutation.cs" />
+    <Compile Include="UtilEnums\PitchRangeSource.cs" />
     <Compile Include="UtilEnums\SortDirection.cs" />
     <Compile Include="ICompositionParamsDTO.cs" />
     <Compile Include="Midi\DryWetMidiAdapter.cs" />
