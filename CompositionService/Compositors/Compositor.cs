@@ -1,5 +1,4 @@
-﻿using CW.Soloist.CompositionService.Compositors.ArpeggiatorStrategy;
-using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
+﻿using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
 using System;
@@ -60,7 +59,7 @@ namespace CW.Soloist.CompositionService.Compositors
                 case CompositionStrategy.GeneticAlgorithmStrategy:
                     return new GeneticAlgorithmCompositor();
                 case CompositionStrategy.ArpeggiatorStrategy:
-                    return new ArpeggiatorCompositor();
+                    throw new NotImplementedException();
                 case CompositionStrategy.ScaleStrategy:
                     throw new NotImplementedException();
                 case CompositionStrategy.CustomStrategy:
