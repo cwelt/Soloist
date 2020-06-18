@@ -181,19 +181,22 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\themes\bootstrap-cerulean.css" />
     <Content Include="Content\themes\bootstrap-cosmo.css" />
     <Content Include="Content\themes\bootstrap-cyborg.css" />
     <Content Include="Content\themes\bootstrap-darkly.css" />
+    <Content Include="Content\themes\bootstrap-flatly.css" />
     <Content Include="Content\themes\bootstrap-lumen.css" />
     <Content Include="Content\themes\bootstrap-readable.css" />
     <Content Include="Content\themes\bootstrap-sandstone.css" />
     <Content Include="Content\themes\bootstrap-slate.css" />
-    <Content Include="Content\themes\bootstrap-spacehero.css" />
+    <Content Include="Content\themes\bootstrap-superhero.css" />
     <Content Include="Content\themes\bootstrap-spacelab.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\themes\bootstrap-united.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

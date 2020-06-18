@@ -24,7 +24,8 @@ namespace WebClient
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       //"~/Content/bootstrap.css",
-                      "~/Content/themes/bootstrap-darkly.css",
+                      //"~/Content/themes/bootstrap-cerulean.css",
+                      "~/Content/themes/bootstrap-united.css",
                       "~/Content/Site.css"));
         }
     }
