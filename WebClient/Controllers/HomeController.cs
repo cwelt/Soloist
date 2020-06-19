@@ -6,7 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace WebClient.Controllers
+namespace SoloistWebClient.Controllers
 {
     public class HomeController : Controller
     {

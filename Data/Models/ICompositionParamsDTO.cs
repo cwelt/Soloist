@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.Data.Models
+namespace CW.Soloist.CompositionService
 {
     /// <summary>
     /// Data transfer object interface for gathering all required 

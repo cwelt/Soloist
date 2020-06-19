@@ -5,9 +5,9 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
-using WebClient.Models;
+using SoloistWebClient.Models;
 
-namespace WebClient
+namespace SoloistWebClient
 {
     public partial class Startup
     {
