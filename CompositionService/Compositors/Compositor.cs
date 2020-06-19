@@ -62,8 +62,6 @@ namespace CW.Soloist.CompositionService.Compositors
                     throw new NotImplementedException();
                 case CompositionStrategy.ScaleStrategy:
                     throw new NotImplementedException();
-                case CompositionStrategy.CustomStrategy:
-                    throw new NotImplementedException();
                 default:
                     throw new NotImplementedException();
             }

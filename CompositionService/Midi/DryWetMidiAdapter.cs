@@ -33,8 +33,6 @@ namespace CW.Soloist.CompositionService.Midi
 
         private readonly List<MidiEvent> _metaEvents;
 
-        private CancellationTokenSource _midiPlayerCancellationHandle;
-
         /// <summary> Medium for playing the MIDI files events on an output device. </summary>
         private Playback _midiPlayer;
 
@@ -127,7 +125,7 @@ namespace CW.Soloist.CompositionService.Midi
         /// <summary>
         /// Converts a melody encoded in list of <see cref="IBar"/> to a <see cref="TrackChunk"/>
         /// </summary>
-        /// <param name="melodyBars"> The bars & notes which are to be converted. </param>
+        /// <param name="melodyBars"> The bars and notes which are to be converted. </param>
         /// <param name="trackName"> The name that would be given to the newly created midi track. </param>
         /// <param name="instrument"> Midi <a href="https://bit.ly/30pmSzP">program number</a> which represents a musical instrument. </param>
         /// <param name="channel"> The channel number in which the new track would be assigned to. </param>

@@ -13,10 +13,6 @@ namespace CW.Soloist.CompositionService.MusicTheory
         private const int NumberOfUniqueChromaticNotes = 12;
         private const int MidiMinimumPitchValue = 0;
         private const int MidiMaximumPitchValue = 127;
-
-        // internal state backing fields 
-        private NotePitch _pitch;
-        private NoteName? _name;
         #endregion
 
         #region Public Properties 
