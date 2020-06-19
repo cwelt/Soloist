@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,7 +16,7 @@ namespace DesktopClient
     public partial class MainForm : Form
     {
         private List<Bitmap> _backgroundImageList;
-        private Timer _imageTimer;
+        private System.Windows.Forms.Timer _imageTimer;
         private int _imageIndex = 1;
 
         private OpenFileDialog _midiFileDialog;
@@ -59,7 +60,7 @@ namespace DesktopClient
             _backgroundImageList.Add(Properties.Resources.musicHead);
 
             // initialize timer & register tick event handler every 5 seconds
-            _imageTimer = new Timer();
+            _imageTimer = new System.Windows.Forms.Timer();
             _imageTimer.Interval = 3000;
             _imageTimer.Tick += new EventHandler(timer_Tick);
             _imageTimer.Start();
@@ -115,7 +116,12 @@ namespace DesktopClient
         private void btnCompose_Click(object sender, EventArgs e)
         {
 
-            new Composition(_midiFilePath, _chordsFilePath, _musicalInstrument).Compose(_musicalInstrument).Play();
+            var composition = new Composition(_midiFilePath, _chordsFilePath, _musicalInstrument).Compose(_musicalInstrument);
+
+            composition.PlayAsync();
+            var res = MessageBox.Show("after play!!", "want to stop?", MessageBoxButtons.YesNoCancel);
+            if (res == DialogResult.Yes)
+                composition.Stop();
         }
     }
 }

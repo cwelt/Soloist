@@ -37,7 +37,7 @@ namespace ConsoleClient
             var composition = new Composition(filePath, chordsFilePath);
             var newMidiFile = composition.Compose(compositionStrategy, MusicalInstrument.AltoSax);
 
-            newMidiFile.Play();
+            newMidiFile.PlayAsync();
             //newMidiFile.Stop();
 
 

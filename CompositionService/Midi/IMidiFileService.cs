@@ -33,6 +33,9 @@ namespace CW.Soloist.CompositionService.Midi
         /// <summary> Starts playing the MIDI events containd in the file. </summary>
         void Play();
 
+        /// <summary> Starts playing the MIDI events containd in the file. </summary>
+        Task PlayAsync();
+
         /// <summary> Stops playing the MIDI data. </summary>
         void Stop();
 

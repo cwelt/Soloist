@@ -11,6 +11,8 @@ using DWMidiI = Melanchall.DryWetMidi.Interaction;
 using DWMidiMT = Melanchall.DryWetMidi.MusicTheory;
 using CW.Soloist.CompositionService.MusicTheory;
 using Note = CW.Soloist.CompositionService.MusicTheory.Note;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace CW.Soloist.CompositionService.Midi
 {
@@ -31,8 +33,10 @@ namespace CW.Soloist.CompositionService.Midi
 
         private readonly List<MidiEvent> _metaEvents;
 
+        private CancellationTokenSource _midiPlayerCancellationHandle;
+
         /// <summary> Medium for playing the MIDI files events on an output device. </summary>
-        private Playback _midiPlayBack;
+        private Playback _midiPlayer;
 
         #endregion
 
@@ -95,17 +99,16 @@ namespace CW.Soloist.CompositionService.Midi
         {
             // Play the Output
             using (var outputDevice = OutputDevice.GetByName("Microsoft GS Wavetable Synth"))
-            using (var MidiPlayBack = _midiFile.GetPlayback(outputDevice))
+            using (_midiPlayer = _midiFile.GetPlayback(outputDevice))
             {
-                MidiPlayBack.Speed = 1.0;
-                MidiPlayBack.Play();
+                _midiPlayer.Speed = 1.0;
+                _midiPlayer.Play();
             }
         }
 
-        public void Stop()
-        {
-            _midiPlayBack?.Stop();
-        }
+        public async Task PlayAsync() => await Task.Run(() => Play());
+            
+        public void Stop() => _midiPlayer?.Stop();
 
         #region EmbedMelody
         /// <inheritdoc/>
@@ -342,6 +345,8 @@ namespace CW.Soloist.CompositionService.Midi
                 throw;
             }
         }
+
+
     }
 }
 
