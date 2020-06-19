@@ -36,6 +36,7 @@ namespace CW.Soloist.CompositionService
         /// <summary> Construct a new composition. </summary>
         /// <param name="midiFilePath"> Path of the midi playback file.</param>
         /// <param name="chordProgressionFilePath"> Path of the chord progression file.</param>
+        /// <param name="instrument"></param>
         public Composition(string midiFilePath, string chordProgressionFilePath, MusicalInstrument instrument = MusicalInstrument.OverdrivenGuitar)
         {
             // open & read the midi file using an adapter 
@@ -60,7 +61,7 @@ namespace CW.Soloist.CompositionService
 
 
         /// <summary>
-        /// overloaded version that uses the default composition strategy. <see cref="Compose(Compositor)"/>
+        /// overloaded version that uses the default composition strategy. <see cref="Compose(CompositionStrategy, MusicalInstrument)"/>
         /// </summary>
         /// <returns> A new midi file containing the composed solo-melody. </returns>
         public IMidiFileService Compose(MusicalInstrument instrument = MusicalInstrument.OverdrivenGuitar)
@@ -71,7 +72,8 @@ namespace CW.Soloist.CompositionService
         /// <summary>
         /// Composes a solo-melody over this composition's midi playback file and chord progression. 
         /// </summary>
-        /// <param name="CompositionStrategy"> The strategy to use to compose the melody. </param>
+        /// <param name="strategy"> The strategy to use to compose the melody</param>
+        /// <param name="instrument"></param>
         /// <returns> A new midi file containing the composed solo-melody. </returns>
         public IMidiFileService Compose(CompositionStrategy strategy, MusicalInstrument instrument = MusicalInstrument.OverdrivenGuitar)
         {
@@ -225,7 +227,8 @@ namespace CW.Soloist.CompositionService
         }
         #endregion
 
-
+        #region TEST ChordNoteMapping
+        // TODO: DELETE ME!!!
         public static void TestChordNoteMapping()
         {
             // test chord-note mapping
@@ -240,5 +243,6 @@ namespace CW.Soloist.CompositionService
                 Console.WriteLine();
             }
         }
+        #endregion
     }
 }

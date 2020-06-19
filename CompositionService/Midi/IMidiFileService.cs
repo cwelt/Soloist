@@ -65,6 +65,8 @@ namespace CW.Soloist.CompositionService.Midi
         /// <param name="melody"> List of notes divided into bars. </param>
         /// <param name="melodyTrackName"> Name that would be given to the new midi track. </param>
         /// <param name="instrument">"> If specified, the new track would be inserted in this index position. </param>
+        /// <param name="trackIndex"> Optional Index of the requested position to put the embedded melody track in.
+        /// if no explict position is requested, leave this parameter null, and the new track would be appended.</param>
         void EmbedMelody(IList<IBar> melody, string melodyTrackName = "Melody", MusicalInstrument instrument = MusicalInstrument.JazzGuitar, byte? trackIndex = null);
 
 
