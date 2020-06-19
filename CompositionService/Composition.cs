@@ -18,32 +18,33 @@ namespace CW.Soloist.CompositionService
         private readonly string _midiInputFilePath;
         private readonly string _midiInputFileName;
         private IMidiFileService _midiInputFile;
-        private MusicalInstrument _musicalInstrument;
-
-        
-        
         // TODO: use input file to construct the output without duplicating unnecessary data (prototype\flyweight)
         private IMidiFileService _midiOutputFile;
-
         private readonly IList<IBar> _chordProgression;
-
         /// <summary>
-        /// Gets or sets the compositor responsible for composing the solo melody with the desired composition strategy.
+        /// compositor responsible for composing the solo melody with the desired composition strategy.
         /// </summary>
-        public Compositor Compositor { get; set; }
+        private Compositor _compositor { get; set; }
 
-        #region Constructor 
+        /// <summary> The musical instrument what would be used for playing the composed melody. </summary>
+        public MusicalInstrument MusicalInstrument;
+
+        /// <summary> The composition strategy for carrying out the actual melody compoition. </summary>
+        public CompositionStrategy CompositionStrategy { get; set; }
+
+
+        #region Constructors 
         /// <summary> Construct a new composition. </summary>
         /// <param name="midiFilePath"> Path of the midi playback file.</param>
         /// <param name="chordProgressionFilePath"> Path of the chord progression file.</param>
         /// <param name="instrument"></param>
-        public Composition(string midiFilePath, string chordProgressionFilePath, MusicalInstrument instrument = MusicalInstrument.OverdrivenGuitar)
+        public Composition(string midiFilePath, string chordProgressionFilePath, MusicalInstrument instrument = MusicalInstrument.AcousticGrandPiano)
         {
             // open & read the midi file using an adapter 
             _midiInputFilePath = midiFilePath;
             _midiInputFileName = Path.GetFileNameWithoutExtension(midiFilePath);
             _midiInputFile = new DryWetMidiAdapter(midiFilePath);
-            _musicalInstrument = instrument;
+            MusicalInstrument = instrument;
 
             // get chords from file 
             try
@@ -77,8 +78,8 @@ namespace CW.Soloist.CompositionService
         /// <returns> A new midi file containing the composed solo-melody. </returns>
         public IMidiFileService Compose(CompositionStrategy strategy, MusicalInstrument instrument = MusicalInstrument.OverdrivenGuitar)
         {
-            // set composition strategy
-            Compositor = Compositor.CreateCompositor(strategy);
+            // set compositor according to composition strategy
+            _compositor = Compositor.CreateCompositor(strategy);
 
             // create adapter handle for the newly created midi file 
             _midiOutputFile = new DryWetMidiAdapter(_midiInputFilePath);
@@ -87,7 +88,7 @@ namespace CW.Soloist.CompositionService
             _midiOutputFile.ExtractMelody(trackNumber: 1, _chordProgression);
 
             // compose a new melody 
-            IEnumerable<IBar> melody = Compositor.Compose(_chordProgression);
+            IEnumerable<IBar> melody = _compositor.Compose(_chordProgression);
 
             // Embed the new generated melody into the midi file
             _midiOutputFile.EmbedMelody(melody: melody.ToList(), melodyTrackName: "new melody", instrument);
