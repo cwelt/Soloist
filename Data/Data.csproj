@@ -41,8 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\CompositionParamsDTO.cs" />
-    <Compile Include="Models\ICompositionParamsDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +48,9 @@
       <Project>{0c3d2a16-dd1e-46e7-ade6-a1a42c9bbc63}</Project>
       <Name>CompositionService</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

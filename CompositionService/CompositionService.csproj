@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Composition.cs" />
+    <Compile Include="CompositionParamsDTO.cs" />
     <Compile Include="Compositors\CompositionStrategy.cs" />
     <Compile Include="Compositors\CompositorExtensions.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\GeneticAlgorithmCompositor.cs" />
@@ -53,15 +54,15 @@
     <Compile Include="Compositors\GeneticAlgorithm\Initializers.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\MelodyCandidate.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\Mutations.cs" />
+    <Compile Include="ICompositionParamsDTO.cs" />
     <Compile Include="UtilEnums\DurationSplitRatio.cs" />
     <Compile Include="UtilEnums\OverallDurationFeel.cs" />
     <Compile Include="UtilEnums\Permutation.cs" />
     <Compile Include="UtilEnums\PitchRangeSource.cs" />
     <Compile Include="UtilEnums\SortDirection.cs" />
-    <Compile Include="ICompositionParamsDTO.cs" />
     <Compile Include="Midi\DryWetMidiAdapter.cs" />
     <Compile Include="Midi\DryWetTrackAdapter.cs" />
-    <Compile Include="Midi\IMidiFileService.cs" />
+    <Compile Include="Midi\IMidiFile.cs" />
     <Compile Include="Midi\IMidiTrack.cs" />
     <Compile Include="Midi\MusicalInstrument.cs" />
     <Compile Include="MusicTheory\Bar.cs" />

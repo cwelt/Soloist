@@ -35,12 +35,10 @@ namespace ConsoleClient
 
             // create a new composition with injected strategy
             var composition = new Composition(filePath, chordsFilePath);
-            var newMidiFile = composition.Compose(compositionStrategy, MusicalInstrument.AltoSax);
+            var newMidiFile = composition.Compose(compositionStrategy);
 
             newMidiFile.PlayAsync();
             //newMidiFile.Stop();
-
-
         }
     }
 }

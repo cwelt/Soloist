@@ -29,7 +29,7 @@ namespace DesktopClient
 
         private MusicalInstrument _musicalInstrument;
         private Composition _composition;
-        private IMidiFileService _midiFile;
+        private IMidiFile _midiFile;
 
 
         public MainForm()
@@ -98,7 +98,7 @@ namespace DesktopClient
 
                 if(!string.IsNullOrWhiteSpace(_chordsFilePath) && !string.IsNullOrWhiteSpace(_midiFilePath))
                 {
-                    _composition = new Composition(_midiFilePath, _chordsFilePath);
+                    _composition = new Composition(_chordsFilePath, _midiFilePath, melodyTrackIndex: 1);
                     _midiFile = _composition.Compose();
                     lblMidiTitle.Text += ": " + _midiFile.Title;
                     lblMidiBpm.Text += ": " + _midiFile.BeatsPerMinute.ToString();
@@ -116,12 +116,13 @@ namespace DesktopClient
         private void btnCompose_Click(object sender, EventArgs e)
         {
 
-            var composition = new Composition(_midiFilePath, _chordsFilePath, _musicalInstrument).Compose(_musicalInstrument);
+            var composition = new Composition(_chordsFilePath, _midiFilePath, melodyTrackIndex: 1);
+            var newMelody = composition.Compose(musicalInstrument: _musicalInstrument);
 
-            composition.PlayAsync();
-            var res = MessageBox.Show("after play!!", "want to stop?", MessageBoxButtons.YesNoCancel);
+            composition.MidiOutputFile.PlayAsync();
+            var res = MessageBox.Show("Want to pause?", "Playing", MessageBoxButtons.YesNoCancel);
             if (res == DialogResult.Yes)
-                composition.Stop();
+                composition.MidiOutputFile.Stop();
         }
     }
 }

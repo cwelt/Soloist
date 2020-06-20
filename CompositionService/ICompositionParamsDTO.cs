@@ -1,4 +1,6 @@
-﻿using CW.Soloist.CompositionService.Midi;
+﻿using CW.Soloist.CompositionService.Compositors;
+using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
 using System;
 using System.Collections.Generic;
@@ -6,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.Data.Models
+namespace CW.Soloist.CompositionService
 {
     /// <summary>
     /// Data transfer object interface for gathering all required 
@@ -14,6 +16,10 @@ namespace CW.Soloist.Data.Models
     /// </summary>
     public interface ICompositionParamsDTO
     {
+        /// <summary> Algorithm for carrying out the actual composition work. </summary>
+        CompositionStrategy CompositionStrategy { get; set; }
+
+
         /// <summary> Musical instrument for the melody track. </summary>
         MusicalInstrument MusicalInstrument { get; set; }
 
@@ -21,28 +27,16 @@ namespace CW.Soloist.Data.Models
         PitchRangeSource PitchRangeSource { get; set; }
 
         /// <summary> Pitch low bound for the composition. </summary>
-        byte MinPitch { get; set; }
+        NotePitch MinPitch { get; set; }
 
         /// <summary> Pitch upper bound for the composition. </summary>
-        byte MaxPitch { get; set; }
-
-        /// <summary> 
-        /// Index of the existing melody track in the midi file, if one exists. 
-        /// <para>
-        /// This track would be replaced by the new composed 
-        /// melody track. If the current midi file is a pure playback 
-        /// that contains no existing melody track, then this property
-        /// should be set to null. 
-        /// </para>
-        /// </summary>
-        int? ExistingMelodyTrackIndex { get; set; }
+        NotePitch MaxPitch { get; set; }
 
         /// <summary> 
         /// Indicator for determining wheter the existing melody should serve as
         /// a seed for the composition or should it be disregarded.  
         /// <para>
-        /// If <see cref="ExistingMelodyTrackIndex"/> is set to null, i.e., 
-        /// if the midi file is a pure playback and contains no melody track
+        /// if the compositio's midi file is a pure playback and contains no melody track
         /// whatsoever, then this property would be disregarded.
         /// </para>
         /// </summary>

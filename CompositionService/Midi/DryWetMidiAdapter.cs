@@ -19,11 +19,11 @@ namespace CW.Soloist.CompositionService.Midi
     /// <summary>
     /// Provides a high level interface for a <a href="https://bit.ly/3bRVzQT"> SMF (Standard MIDI File) </a> 
     /// </summary>
-    internal partial class DryWetMidiAdapter : IMidiFileService
+    internal partial class DryWetMidiAdapter : IMidiFile
     {
         #region Adapter Specific Private Data Members 
 
-        private readonly MidiFile _midiFile;
+        private readonly MidiFile _midiContent;
 
         private readonly TempoMap _tempoMap;
 
@@ -32,6 +32,8 @@ namespace CW.Soloist.CompositionService.Midi
         private readonly TrackChunk _metadataTrack;
 
         private readonly List<MidiEvent> _metaEvents;
+
+        private static readonly string DefaulTrackName = "Soloist Generated Melody";
 
         /// <summary> Medium for playing the MIDI files events on an output device. </summary>
         private Playback _midiPlayer;
@@ -42,26 +44,32 @@ namespace CW.Soloist.CompositionService.Midi
         #region IMidiFile Interface Properties 
 
         public string FilePath { get; }
+
+        public object Content => _midiContent;
         public string Title { get; } 
         public IDuration KeySignature { get; }
         public byte BeatsPerMinute { get; }
         public int NumberOfBars { get; }
+
+        public NotePitch? LowestPitch { get; }
+        public NotePitch? HighestPitch { get; }
         public ICollection<IMidiTrack> Tracks { get; private set; }
 
         #endregion
 
 
-        #region Consturctor 
+        #region Consturctors 
         /// <summary> Constructor </summary>
         /// <param name="midiFilePath"></param>
-        public DryWetMidiAdapter(string midiFilePath)
+        internal DryWetMidiAdapter(string midiFilePath)
         {
             FilePath = midiFilePath;
-            _midiFile = MidiFile.Read(midiFilePath);
-            _tempoMap = _midiFile.GetTempoMap();
-            _trackChunks = _midiFile.GetTrackChunks().ToList();
+            _midiContent = MidiFile.Read(midiFilePath);
+            _tempoMap = _midiContent.GetTempoMap();
+            _trackChunks = _midiContent.GetTrackChunks().ToList();
             _metadataTrack = _trackChunks.First();
             _metaEvents = _metadataTrack.Events.ToList();
+
 
             // set midi title property 
             Title = (((from e in _metaEvents
@@ -76,13 +84,20 @@ namespace CW.Soloist.CompositionService.Midi
 
 
             // set number of bars property
-            BarBeatFractionTimeSpan duration = _midiFile.GetDuration<BarBeatFractionTimeSpan>();
+            BarBeatFractionTimeSpan duration = _midiContent.GetDuration<BarBeatFractionTimeSpan>();
             NumberOfBars = (int)duration.Bars + (int)Math.Floor(duration.Beats / timeSignatureEvent.Numerator);
 
             // set BPM property 
-            BeatsPerMinute = (byte)(_midiFile.GetTempoMap().Tempo.AtTime(0).BeatsPerMinute);
+            BeatsPerMinute = (byte)(_midiContent.GetTempoMap().Tempo.AtTime(0).BeatsPerMinute);
 
-            // add midi tracks
+            // set MIDI pitch range
+            var notes = _midiContent.GetNotes();
+            LowestPitch = (NotePitch)(byte)(notes.Min(note => note.NoteNumber));
+            HighestPitch = (NotePitch)(byte)(notes.Max(note => note.NoteNumber));
+
+
+            // TODO - refactor track representation and dry wet track adapter
+            // add midi tracks 
             Tracks = new List<IMidiTrack>();
             foreach (var track in _trackChunks)
             {
@@ -91,37 +106,44 @@ namespace CW.Soloist.CompositionService.Midi
 
         }
 
+
         #endregion
 
+        #region Play()
         public void Play()
         {
             // Play the Output
             using (var outputDevice = OutputDevice.GetByName("Microsoft GS Wavetable Synth"))
-            using (_midiPlayer = _midiFile.GetPlayback(outputDevice))
+            using (_midiPlayer = _midiContent.GetPlayback(outputDevice))
             {
                 _midiPlayer.Speed = 1.0;
                 _midiPlayer.Play();
             }
         }
+        #endregion
 
+        #region PlayAsync()
         public async Task PlayAsync() => await Task.Run(() => Play());
-            
+        #endregion
+
+        #region Stop()
         public void Stop() => _midiPlayer?.Stop();
+        #endregion 
 
         #region EmbedMelody
         /// <inheritdoc/>
-        public void EmbedMelody(IList<IBar> melody, string melodyTrackName = "Melody", MusicalInstrument instrument = MusicalInstrument.Sitar, byte? trackNumber = null)
+        public void EmbedMelody(IList<IBar> melody, MusicalInstrument instrument = MusicalInstrument.Sitar, byte? trackNumber = null)
         {
             // use utility private helper method to convert the melody into a midi track 
-            TrackChunk melodyTrack = ConvertMelodyToTrackChunk(melody, melodyTrackName, instrument);
+            TrackChunk melodyTrack = ConvertMelodyToTrackChunk(melody, trackName: DefaulTrackName, instrument);
 
             // assemble the midi file with new track which contains the melody's midi events 
-            int indexOfNewTrack = trackNumber ?? _midiFile.Chunks.Count;
-            _midiFile.Chunks.Insert(indexOfNewTrack, melodyTrack);
+            int indexOfNewTrack = trackNumber ?? _midiContent.Chunks.Count;
+            _midiContent.Chunks.Insert(indexOfNewTrack, melodyTrack);
         }
         #endregion
 
-        #region ConvertMelodyToTrackChunk
+        #region ConvertMelodyToTrackChunk()
         /// <summary>
         /// Converts a melody encoded in list of <see cref="IBar"/> to a <see cref="TrackChunk"/>
         /// </summary>
@@ -192,22 +214,26 @@ namespace CW.Soloist.CompositionService.Midi
         }
         #endregion
 
-        #region ExtractMelody
+        #region ExtractMelody()
         /// <inheritdoc/>
-        public void ExtractMelody(byte trackNumber, in IList<IBar> melodyBars)
+        public void ExtractMelodyTrack(byte trackNumber, in IList<IBar> melodyBars = null)
         {
             // get the requested track 
-            TrackChunk melodyTrack = _midiFile.Chunks[trackNumber] as TrackChunk;
+            TrackChunk melodyTrack = _midiContent.Chunks[trackNumber] as TrackChunk;
 
             // remove the track from the midi file 
-            _midiFile.Chunks.RemoveAt(trackNumber);
+            _midiContent.Chunks.RemoveAt(trackNumber);
 
-            // encode the melody in the track as a list of bars with music notes 
-            ConvertTrackChunkToMelody(melodyTrack, melodyBars);
+            /* if requested, decode the melody from the removed track as a list of bars 
+             * with music notes and embed this sequence the melody bars reference parameter. */
+            if (melodyBars != null)
+            {
+                ConvertTrackChunkToMelody(melodyTrack, melodyBars);
+            }
         }
         #endregion
 
-        #region ConvertTrackChunkToMelody
+        #region ConvertTrackChunkToMelody()
         /// <summary>
         /// Converts a midi track from a midi file into a collection of musical notes.
         /// </summary>
@@ -304,7 +330,7 @@ namespace CW.Soloist.CompositionService.Midi
         }
         #endregion
 
-
+        #region GetBarDuration()
         /// <inheritdoc/>
         public IDuration GetBarDuration(int barIndex)
         {
@@ -318,7 +344,9 @@ namespace CW.Soloist.CompositionService.Midi
             // if no explicit key signature exists for this specific bar, return the default key signature from meta events
             else return KeySignature;
         }
+        #endregion
 
+        #region SaveFile()
         /// <inheritdoc/>
         public void SaveFile(string path = null, string fileNamePrefix = "")
         {
@@ -335,7 +363,7 @@ namespace CW.Soloist.CompositionService.Midi
             // save file 
             try
             {
-                this._midiFile.Write(filePath: fullPath, overwriteFile: true);
+                this._midiContent.Write(filePath: fullPath, overwriteFile: true);
             }
             catch (Exception ex)
             {
@@ -343,7 +371,16 @@ namespace CW.Soloist.CompositionService.Midi
                 throw;
             }
         }
+        #endregion
 
+        #region GetPitchRangeForTrack()
+        public void GetPitchRangeForTrack(int trackIndex, out NotePitch? lowestPitch, out NotePitch? highestPitch)
+        {
+            var notes = (_midiContent.Chunks[trackIndex] as TrackChunk).GetNotes();
+            lowestPitch = (NotePitch)(byte)(notes.Min(note => note.NoteNumber));
+            highestPitch = (NotePitch)(byte)(notes.Min(note => note.NoteNumber));
+        }
+        #endregion
 
     }
 }

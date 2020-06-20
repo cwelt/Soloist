@@ -1,4 +1,5 @@
 ﻿using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
+using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
 using System;
@@ -19,39 +20,56 @@ namespace CW.Soloist.CompositionService.Compositors
     public abstract class Compositor
     {
         /// <summary> Melody seed to base on the composition of the new melody. </summary>
-        internal IEnumerable<IBar> Seed { get; }
+        internal IEnumerable<IBar> Seed { get; private protected set; }
 
         /// <summary> The outcome of the <see cref="Compose"/> method. </summary>
-        internal IEnumerable<IBar> ComposedMelody { get; private set; }
+        internal IEnumerable<IBar> ComposedMelody { get; private protected set; }
 
         /// <summary> The playback's harmony. </summary>
-        internal IEnumerable<IBar> ChordProgression { get; private set; }
+        internal IEnumerable<IBar> ChordProgression { get; private protected set; }
 
         /// <summary> Default duration denominator for a single note. </summary>
-        internal byte DefaultDuration { get; set; } = 8;
+        internal byte DefaultDuration { get; private protected set; } = 8;
 
-        internal byte ShortestDuration { get; } = 16;
+        internal byte ShortestDuration { get; private protected set; } = 16;
 
 
         /// <summary> Minimum octave of note pitch range for the composition. </summary>
-        public byte MinOctave { get; } = 4;
+        public byte MinOctave { get; private protected set; } = 4;
 
         /// <summary> Maximum octave of note pitch range for the composition. </summary>
-        public byte MaxOctave { get; } = 5;
+        public byte MaxOctave { get; private protected set;  } = 5;
 
         /// <summary> Lowest bound of a note pitch for the composition. </summary>
-        public byte MinPitch { get; } = 40; //E2
+        public NotePitch MinPitch { get; private protected set; } = NotePitch.E2; 
 
         /// <summary> Upper bound of a  note pitch for the composition. </summary>
-        public byte MaxPitch{ get; } = 88; // E6
+        public NotePitch MaxPitch { get; private protected set; } = NotePitch.E6; 
 
 
         /// <summary> Compose a solo-melody over a given playback. </summary>
         /// <param name="chordProgression"> The chords of the song in the playback. </param>
-        /// <param name="seed"> Optional existing melody on which to base the composition on.</param>
+        /// <param name="melodyInitializationSeed"> Optional existing melody on which to base the composition on.</param>
+        /// <param name="overallNoteDurationFeel"> Determines the overall feel and density regarding the amount of notes
+        /// in the composed melody. For further details, see <see cref="OverallNoteDurationFeel"/>.</param>
+        /// <param name="minPitch"> Lowest bound of a note pitch for the composition. </param>
+        /// <param name="maxPitch"> Upper bound of a note pitch for the composition. </param>
         /// <returns> The composition of solo-melody</returns>
-        internal abstract IEnumerable<IBar> Compose(IEnumerable<IBar> chordProgression, IEnumerable<IBar> seed = null);
+        internal abstract IList<IBar> Compose(
+            IList<IBar> chordProgression,
+            IList<IBar> melodyInitializationSeed = null,
+            OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
+            NotePitch minPitch = NotePitch.E2,
+            NotePitch maxPitch = NotePitch.E6);
 
+
+        #region CreateCompositor()
+        /// <summary>
+        /// Factory for creating a compositor instance based on an the 
+        /// composition strategy enumeration value.  
+        /// </summary>
+        /// <param name="strategy"> The requested composition algorithm strategy. </param>
+        /// <returns></returns>
         internal static Compositor CreateCompositor(CompositionStrategy strategy = CompositionStrategy.GeneticAlgorithmStrategy)
         {
             switch (strategy)
@@ -66,6 +84,7 @@ namespace CW.Soloist.CompositionService.Compositors
                     throw new NotImplementedException();
             }
         }
+        #endregion
 
         #region ChangePitchForARandomNote() 
         /// <summary>

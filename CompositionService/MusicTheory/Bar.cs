@@ -63,13 +63,13 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// Constructs an empty bar with the given time signature. />
         /// </summary>
         /// <param name="timeSignature"></param>
-        public Bar(Duration timeSignature)
+        public Bar(IDuration timeSignature)
             : this(timeSignature, new List<IChord>(), new List<INote>()) { }
 
         /// <summary>
         /// Constructs a bar instance based on the given <paramref name="timeSignature"/>
         /// and chord progression (<paramref name="chords"/>). 
-        /// The <see cref="Notes"/> property is initialized to an empty list. 
+        /// <para>The <see cref="Notes"/> property is initialized to an empty list. </para>
         /// </summary>
         /// <param name="timeSignature"></param>
         /// <param name="chords"></param>

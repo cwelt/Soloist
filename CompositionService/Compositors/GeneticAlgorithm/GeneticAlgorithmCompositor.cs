@@ -12,11 +12,8 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
     internal partial class GeneticAlgorithmCompositor : Compositor
     {
         private IList<MelodyCandidate> _candidates;
+        private uint _currentGeneration = 1;
         private protected Action<MelodyCandidate, int?>[] _mutations;
-
-        
-
-
 
         public GeneticAlgorithmCompositor()
         {
@@ -26,10 +23,23 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
 
         /// <inheritdoc/>
-        internal override IEnumerable<IBar> Compose(IEnumerable<IBar> chordProgression, IEnumerable<IBar> seed = null)
+        internal override IList<IBar> Compose(
+            IList<IBar> chordProgression,
+            IList<IBar> melodyInitializationSeed = null,
+            OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
+            NotePitch minPitch = NotePitch.E2,
+            NotePitch maxPitch = NotePitch.E6)
         {
+            // initialize general parameters for the algorithm 
+            _candidates = new List<MelodyCandidate>(120);
+            _currentGeneration = 1;
+            ChordProgression = chordProgression;
+            Seed = melodyInitializationSeed;
+            MinPitch = minPitch;
+            MaxPitch = maxPitch;
+
             // get first generatiion 
-            InitializeFirstGeneration();
+            PopulateFirstGeneration();
 
             int i = 0;
             bool terminateCondition = false;
@@ -40,7 +50,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 Crossover();
 
                 // modify parts of individuals 
-                Mutate(chordProgression);
+                Mutate(_candidates[0].Bars);
 
                 // rate each individual 
                 EvaluateFitness();
@@ -54,16 +64,27 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             }
 
             // TODO: convert internal genome representation of each candidate in to a MIDI track chunk representation
-            return chordProgression;
+            return _candidates[0].Bars;
         }
 
 
         /// <summary>
         /// Initialize first generation of solution candidates. 
         /// </summary>
-        protected internal void InitializeFirstGeneration()
+        protected internal void PopulateFirstGeneration()
         {
             Console.WriteLine($"In {this.GetType().FullName}, \ninitializing first generation");
+            MelodyCandidate candidate;
+            if (Seed != null)
+            {
+                candidate = new MelodyCandidate(_currentGeneration, Seed, includeExistingMelody: true);
+            }
+            else
+            {
+                candidate = new MelodyCandidate(_currentGeneration, ChordProgression);
+            }
+
+            _candidates.Add(candidate);
         }
 
         /// <summary>
@@ -86,15 +107,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             int NumberOfBars = melody.Count();
             int randomBarIndex = random.Next(NumberOfBars);
 
-            var melodyCandidate = new MelodyCandidate
-            {
-                Bars = melody.ToList()
-            };
+            var melodyCandidate = _candidates[0];
 
-            
-
-
-            for (int i = 0; i < melodyCandidate.Bars.Count && false; i++)
+            for (int i = 0; i < melodyCandidate.Bars.Count; i++)
             {
                 SyncopedNoteMutation(melodyCandidate);
                 PermutateNotes(melodyCandidate.Bars[random.Next(NumberOfBars)], permutation: Permutation.Shuffled);

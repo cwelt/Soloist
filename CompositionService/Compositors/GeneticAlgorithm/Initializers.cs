@@ -15,7 +15,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             IDuration defaultDuration = new Duration(1, 16);
             float chordDuration;
             byte numberOfNotes;
-            byte middlePitch = (byte)Math.Floor(MinPitch + MaxOctave / 2F);
+            byte middlePitch = (byte)Math.Floor((byte)MinPitch + (byte)MaxOctave / 2F);
             
                 foreach (IBar bar in bars)
             {
