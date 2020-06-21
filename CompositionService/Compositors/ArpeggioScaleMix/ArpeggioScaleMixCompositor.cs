@@ -18,6 +18,33 @@ namespace CW.Soloist.CompositionService.Compositors.ArpeggioScaleMix
             NotePitch minPitch = NotePitch.E2,
             NotePitch maxPitch = NotePitch.E8)
         {
+            switch (overallNoteDurationFeel)
+            {
+                case OverallNoteDurationFeel.Slow:
+                    DefaultDurationFraction = Duration.QuaterNoteFraction;
+                    DefaultDurationDenomniator = Duration.QuaterNoteDenominator;
+                    break;
+                case OverallNoteDurationFeel.Medium:
+                default:
+                    DefaultDurationFraction = Duration.EighthNoteFraction;
+                    DefaultDurationDenomniator = Duration.EighthNoteDenominator;
+                    break;
+                case OverallNoteDurationFeel.Intense:
+                    DefaultDurationFraction = Duration.SixteenthNoteFraction;
+                    DefaultDurationDenomniator = Duration.SixteenthNoteDenominator;
+                    break;
+                case OverallNoteDurationFeel.Extreme:
+                    DefaultDurationFraction = Duration.ThirtySecondNoteFraction;
+                    DefaultDurationDenomniator = Duration.ThirtySecondNoteDenominator;
+                    break;
+            }
+            DefaultDuration = new Duration(1, DefaultDurationDenomniator);
+
+            ChordProgression = chordProgression;
+            Seed = melodyInitializationSeed;
+            MinPitch = minPitch;
+            MaxPitch = maxPitch;
+
             ScaleArpeggioeMixInitializer(chordProgression);
             return chordProgression;
         }

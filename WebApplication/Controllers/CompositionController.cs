@@ -40,7 +40,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 minPitch: model.MinPitch,
                 maxPitch: model.MaxPitch);
 
-            midiFile.PlayAsync();
+            midiFile.Play();
             
             return null;
         }
