@@ -34,7 +34,7 @@ namespace ConsoleClient
             CompositionStrategy compositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy;
 
             // create a new composition with injected strategy
-            var composition = new Composition(filePath, chordsFilePath);
+            var composition = new Composition(filePath, chordsFilePath, melodyTrackIndex: 1);
             var newMidiFile = composition.Compose(compositionStrategy);
 
             newMidiFile.PlayAsync();

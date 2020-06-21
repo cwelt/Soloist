@@ -129,7 +129,7 @@ namespace CW.Soloist.CompositionService
         /// <remarks> Number of bars in midi file and chord progression must match exactly, and so do their durations. </remarks>
         /// <param name="chordProgressionFilePath"></param>
         /// <param name="midiFilePath"></param>
-        /// <param name="melodyTrackIndex"> Index of the existing melody track in the midi file, if one exists. 
+        /// <param name="melodyTrackIndex"> One-based Index of the existing melody track in the midi file, if one exists. 
         /// <para>
         /// When composing, the track with this index would be replaced by the new composed 
         /// melody track. If the current midi file is a pure playback that contains no existing
