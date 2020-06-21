@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CW.Soloist.CompositionService.Compositors
 {
     /// <summary>
-    /// Strategie for composing a melody.
+    /// Strategy algorithm for composing a melody.
     /// </summary>
     public enum CompositionStrategy
     {
