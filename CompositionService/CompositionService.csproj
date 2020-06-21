@@ -48,6 +48,7 @@
     <Compile Include="Composition.cs" />
     <Compile Include="CompositionParamsDTO.cs" />
     <Compile Include="Compositors\Arpeggiator\ArpeggiatorCompositor.cs" />
+    <Compile Include="Compositors\ArpeggioScaleMix\ArpeggioScaleMixCompositor.cs" />
     <Compile Include="Compositors\CompositionStrategy.cs" />
     <Compile Include="Compositors\CompositorExtensions.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\GeneticAlgorithmCompositor.cs" />

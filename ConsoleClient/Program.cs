@@ -33,7 +33,7 @@ namespace ConsoleClient
             string chordsFilePath = ConfigurationManager.AppSettings["chordsFile"];
 
             // set the strategy compositor 
-            CompositionStrategy compositionStrategy = CompositionStrategy.ArpeggiatorStrategy;
+            CompositionStrategy compositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy;
 
             // create a new composition with injected strategy
             var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: 1);

@@ -1,4 +1,5 @@
 ﻿using CW.Soloist.CompositionService.Compositors.Arpeggiator;
+using CW.Soloist.CompositionService.Compositors.ArpeggioScaleMix;
 using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Compositors.Scalerator;
 using CW.Soloist.CompositionService.Midi;
@@ -84,6 +85,8 @@ namespace CW.Soloist.CompositionService.Compositors
                     return new ArpeggiatorCompositor();
                 case CompositionStrategy.ScaleratorStrategy:
                     return new ScaleratorCompositor();
+                case CompositionStrategy.ArpeggioScaleMixStrategy:
+                    return new ArpeggioScaleMixCompositor();
                 default:
                     throw new NotImplementedException();
             }
@@ -96,8 +99,9 @@ namespace CW.Soloist.CompositionService.Compositors
 
         #region NoteSequenceInitializer()
         private protected void NoteSequenceInitializer(IEnumerable<IBar> bars, 
-            ChordNoteMappingSource mappingSource, 
-            NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
+            NoteSequenceMode mode = NoteSequenceMode.BarZigzag,
+            ChordNoteMappingSource mappingSource = ChordNoteMappingSource.Chord,
+            bool toggleMappingSource = true)
         {
             // durtion length of a single chord
             float chordDurationFraction;
@@ -139,6 +143,10 @@ namespace CW.Soloist.CompositionService.Compositors
                     // calculate amount of notes that fit in current chord 
                     chordDurationFraction = chord.Duration.Numerator / (float)(chord.Duration.Denominator);
                     numberOfNotes = (byte)(chordDurationFraction / DefaultDurationFraction);
+
+                    // update chord-note mapping source if toggle is requested
+                    if (toggleMappingSource)
+                        mappingSource = (ChordNoteMappingSource)(((int)(mappingSource) + 1) % 2);
 
                     // get the mapped notes under the requested mapping source and pitch range
                     if (mappingSource == ChordNoteMappingSource.Chord)
@@ -187,7 +195,7 @@ namespace CW.Soloist.CompositionService.Compositors
         private protected void ArpeggiatorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
         {
             // delegate the work to the generic method 
-            NoteSequenceInitializer(bars, mappingSource: ChordNoteMappingSource.Chord, mode);
+            NoteSequenceInitializer(bars, mode, mappingSource: ChordNoteMappingSource.Chord);
         }
         #endregion
 
@@ -195,7 +203,15 @@ namespace CW.Soloist.CompositionService.Compositors
         private protected void ScaleratorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
         {
             // delegate the work to the generic method 
-            NoteSequenceInitializer(bars, mappingSource: ChordNoteMappingSource.Scale, mode);
+            NoteSequenceInitializer(bars, mode, mappingSource: ChordNoteMappingSource.Scale);
+        }
+        #endregion
+
+        #region ScaleArpeggioeMixInitializer()
+        private protected void ScaleArpeggioeMixInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.ChordZigzag)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mode, mappingSource: ChordNoteMappingSource.Scale, toggleMappingSource: true); ;
         }
         #endregion
 

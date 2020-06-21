@@ -23,5 +23,9 @@ namespace CW.Soloist.CompositionService.Compositors
         /// <summary> Scale based strategy. </summary>
         [Description("Scale Based Strategy")]
         ScaleratorStrategy,
+
+        /// <summary> Mix of arpeggio-scale based strategy. </summary>
+        [Description("Arpeggio-Scale Based Mix Strategy")]
+        ArpeggioScaleMixStrategy,
     }
 }
