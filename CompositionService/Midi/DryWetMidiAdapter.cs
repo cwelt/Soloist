@@ -378,7 +378,7 @@ namespace CW.Soloist.CompositionService.Midi
         {
             var notes = (_midiContent.Chunks[trackIndex] as TrackChunk).GetNotes();
             lowestPitch = (NotePitch)(byte)(notes.Min(note => note.NoteNumber));
-            highestPitch = (NotePitch)(byte)(notes.Min(note => note.NoteNumber));
+            highestPitch = (NotePitch)(byte)(notes.Max(note => note.NoteNumber));
         }
         #endregion
 
