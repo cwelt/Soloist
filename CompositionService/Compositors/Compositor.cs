@@ -143,8 +143,8 @@ namespace CW.Soloist.CompositionService.Compositors
             // get candidate pitches according to mapping source and octave range
             IEnumerable<NotePitch> candidateNotes;
             if (mappingSource == ChordNoteMappingSource.Chord)
-                candidateNotes = chord.GetArpeggioNotes(MinOctave, MaxOctave);
-            else candidateNotes = chord.GetScaleNotes(MinOctave, MaxOctave);
+                candidateNotes = chord.GetArpeggioNotes(MinPitch, MaxPitch);
+            else candidateNotes = chord.GetScaleNotes(MinPitch, MaxPitch);
 
             // filter candidats according to specified semitone radius
             int pitchUpperBound = oldPitch + semitoneRadius;

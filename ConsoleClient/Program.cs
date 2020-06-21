@@ -2,6 +2,8 @@
 using CW.Soloist.CompositionService.Compositors;
 using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.CompositionService.MusicTheory;
+using CW.Soloist.CompositionService.UtilEnums;
 using System;
 using System.Configuration;
 using System.Globalization;
@@ -34,10 +36,16 @@ namespace ConsoleClient
             CompositionStrategy compositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy;
 
             // create a new composition with injected strategy
-            var composition = new Composition(filePath, chordsFilePath, melodyTrackIndex: 1);
-            var newMidiFile = composition.Compose(compositionStrategy);
+            var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: 1);
+            var newMidiFile = composition.Compose(
+                compositionStrategy,
+                overallNoteDurationFeel: CW.Soloist.CompositionService.UtilEnums.OverallNoteDurationFeel.Medium,
+                pitchRangeSource: PitchRangeSource.MidiFile,
+                minPitch: NotePitch.A0,
+                maxPitch: NotePitch.A2,
+                useExistingMelodyAsSeed: true);
 
-            newMidiFile.PlayAsync();
+            newMidiFile.Play();
             //newMidiFile.Stop();
         }
     }

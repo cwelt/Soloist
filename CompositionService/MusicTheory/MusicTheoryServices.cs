@@ -197,8 +197,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
         internal static IEnumerable<NotePitch> GetNotes(IChord chord, ChordNoteMappingSource mappingSource, int minOctave = 0, int maxOctave = 9)
         {
             int basePitch = MusicTheoryServices.SemitonesInOctave;
-            int minPitch = basePitch + (minOctave * MusicTheoryServices.SemitonesInOctave);
-            int maxPitch = basePitch + ((maxOctave + 1) * MusicTheoryServices.SemitonesInOctave) - 1;
+            NotePitch minPitch = (NotePitch)(basePitch + (minOctave * MusicTheoryServices.SemitonesInOctave));
+            NotePitch maxPitch = (NotePitch)(basePitch + ((maxOctave + 1) * MusicTheoryServices.SemitonesInOctave) - 1);
             return MusicTheoryServices.GetNotes(chord, mappingSource, minPitch, maxPitch);
         }
 
