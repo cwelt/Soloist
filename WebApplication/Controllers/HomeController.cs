@@ -1,4 +1,5 @@
-﻿using Microsoft.Ajax.Utilities;
+﻿using CW.Soloist.WebApplication.ActionFilters;
+using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -35,6 +36,7 @@ namespace SoloistWebClient.Controllers
             return Redirect(repositoryUrl);
         }
 
+        [CrawlerFilter]
         public ActionResult Contact()
         {
             ViewBag.Message = "Feel free to contact me in one of the following medium channels.";
