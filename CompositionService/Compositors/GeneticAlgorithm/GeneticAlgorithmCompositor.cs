@@ -122,7 +122,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// </summary>
         protected internal void Mutate(IEnumerable<IBar> melody)
         {
-            NoteSequenceInitializer(melody, NoteSequenceMode.ChordZigzag);
+            NoteSequenceInitializer(melody, NoteSequenceMode.ChordZigzag, toggleMappingSource: true);
 
             Random random = new Random();
             int NumberOfBars = melody.Count();

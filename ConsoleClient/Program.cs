@@ -40,10 +40,10 @@ namespace ConsoleClient
             var newMidiFile = composition.Compose(
                 compositionStrategy,
                 musicalInstrument: MusicalInstrument.AcousticGrandPiano,
-                overallNoteDurationFeel: OverallNoteDurationFeel.Extreme,
+                overallNoteDurationFeel: OverallNoteDurationFeel.Medium,
                 pitchRangeSource: PitchRangeSource.Custom,
-                minPitch: NotePitch.E2,
-                maxPitch: NotePitch.E8,
+                minPitch: NotePitch.E3,
+                maxPitch: NotePitch.E6,
                 useExistingMelodyAsSeed: false);
 
             newMidiFile.Play();
