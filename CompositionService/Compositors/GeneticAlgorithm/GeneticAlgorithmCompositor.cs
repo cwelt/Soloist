@@ -122,7 +122,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// </summary>
         protected internal void Mutate(IEnumerable<IBar> melody)
         {
-            ArppegiateUp(melody);
+            ArpeggiatorInitializer(melody, NoteSequenceMode.BarZigzag);
 
 
             Random random = new Random();
@@ -131,7 +131,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
             var melodyCandidate = _candidates[0];
 
-            for (int i = 0; i < melodyCandidate.Bars.Count; i++)
+            for (int i = 0; i < melodyCandidate.Bars.Count && false; i++)
             {
                 SyncopedNoteMutation(melodyCandidate);
                 PermutateNotes(melodyCandidate.Bars[random.Next(NumberOfBars)], permutation: Permutation.Shuffled);

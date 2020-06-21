@@ -1,4 +1,6 @@
-﻿using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
+﻿using CW.Soloist.CompositionService.Compositors.Arpeggiator;
+using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
+using CW.Soloist.CompositionService.Compositors.Scalerator;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
@@ -29,9 +31,9 @@ namespace CW.Soloist.CompositionService.Compositors
         internal IEnumerable<IBar> ChordProgression { get; private protected set; }
 
         /// <summary> Default duration denominator for a single note. </summary>
-        internal IDuration DefaultDuration { get; private protected set; } 
-        internal byte DefaultDurationDenomniator { get; private protected set; } 
-        internal float DefaultDurationFraction { get; private protected set; } 
+        internal IDuration DefaultDuration { get; private protected set; } = new Duration(1, Duration.EighthNoteDenominator);
+        internal byte DefaultDurationDenomniator { get; private protected set; } = Duration.EighthNoteDenominator;
+        internal float DefaultDurationFraction { get; private protected set; } = Duration.EighthNoteFraction;
 
         internal byte ShortestDuration { get; private protected set; } = 16;
 
@@ -79,12 +81,121 @@ namespace CW.Soloist.CompositionService.Compositors
                 case CompositionStrategy.GeneticAlgorithmStrategy:
                     return new GeneticAlgorithmCompositor();
                 case CompositionStrategy.ArpeggiatorStrategy:
-                    throw new NotImplementedException();
-                case CompositionStrategy.ScaleStrategy:
-                    throw new NotImplementedException();
+                    return new ArpeggiatorCompositor();
+                case CompositionStrategy.ScaleratorStrategy:
+                    return new ScaleratorCompositor();
                 default:
                     throw new NotImplementedException();
             }
+        }
+        #endregion
+
+
+
+
+
+        #region NoteSequenceInitializer()
+        private protected void NoteSequenceInitializer(IEnumerable<IBar> bars, 
+            ChordNoteMappingSource mappingSource, 
+            NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
+        {
+            // durtion length of a single chord
+            float chordDurationFraction;
+
+            // number of notes of default duration length that fit in chord's duration length
+            byte numberOfNotes;
+
+            // indices for the collection of the mapped notes  
+            int j = 0, first, middle, last;
+
+            // the mapped note pitches for a given chord 
+            NotePitch[] chordMappedNotes;
+
+            // last played pitch on the previous chord. initialize to middle pitch in range
+            NotePitch prevChordLastPitch = (NotePitch)((byte)Math.Floor((byte)MinPitch + (byte)MaxOctave / 2F));
+
+            // closest pitch to the previous chord's last pitch 
+            NotePitch closestPitch;
+
+            // step for incrementing/decrementing note index in a given iteration 
+            int step = ((mode == NoteSequenceMode.Ascending) ? 1 : -1);
+
+            // populate bars with mapped notes 
+            foreach (IBar bar in bars)
+            {
+                // remove any old existing "garbage" notes 
+                bar.Notes.Clear();
+
+                // if BAR zigzag mode is requested, toggle step direction on each bar change 
+                if (mode == NoteSequenceMode.BarZigzag)
+                    step *= -1;
+
+                foreach (IChord chord in bar.Chords)
+                {
+                    // if CHORD zigzag mode is requested, toggle step direction on each chord change 
+                    if (mode == NoteSequenceMode.ChordZigzag)
+                        step *= -1;
+
+                    // calculate amount of notes that fit in current chord 
+                    chordDurationFraction = chord.Duration.Numerator / (float)(chord.Duration.Denominator);
+                    numberOfNotes = (byte)(chordDurationFraction / DefaultDurationFraction);
+
+                    // get the mapped notes under the requested mapping source and pitch range
+                    if (mappingSource == ChordNoteMappingSource.Chord)
+                        chordMappedNotes = chord.GetArpeggioNotes(MinPitch, MaxPitch).ToArray();
+                    else chordMappedNotes = chord.GetScaleNotes(MinPitch, MaxPitch).ToArray();
+                    
+                    // initialize indices for the mapped notes collection 
+                    first = 0;
+                    middle = chordMappedNotes.Length / 2;
+                    last = chordMappedNotes.Length - 1;
+
+                    // in zigzag mode, continue the sequence flow from last note 
+                    if (mode == NoteSequenceMode.BarZigzag || mode == NoteSequenceMode.ChordZigzag)
+                    {
+                        /* select the closest pitch to previous chord's last pitch from within 
+                         * the current chord mapped notes collection */
+                        closestPitch = chordMappedNotes
+                            .First(pitch1 => Math.Abs((byte)pitch1 - (byte)prevChordLastPitch)
+                            .Equals(chordMappedNotes.Min(pitch2 =>
+                                             Math.Abs((byte)pitch2 - (byte)prevChordLastPitch))));
+
+                        // set index of next note to continue as close as possible to last played note 
+                        j = Array.IndexOf(chordMappedNotes, closestPitch);
+                    }
+
+                    // if not zigzag mode, just reset index back to middle of the collection 
+                    else j = middle;
+
+                    // do the actual note population in current bar from the mapped collection 
+                    for (int i = 0; i < numberOfNotes; i++)
+                    {
+                        bar.Notes.Add(new Note(chordMappedNotes[j], DefaultDuration));
+                        if (j == first || j == last)
+                            j = middle;
+                        else j += step;
+                    }
+
+                    // save last played pitch from the last chord
+                    prevChordLastPitch = bar.Notes[bar.Notes.Count - 1].Pitch;
+                }
+            }
+        }
+        #endregion
+
+        #region ArpeggiatorInitializer()
+        private protected void ArpeggiatorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mappingSource: ChordNoteMappingSource.Chord, mode);
+        }
+        #endregion
+
+        #region ScaleInitializer()
+        private protected void ScaleratorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mappingSource: ChordNoteMappingSource.Scale, mode);
         }
         #endregion
 

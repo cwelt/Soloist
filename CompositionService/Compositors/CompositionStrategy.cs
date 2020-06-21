@@ -20,8 +20,8 @@ namespace CW.Soloist.CompositionService.Compositors
         [Description("Arpeggio Based Strategy")]
         ArpeggiatorStrategy,
 
-        /// <summary> Scale ased strategy. </summary>
+        /// <summary> Scale based strategy. </summary>
         [Description("Scale Based Strategy")]
-        ScaleStrategy,
+        ScaleratorStrategy,
     }
 }

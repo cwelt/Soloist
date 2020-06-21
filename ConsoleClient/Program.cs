@@ -33,17 +33,18 @@ namespace ConsoleClient
             string chordsFilePath = ConfigurationManager.AppSettings["chordsFile"];
 
             // set the strategy compositor 
-            CompositionStrategy compositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy;
+            CompositionStrategy compositionStrategy = CompositionStrategy.ArpeggiatorStrategy;
 
             // create a new composition with injected strategy
             var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: 1);
             var newMidiFile = composition.Compose(
                 compositionStrategy,
-                overallNoteDurationFeel: CW.Soloist.CompositionService.UtilEnums.OverallNoteDurationFeel.Medium,
-                pitchRangeSource: PitchRangeSource.MidiFile,
-                minPitch: NotePitch.A0,
-                maxPitch: NotePitch.A2,
-                useExistingMelodyAsSeed: true);
+                musicalInstrument: MusicalInstrument.AcousticGrandPiano,
+                overallNoteDurationFeel: OverallNoteDurationFeel.Extreme,
+                pitchRangeSource: PitchRangeSource.Custom,
+                minPitch: NotePitch.E2,
+                maxPitch: NotePitch.E8,
+                useExistingMelodyAsSeed: false);
 
             newMidiFile.Play();
             //newMidiFile.Stop();

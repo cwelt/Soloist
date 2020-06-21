@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Composition.cs" />
     <Compile Include="CompositionParamsDTO.cs" />
+    <Compile Include="Compositors\Arpeggiator\ArpeggiatorCompositor.cs" />
     <Compile Include="Compositors\CompositionStrategy.cs" />
     <Compile Include="Compositors\CompositorExtensions.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\GeneticAlgorithmCompositor.cs" />
@@ -54,7 +55,9 @@
     <Compile Include="Compositors\GeneticAlgorithm\Initializers.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\MelodyCandidate.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\Mutations.cs" />
+    <Compile Include="Compositors\Scalerator\ScaleratorCompositor.cs" />
     <Compile Include="ICompositionParamsDTO.cs" />
+    <Compile Include="UtilEnums\NodeSequenceMode.cs" />
     <Compile Include="UtilEnums\DurationSplitRatio.cs" />
     <Compile Include="UtilEnums\OverallDurationFeel.cs" />
     <Compile Include="UtilEnums\Permutation.cs" />
