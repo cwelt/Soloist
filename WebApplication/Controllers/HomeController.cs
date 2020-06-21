@@ -18,7 +18,11 @@ namespace SoloistWebClient.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            return View();
+        }
+
+        public ActionResult Documentation()
+        {
             return View();
         }
 

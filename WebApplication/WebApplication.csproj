@@ -162,6 +162,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\CompositionController.cs" />
     <Compile Include="Filters\ActionFilters\CrawlerFilter.cs" />
     <Compile Include="Filters\ExceptionFilters\CustomExceptionHandler.cs" />
     <Compile Include="Filters\ActionFilters\LogRequestFilter.cs" />
@@ -205,6 +206,8 @@
     <Content Include="Content\site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\soloist - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\soloist - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -254,6 +257,8 @@
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\Home\SourceCode.cshtml" />
     <Content Include="Views\Shared\Error500.html" />
+    <Content Include="Views\Home\Documentation.cshtml" />
+    <Content Include="Views\Composition\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

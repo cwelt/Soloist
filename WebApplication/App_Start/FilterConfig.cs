@@ -10,8 +10,8 @@ namespace WebApplication
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
 
-            /* filters.Add(new HandleErrorAttribute()); */
-            filters.Add(new CustomExceptionHandler());
+            filters.Add(new HandleErrorAttribute()); 
+            //filters.Add(new CustomExceptionHandler());
 
             // configure the custom action log request filter
             filters.Add(new LogRequestFilter());

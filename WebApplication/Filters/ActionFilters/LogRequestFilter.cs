@@ -29,12 +29,12 @@ namespace CW.Soloist.WebApplication.Filters.ActionFilters
             Debug.WriteLine(loggedAction);
             
 
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\SoloistWebSiteRequestLog.txt";
+            //string path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\;
 
-            using (StreamWriter streamWriter = File.AppendText(path))
+/*            using (StreamWriter streamWriter = File.AppendText("SoloistWebSiteRequestLog.txt"))
             {
                 streamWriter.WriteLine(loggedAction);
-            }
+            }*/
         }
     }
 }
