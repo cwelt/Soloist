@@ -1,8 +1,48 @@
-﻿
+﻿@model CW.Soloist.WebApplication.ViewModels.CompositionParamsViewModel
+
 @{
     ViewBag.Title = "Composition";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>@ViewBag.Title</h2>
+
+
+@using (Html.BeginForm("Compose", "Composition"))
+{
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.MusicalInstrument)
+        @Html.EnumDropDownListFor(m => m.OverallNoteDurationFeel, "Select Overall Feel")
+        @Html.ValidationMessageFor(m => m.OverallNoteDurationFeel)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.MusicalInstrument)
+        @Html.EnumDropDownListFor(m => m.MusicalInstrument, "Select Musical Instrument")
+        @Html.ValidationMessageFor(m => m.MusicalInstrument)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.MinPitch)
+        @Html.EnumDropDownListFor(m => m.MinPitch, "Select Minimum Pitch")
+        @Html.ValidationMessageFor(m => m.MinPitch)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.MaxPitch)
+        @Html.EnumDropDownListFor(m => m.MaxPitch, "Select Maximum Pitch")
+        @Html.ValidationMessageFor(m => m.MaxPitch)
+    </div>
+
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-primary">Submit</button>
+}
+
+
+@* Client Side Validations *@
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
 
