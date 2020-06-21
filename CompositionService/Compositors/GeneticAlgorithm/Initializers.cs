@@ -11,28 +11,26 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
     {
         private protected void ArppegiateUp(IEnumerable<IBar> bars)
         {
-            float basicDuration = Duration.SixteenthNote;
-            IDuration defaultDuration = new Duration(1, 16);
-            float chordDuration;
+            float chordDurationFraction;
             byte numberOfNotes;
             byte middlePitch = (byte)Math.Floor((byte)MinPitch + (byte)MaxOctave / 2F);
             
                 foreach (IBar bar in bars)
             {
-                bar.Notes.Clear(); // for testing purposes
+                bar.Notes.Clear(); 
                 foreach (IChord chord in bar.Chords)
                 {
-                    chordDuration = chord.Duration.Numerator / (float)(chord.Duration.Denominator);
-                    numberOfNotes = (byte)(chordDuration / basicDuration);
+                    chordDurationFraction = chord.Duration.Numerator / (float)(chord.Duration.Denominator);
+                    numberOfNotes = (byte)(chordDurationFraction / DefaultDurationFraction);
 
-                    var chordNotes = chord.GetArpeggioNotes(MinOctave, MaxOctave).ToArray();
+                    var chordNotes = chord.GetArpeggioNotes(MinPitch, MaxPitch).ToArray();
                     int middle = chordNotes.Length / 2;
                     int step = 1;
 
                     // get middle root chordNotes.
                     for ( int i = 0, j = middle; i < numberOfNotes; i++)
                     {
-                        bar.Notes.Add(new Note(chordNotes[j], defaultDuration));
+                        bar.Notes.Add(new Note(chordNotes[j], DefaultDuration));
                         if (j == chordNotes.Length - 1)
                             j = middle;
                         else j++;

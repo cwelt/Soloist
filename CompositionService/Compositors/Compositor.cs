@@ -29,7 +29,9 @@ namespace CW.Soloist.CompositionService.Compositors
         internal IEnumerable<IBar> ChordProgression { get; private protected set; }
 
         /// <summary> Default duration denominator for a single note. </summary>
-        internal byte DefaultDuration { get; private protected set; } = 8;
+        internal IDuration DefaultDuration { get; private protected set; } 
+        internal byte DefaultDurationDenomniator { get; private protected set; } 
+        internal float DefaultDurationFraction { get; private protected set; } 
 
         internal byte ShortestDuration { get; private protected set; } = 16;
 

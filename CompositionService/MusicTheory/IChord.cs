@@ -27,7 +27,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <summary>
         /// Returns an enumerator that can be used to iterate through the collection 
         /// of all note pitches which correspond to this chord's root and type, 
-        /// and fullfill the requested octave range constraint. 
+        /// and fullfill the requested range constraint. 
         /// </summary>
         /// <param name="minOctave"> Minimum octave for note pitches.</param>
         /// <param name="maxOctave"> Maximum octave for note pitches</param>
@@ -37,10 +37,17 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// </returns>
         IEnumerable<NotePitch> GetArpeggioNotes(int minOctave, int maxOctave);
 
+        /// <summary> <inheritdoc cref="GetArpeggioNotes(int, int)"/> </summary>
+        /// <param name="minPitch"> Lowest bound for note pitches height.</param>
+        /// <param name="maxPitch"> Heighest bound for note pitches height. </param>
+        /// <returns> <inheritdoc cref="GetArpeggioNotes(int, int)"/> </returns>
+        IEnumerable<NotePitch> GetArpeggioNotes(NotePitch minPitch, NotePitch maxPitch);
+
+
         /// <summary>
         /// Returns an enumerator that can be used to iterate through the collection 
         /// of all note pitches which correspond to this chord's root and type mapping scale, 
-        /// and fullfill the requested octave range constraint. 
+        /// and fullfill the requested range constraint. 
         /// </summary>
         /// <param name="minOctave"> Minimum octave for note pitches.</param>
         /// <param name="maxOctave"> Maximum octave for note pitches</param>
@@ -49,5 +56,11 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// Only note pitches which are within the requested range are enumerated. 
         /// </returns>
         IEnumerable<NotePitch> GetScaleNotes(int minOctave, int maxOctave);
+
+        /// <summary> <inheritdoc cref="GetScaleNotes(int, int)"/> </summary>
+        /// <param name="minPitch"> Lowest bound for note pitches height.</param>
+        /// <param name="maxPitch"> Highest bound for note pitches height</param>
+        /// <returns> <inheritdoc cref="GetScaleNotes(int, int)"/> </returns>
+        IEnumerable<NotePitch> GetScaleNotes(NotePitch minPitch, NotePitch maxPitch);
     }
 }

@@ -20,14 +20,22 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// </remarks>
     internal class Duration : IDuration
     {
-        internal const float WholeNote = 1F;
-        internal const float HalfNote = 0.5F;
-        internal const float QuaterNote = 0.25F;
-        internal const float EighthNote = 0.125F;
-        internal const float SixteenthNote = 0.0625F;
-        internal const float ThirtySecondNote = 0.03125F;
-        internal const float TripletEighthNote = 1 / 12;
-        internal const float TripletSixteenthNote = 1 / 24;
+        internal const float WholeNoteFraction = 1F;
+        internal const float HalfNoteFraction = 0.5F;
+        internal const float QuaterNoteFraction = 0.25F;
+        internal const float EighthNoteFraction = 0.125F;
+        internal const float SixteenthNoteFraction = 0.0625F;
+        internal const float ThirtySecondNoteFraction = 0.03125F;
+        internal const float TripletEighthNoteFraction = 1 / 12;
+        internal const float TripletSixteenthNoteFraction = 1 / 24;
+        internal const byte WholeNoteDenominator = 1;
+        internal const byte HalfNoteDenominator = 2;
+        internal const byte QuaterNoteDenominator = 4;
+        internal const byte EighthNoteDenominator = 8;
+        internal const byte SixteenthNoteDenominator = 16;
+        internal const byte ThirtySecondNoteDenominator = 32;
+        internal const byte TripletEighthNoteDenominator = 12;
+        internal const byte TripletSixteenthNoteDenominator = 24;
 
         /// <summary> Number of beats </summary>
         public byte Numerator { get; set; }

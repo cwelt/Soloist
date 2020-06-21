@@ -224,7 +224,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
              * note pitch, and make original note hold the note from preceding bar: */
 
             // case 1: preceding note's length is too short for splitting (8th note or shorter) - replace it directly
-            if ((precedingNote.Duration.Numerator / (float)precedingNote.Duration.Denominator) <= Duration.EighthNote)
+            if ((precedingNote.Duration.Numerator / (float)precedingNote.Duration.Denominator) <= Duration.EighthNoteFraction)
             {
                 INote newPrecedingNote = new Note(originalNote.Pitch, precedingNote.Duration);
                 precedingBar.Notes.RemoveAt(precedingNoteIndex);

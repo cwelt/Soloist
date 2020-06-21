@@ -29,9 +29,18 @@ namespace CW.Soloist.CompositionService.MusicTheory
             return MusicTheoryServices.GetNotes(this, ChordNoteMappingSource.Chord, minOctave, maxOctave);
         }
 
+        public IEnumerable<NotePitch> GetArpeggioNotes(NotePitch minPitch, NotePitch maxPitch)
+        {
+            return MusicTheoryServices.GetNotes(this, ChordNoteMappingSource.Chord, minPitch, maxPitch);
+        }
+
         public IEnumerable<NotePitch> GetScaleNotes(int minOctave, int maxOctave)
         {
             return MusicTheoryServices.GetNotes(this, ChordNoteMappingSource.Scale, minOctave, maxOctave);
+        }
+        public IEnumerable<NotePitch> GetScaleNotes(NotePitch minPitch, NotePitch maxPitch)
+        {
+            return MusicTheoryServices.GetNotes(this, ChordNoteMappingSource.Scale, minPitch, maxPitch);
         }
 
         public override string ToString()

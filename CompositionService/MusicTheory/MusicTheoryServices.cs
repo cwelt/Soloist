@@ -78,11 +78,12 @@ namespace CW.Soloist.CompositionService.MusicTheory
             return MusicTheoryServices.GetNotes(chord, mappingSource, minOctave, maxOctave);
         }
 
-        internal static IEnumerable<NotePitch> GetNotes(IChord chord, ChordNoteMappingSource mappingSource, int minOctave = 0, int maxOctave = 9)
+        internal static IEnumerable<NotePitch> GetNotes(IChord chord, ChordNoteMappingSource mappingSource, NotePitch minPitch, NotePitch maxPitch)
         {
+            // build the scale (sequence of intervals from the chord's root note)
             var rootNote = ConvertToExternalNoteName(chord.ChordRoot);
             Scale scale = null;
-
+            
             switch (chord.ChordType)
             {
                 case ChordType.Diminished:
@@ -185,15 +186,22 @@ namespace CW.Soloist.CompositionService.MusicTheory
                     break;
             }
 
-            int basePitch = MusicTheoryServices.SemitonesInOctave;
-            int minPitch = basePitch + (minOctave * MusicTheoryServices.SemitonesInOctave);
-            int maxPitch = basePitch + ((maxOctave + 1) * MusicTheoryServices.SemitonesInOctave) - 1;
+            // get actual notes and filter out results according to range constraints
             var result = from note in scale.GetNotes()
-                         where (int)note.NoteNumber >= minPitch && (int)note.NoteNumber <= maxPitch
+                         where (int)note.NoteNumber >= (byte)minPitch && (int)note.NoteNumber <= (byte)maxPitch
                          select (NotePitch)(int)note.NoteNumber;
 
             return result;
         }
+
+        internal static IEnumerable<NotePitch> GetNotes(IChord chord, ChordNoteMappingSource mappingSource, int minOctave = 0, int maxOctave = 9)
+        {
+            int basePitch = MusicTheoryServices.SemitonesInOctave;
+            int minPitch = basePitch + (minOctave * MusicTheoryServices.SemitonesInOctave);
+            int maxPitch = basePitch + ((maxOctave + 1) * MusicTheoryServices.SemitonesInOctave) - 1;
+            return MusicTheoryServices.GetNotes(chord, mappingSource, minPitch, maxPitch);
+        }
+
 
         internal static IDuration DurationAritmetic(AritmeticOperation operation, IDuration duration1, IDuration duration2)
         {

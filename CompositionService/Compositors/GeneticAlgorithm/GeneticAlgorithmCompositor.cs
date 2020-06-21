@@ -38,6 +38,28 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             MinPitch = minPitch;
             MaxPitch = maxPitch;
 
+            switch (overallNoteDurationFeel)
+            {
+                case OverallNoteDurationFeel.Slow:
+                    DefaultDurationFraction = Duration.QuaterNoteFraction;
+                    DefaultDurationDenomniator = Duration.QuaterNoteDenominator;
+                    break;
+                case OverallNoteDurationFeel.Medium:
+                default:
+                    DefaultDurationFraction = Duration.EighthNoteFraction;
+                    DefaultDurationDenomniator = Duration.EighthNoteDenominator; 
+                    break;
+                case OverallNoteDurationFeel.Intense:
+                    DefaultDurationFraction = Duration.SixteenthNoteFraction;
+                    DefaultDurationDenomniator = Duration.SixteenthNoteDenominator;
+                    break;
+                case OverallNoteDurationFeel.Extreme:
+                    DefaultDurationFraction = Duration.ThirtySecondNoteFraction;
+                    DefaultDurationDenomniator = Duration.ThirtySecondNoteDenominator;
+                    break;
+            }
+            DefaultDuration = new Duration(1, DefaultDurationDenomniator);
+
             // get first generatiion 
             PopulateFirstGeneration();
 
@@ -101,8 +123,8 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         protected internal void Mutate(IEnumerable<IBar> melody)
         {
             ArppegiateUp(melody);
-            
-            
+
+
             Random random = new Random();
             int NumberOfBars = melody.Count();
             int randomBarIndex = random.Next(NumberOfBars);
