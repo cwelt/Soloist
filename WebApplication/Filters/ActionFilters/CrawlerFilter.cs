@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace CW.Soloist.WebApplication.ActionFilters
+namespace CW.Soloist.WebApplication.Filters.ActionFilters
 {
     /// <summary>
     /// Filter for blocking access to requests that come from 

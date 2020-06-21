@@ -162,8 +162,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionFilters\CrawlerFilter.cs" />
-    <Compile Include="ActionFilters\LogRequestFilter.cs" />
+    <Compile Include="Filters\ActionFilters\CrawlerFilter.cs" />
+    <Compile Include="Filters\ExceptionFilters\CustomExceptionHandler.cs" />
+    <Compile Include="Filters\ActionFilters\LogRequestFilter.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -215,6 +216,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Views\Shared\Error404.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -251,6 +253,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\Home\SourceCode.cshtml" />
+    <Content Include="Views\Shared\Error500.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

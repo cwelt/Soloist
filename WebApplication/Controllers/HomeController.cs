@@ -1,4 +1,4 @@
-﻿using CW.Soloist.WebApplication.ActionFilters;
+﻿using CW.Soloist.WebApplication.Filters.ActionFilters;
 using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,6 @@ namespace SoloistWebClient.Controllers
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-
             return View();
         }
 
