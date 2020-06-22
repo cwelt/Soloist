@@ -240,7 +240,7 @@ namespace CW.Soloist.CompositionService
             MidiOutputFile.EmbedMelody(composedMelody, musicalInstrument);
 
             // save output
-            MidiOutputFile.SaveFile(fileNamePrefix: _midiInputFileName);
+            //MidiOutputFile.SaveFile(fileNamePrefix: _midiInputFileName);
 
             return MidiOutputFile;
         }
