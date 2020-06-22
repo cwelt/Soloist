@@ -2,7 +2,6 @@
 using CW.Soloist.CompositionService.Compositors.ArpeggioScaleMix;
 using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Compositors.Scalerator;
-using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
 using System;
@@ -23,13 +22,13 @@ namespace CW.Soloist.CompositionService.Compositors
     public abstract class Compositor
     {
         /// <summary> Melody seed to base on the composition of the new melody. </summary>
-        internal IEnumerable<IBar> Seed { get; private protected set; }
+        internal IList<IBar> Seed { get; private protected set; }
 
         /// <summary> The outcome of the <see cref="Compose"/> method. </summary>
-        internal IEnumerable<IBar> ComposedMelody { get; private protected set; }
+        internal IList<IBar> ComposedMelody { get; private protected set; }
 
         /// <summary> The playback's harmony. </summary>
-        internal IEnumerable<IBar> ChordProgression { get; private protected set; }
+        internal IList<IBar> ChordProgression { get; private protected set; }
 
         /// <summary> Default duration denominator for a single note. </summary>
         internal IDuration DefaultDuration { get; private protected set; } = new Duration(1, Duration.EighthNoteDenominator);
@@ -60,12 +59,57 @@ namespace CW.Soloist.CompositionService.Compositors
         /// <param name="minPitch"> Lowest bound of a note pitch for the composition. </param>
         /// <param name="maxPitch"> Upper bound of a note pitch for the composition. </param>
         /// <returns> The composition of solo-melody</returns>
-        internal abstract IList<IBar> Compose(
+        internal IList<IBar> Compose(
             IList<IBar> chordProgression,
             IList<IBar> melodyInitializationSeed = null,
             OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
             NotePitch minPitch = NotePitch.E2,
-            NotePitch maxPitch = NotePitch.E6);
+            NotePitch maxPitch = NotePitch.E6)
+        {
+            InitializeCompositionParams(chordProgression, melodyInitializationSeed, overallNoteDurationFeel, minPitch, maxPitch);
+
+            return GenerateMelody();
+        }
+
+
+        private protected abstract IList<IBar> GenerateMelody();
+        private protected virtual void InitializeCompositionParams(
+            IList<IBar> chordProgression,
+            IList<IBar> melodyInitializationSeed = null,
+            OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
+            NotePitch minPitch = NotePitch.E2,
+            NotePitch maxPitch = NotePitch.E6)
+        {
+            // initialize general parameters for the algorithm 
+            ChordProgression = chordProgression;
+            Seed = melodyInitializationSeed;
+            MinPitch = minPitch;
+            MaxPitch = maxPitch;
+
+            switch (overallNoteDurationFeel)
+            {
+                case OverallNoteDurationFeel.Slow:
+                    DefaultDurationFraction = Duration.QuaterNoteFraction;
+                    DefaultDurationDenomniator = Duration.QuaterNoteDenominator;
+                    break;
+                case OverallNoteDurationFeel.Medium:
+                default:
+                    DefaultDurationFraction = Duration.EighthNoteFraction;
+                    DefaultDurationDenomniator = Duration.EighthNoteDenominator;
+                    break;
+                case OverallNoteDurationFeel.Intense:
+                    DefaultDurationFraction = Duration.SixteenthNoteFraction;
+                    DefaultDurationDenomniator = Duration.SixteenthNoteDenominator;
+                    break;
+                case OverallNoteDurationFeel.Extreme:
+                    DefaultDurationFraction = Duration.ThirtySecondNoteFraction;
+                    DefaultDurationDenomniator = Duration.ThirtySecondNoteDenominator;
+                    break;
+            }
+            DefaultDuration = new Duration(1, DefaultDurationDenomniator);
+        }
+
+
 
 
         #region CreateCompositor()

@@ -10,15 +10,10 @@ namespace CW.Soloist.CompositionService.Compositors.Arpeggiator
 {
     internal class ArpeggiatorCompositor : Compositor
     {
-        internal override IList<IBar> Compose(
-            IList<IBar> chordProgression, 
-            IList<IBar> melodyInitializationSeed = null, 
-            OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium, 
-            NotePitch minPitch = NotePitch.E2,
-            NotePitch maxPitch = NotePitch.E6)
+        private protected override IList<IBar> GenerateMelody()
         {
-            ArpeggiatorInitializer(chordProgression);
-            return chordProgression;
+            ArpeggiatorInitializer(ChordProgression);
+            return ChordProgression;
         }
     }
 }

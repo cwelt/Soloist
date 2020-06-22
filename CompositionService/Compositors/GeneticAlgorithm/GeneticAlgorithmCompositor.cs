@@ -19,47 +19,20 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         {
             _mutations = new Action<MelodyCandidate, int?>[10];
 
+
+        }
+
+        private protected override void InitializeCompositionParams(IList<IBar> chordProgression, IList<IBar> melodyInitializationSeed = null, OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium, NotePitch minPitch = NotePitch.E2, NotePitch maxPitch = NotePitch.E6)
+        {
+            base.InitializeCompositionParams(chordProgression, melodyInitializationSeed, overallNoteDurationFeel, minPitch, maxPitch);
+            _candidates = new List<MelodyCandidate>(120);
+            _currentGeneration = 1;
         }
 
 
         /// <inheritdoc/>
-        internal override IList<IBar> Compose(
-            IList<IBar> chordProgression,
-            IList<IBar> melodyInitializationSeed = null,
-            OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
-            NotePitch minPitch = NotePitch.E2,
-            NotePitch maxPitch = NotePitch.E6)
+        private protected override IList<IBar> GenerateMelody()
         {
-            // initialize general parameters for the algorithm 
-            _candidates = new List<MelodyCandidate>(120);
-            _currentGeneration = 1;
-            ChordProgression = chordProgression;
-            Seed = melodyInitializationSeed;
-            MinPitch = minPitch;
-            MaxPitch = maxPitch;
-
-            switch (overallNoteDurationFeel)
-            {
-                case OverallNoteDurationFeel.Slow:
-                    DefaultDurationFraction = Duration.QuaterNoteFraction;
-                    DefaultDurationDenomniator = Duration.QuaterNoteDenominator;
-                    break;
-                case OverallNoteDurationFeel.Medium:
-                default:
-                    DefaultDurationFraction = Duration.EighthNoteFraction;
-                    DefaultDurationDenomniator = Duration.EighthNoteDenominator; 
-                    break;
-                case OverallNoteDurationFeel.Intense:
-                    DefaultDurationFraction = Duration.SixteenthNoteFraction;
-                    DefaultDurationDenomniator = Duration.SixteenthNoteDenominator;
-                    break;
-                case OverallNoteDurationFeel.Extreme:
-                    DefaultDurationFraction = Duration.ThirtySecondNoteFraction;
-                    DefaultDurationDenomniator = Duration.ThirtySecondNoteDenominator;
-                    break;
-            }
-            DefaultDuration = new Duration(1, DefaultDurationDenomniator);
-
             // get first generatiion 
             PopulateFirstGeneration();
 

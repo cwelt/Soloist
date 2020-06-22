@@ -10,15 +10,10 @@ namespace CW.Soloist.CompositionService.Compositors.Scalerator
 {
     internal class ScaleratorCompositor : Compositor
     {
-        internal override IList<IBar> Compose(
-            IList<IBar> chordProgression,
-            IList<IBar> melodyInitializationSeed = null,
-            OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
-            NotePitch minPitch = NotePitch.E2,
-            NotePitch maxPitch = NotePitch.E6)
+        private protected override IList<IBar> GenerateMelody()
         {
-            ScaleratorInitializer(chordProgression);
-            return chordProgression;
+            ScaleratorInitializer(ChordProgression);
+            return ChordProgression;
         }
     }
 }
