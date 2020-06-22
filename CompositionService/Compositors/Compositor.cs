@@ -201,19 +201,67 @@ namespace CW.Soloist.CompositionService.Compositors
         }
         #endregion
 
-        #region ArpeggiatorInitializer()
+        #region Arpeggiator Initializers
         private protected void ArpeggiatorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode, mappingSource: ChordNoteMappingSource.Chord);
         }
+
+        private protected void ArpeggiatorInitializerAscending(IEnumerable<IBar> bars)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mode: NoteSequenceMode.Ascending, mappingSource: ChordNoteMappingSource.Chord);
+        }
+
+        private protected void ArpeggiatorInitializerDescending(IEnumerable<IBar> bars)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mode: NoteSequenceMode.Descending, mappingSource: ChordNoteMappingSource.Chord);
+        }
+
+        private protected void ArpeggiatorInitializerChordZigzag(IEnumerable<IBar> bars)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mode: NoteSequenceMode.ChordZigzag, mappingSource: ChordNoteMappingSource.Chord);
+        }
+
+        private protected void ArpeggiatorInitializerBarZigzag(IEnumerable<IBar> bars)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mode: NoteSequenceMode.BarZigzag, mappingSource: ChordNoteMappingSource.Chord);
+        }
         #endregion
 
-        #region ScaleInitializer()
+        #region Scale Initializers
         private protected void ScaleratorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode, mappingSource: ChordNoteMappingSource.Scale);
+        }
+
+        private protected void ScaleratorInitializerAscending(IEnumerable<IBar> bars)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mode: NoteSequenceMode.Ascending, mappingSource: ChordNoteMappingSource.Scale);
+        }
+
+        private protected void ScaleratorInitializerDescending(IEnumerable<IBar> bars)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mode: NoteSequenceMode.Descending, mappingSource: ChordNoteMappingSource.Scale);
+        }
+
+        private protected void ScaleratorInitializerChordZigzag(IEnumerable<IBar> bars)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mode: NoteSequenceMode.ChordZigzag, mappingSource: ChordNoteMappingSource.Scale);
+        }
+
+        private protected void ScaleratorInitializerBarZigzag(IEnumerable<IBar> bars)
+        {
+            // delegate the work to the generic method 
+            NoteSequenceInitializer(bars, mode: NoteSequenceMode.BarZigzag, mappingSource: ChordNoteMappingSource.Scale);
         }
         #endregion
 
@@ -303,9 +351,6 @@ namespace CW.Soloist.CompositionService.Compositors
             int indexOfOldNoteInBar = bar.Notes.IndexOf(oldNote);
             bar.Notes.RemoveAt(indexOfOldNoteInBar);
             bar.Notes.Insert(indexOfOldNoteInBar, newNote);
-
-            // print to log 
-            Console.WriteLine($"chord {chord.ChordRoot}{chord.ChordType} - old: {oldNote.Pitch}, new: {newPitch}");
 
             // indicate that a change has been made
             return true;

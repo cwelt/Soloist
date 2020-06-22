@@ -39,12 +39,14 @@ namespace ConsoleClient
             var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: 1);
             var newMidiFile = composition.Compose(
                 compositionStrategy,
-                musicalInstrument: MusicalInstrument.AcousticGrandPiano,
-                overallNoteDurationFeel: OverallNoteDurationFeel.Medium,
-                pitchRangeSource: PitchRangeSource.Custom,
-                minPitch: NotePitch.E3,
+                musicalInstrument: MusicalInstrument.ElectricPiano1,
+                overallNoteDurationFeel: OverallNoteDurationFeel.Intense,
+                pitchRangeSource: PitchRangeSource.MidiFile,
+                minPitch: NotePitch.E2,
                 maxPitch: NotePitch.E6,
                 useExistingMelodyAsSeed: false);
+
+            newMidiFile.SaveFile(fileNamePrefix: "consoleTest");
 
             newMidiFile.Play();
             //newMidiFile.Stop();

@@ -52,6 +52,7 @@
     <Compile Include="Compositors\CompositionStrategy.cs" />
     <Compile Include="Compositors\CompositorExtensions.cs" />
     <Compile Include="Compositors\CompositorFactory.cs" />
+    <Compile Include="Compositors\GeneticAlgorithm\Crossovers.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\GeneticAlgorithmCompositor.cs" />
     <Compile Include="Compositors\Compositor.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\Initializers.cs" />

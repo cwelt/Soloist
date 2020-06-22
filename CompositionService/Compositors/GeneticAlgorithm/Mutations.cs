@@ -158,6 +158,40 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         }
         #endregion
 
+        #region ToggleToHoldNoteMutation()
+        private protected virtual void ToggleToHoldNoteMutation(MelodyCandidate melody, int? barIndex)
+        {
+            // intialize random generator 
+            Random random = new Random();
+
+            // fetch the requested bar randomly select one if no specific bar is requested 
+            barIndex = barIndex ?? random.Next(melody.Bars.Count);
+            IBar selectedBar = melody.Bars[(int)barIndex];
+
+            // fetch potential notes for the toggle (filter rest, hold & first notes in bar)
+            IList<INote> relevantNotes = selectedBar.Notes.Where((note, noteIndex) => 
+                noteIndex > 0 &&
+                note.Pitch != NotePitch.RestNote && 
+                note.Pitch != NotePitch.HoldNote).ToList();
+
+            // assure at least one note as found 
+            if (!relevantNotes.Any())
+                return;
+
+            // fetch a random note from the potential notes found
+            int randomNoteIndex = random.Next(relevantNotes.Count);
+            INote selectedNote = relevantNotes[randomNoteIndex];
+
+            // get original index of the selected note in the original sequence 
+            int originalNoteIndex = selectedBar.Notes.IndexOf(selectedNote);
+
+            // replace selected note with a hold note
+            INote holdNote = new Note(NotePitch.HoldNote, selectedNote.Duration);
+            selectedBar.Notes.RemoveAt(originalNoteIndex);
+            selectedBar.Notes.Insert(originalNoteIndex, holdNote);
+        }
+        #endregion
+
         #region SyncopedNoteMutation()
         /// <summary>
         /// Syncopes a bar's first note by preceding it's start time to it's preceding bar,
