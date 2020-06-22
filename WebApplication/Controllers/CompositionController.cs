@@ -50,6 +50,8 @@ namespace CW.Soloist.WebApplication.Controllers
 
             // save file and return it for client to download
             string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
+
+            Directory.CreateDirectory(directoryPath);
             string filePath = _midiFile.SaveFile(directoryPath);
 
             byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
@@ -60,7 +62,8 @@ namespace CW.Soloist.WebApplication.Controllers
 
         public FileResult DownloadFile(IMidiFile midiFile)
         {
-            string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
+            //string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
+            string directoryPath = this.HttpContext.Server.MapPath("/Outputs/");
 
             string filePath = _midiFile.SaveFile(directoryPath);
 
