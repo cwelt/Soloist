@@ -189,7 +189,7 @@ namespace CW.Soloist.CompositionService
             bool useExistingMelodyAsSeed = true)
         {
             // set compositor according to composition strategy
-            _compositor = Compositor.CreateCompositor(strategy);
+            _compositor = CompositorFactory.CreateCompositor(strategy);
 
             // make a copy of the input midi file for the output file   
             MidiOutputFile = new DryWetMidiAdapter(_midiInputFilePath);
