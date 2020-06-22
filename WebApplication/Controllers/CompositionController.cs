@@ -6,6 +6,7 @@ using CW.Soloist.CompositionService.UtilEnums;
 using CW.Soloist.WebApplication.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -14,6 +15,8 @@ namespace CW.Soloist.WebApplication.Controllers
 {
     public class CompositionController : Controller
     {
+        private IMidiFile _midiFile;
+
         // GET: Composition
         public ActionResult Index()
         {
@@ -40,9 +43,32 @@ namespace CW.Soloist.WebApplication.Controllers
                 minPitch: model.MinPitch,
                 maxPitch: model.MaxPitch);
 
-            midiFile.Play();
-            
-            return null;
+            _midiFile = midiFile;
+
+            ViewBag.MidiFile = midiFile;
+
+
+            // save file and return it for client to download
+            string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
+            string filePath = _midiFile.SaveFile(directoryPath);
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            string fileName = Path.GetFileName(filePath);
+
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
+
+        public FileResult DownloadFile(IMidiFile midiFile)
+        {
+            string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
+
+            string filePath = _midiFile.SaveFile(directoryPath);
+
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
     }
 }

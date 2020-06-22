@@ -70,7 +70,6 @@ namespace CW.Soloist.CompositionService.Midi
             _metadataTrack = _trackChunks.First();
             _metaEvents = _metadataTrack.Events.ToList();
 
-
             // set midi title property 
             Title = (((from e in _metaEvents
                        where e.EventType == MidiEventType.SequenceTrackName
@@ -348,13 +347,16 @@ namespace CW.Soloist.CompositionService.Midi
 
         #region SaveFile()
         /// <inheritdoc/>
-        public void SaveFile(string path = null, string fileNamePrefix = "")
+        public string SaveFile(string path = null, string fileNamePrefix = "")
         {
             // get time stamp 
-            string timeStamp = DateTime.Now.ToString("dd-MM-yyyy_HHmmss");
+            string timeStamp = DateTime.Now.ToString("ddMMyyyy_HHmmss");
 
             // set file name 
-            string fileName = fileNamePrefix + $"_output_{timeStamp}.mid";
+            string fileName = String.IsNullOrWhiteSpace(fileNamePrefix) ?
+                fileNamePrefix + $"output_{timeStamp}.mid" :
+                fileNamePrefix + $"_output_{timeStamp}.mid";
+
 
             // set full path: if no path is specified then set desktop as the default path
             path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\midioutput";
@@ -370,6 +372,7 @@ namespace CW.Soloist.CompositionService.Midi
                 Console.WriteLine(ex.Message + ex.InnerException?.Message);
                 throw;
             }
+            return fullPath;
         }
         #endregion
 

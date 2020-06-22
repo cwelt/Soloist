@@ -105,7 +105,8 @@ namespace CW.Soloist.CompositionService.Midi
         /// <summary> Save midi file on local device. </summary>
         /// <param name="outputPath"> The path in which to save the midi file. </param>
         /// <param name="fileNamePrefix"> Optional prefix for the new midi file. </param>
-        void SaveFile(string outputPath = null, string fileNamePrefix = "");
+        /// <returns> The full path of the saved file. </returns>
+        string SaveFile(string outputPath = null, string fileNamePrefix = "");
 
         /// <summary> Returns the specified bar's duration. </summary>
         /// <param name="barIndex"> Zero-based index of the bar in the midi file.</param>

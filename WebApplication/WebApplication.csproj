@@ -262,9 +262,11 @@
     <Content Include="Views\Shared\Error500.html" />
     <Content Include="Views\Home\Documentation.cshtml" />
     <Content Include="Views\Composition\Index.cshtml" />
+    <Content Include="Views\Composition\Compose.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Outputs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
