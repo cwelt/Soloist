@@ -22,10 +22,13 @@ namespace CW.Soloist.WebApplication.Controllers
         {
             CompositionParamsViewModel viewModel = new CompositionParamsViewModel
             {
+                CompositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy,
                 MusicalInstrument = MusicalInstrument.AcousticGrandPiano,
                 OverallNoteDurationFeel = OverallNoteDurationFeel.Extreme,
                 MinPitch = NotePitch.E2,
-                MaxPitch = NotePitch.E7
+                MaxPitch = NotePitch.E7,
+                useExistingMelodyAsSeed = true
+                
             };
             return View(viewModel);
         }
@@ -37,11 +40,12 @@ namespace CW.Soloist.WebApplication.Controllers
 
             Composition composition = new Composition(chordFilePath, midiFilePath, 1);
             IMidiFile midiFile = composition.Compose(
-                strategy: CompositionStrategy.ArpeggioScaleMixStrategy,
+                strategy: model.CompositionStrategy,
                 overallNoteDurationFeel: model.OverallNoteDurationFeel,
                 musicalInstrument: model.MusicalInstrument,
                 minPitch: model.MinPitch,
-                maxPitch: model.MaxPitch);
+                maxPitch: model.MaxPitch, 
+                useExistingMelodyAsSeed: model.useExistingMelodyAsSeed);
 
             _midiFile = midiFile;
 
