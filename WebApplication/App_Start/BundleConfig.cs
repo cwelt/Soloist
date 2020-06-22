@@ -24,7 +24,7 @@ namespace WebApplication
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       //"~/Content/bootstrap.css",
-                      "~/Content/themes/bootstrap-readable.css",
+                      "~/Content/themes/bootstrap-darkly.css",
                       "~/Content/site.css"));
         }
     }
