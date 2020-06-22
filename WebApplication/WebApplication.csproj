@@ -194,12 +194,8 @@
     <Content Include="Content\Themes\bootstrap-cyborg.css" />
     <Content Include="Content\Themes\bootstrap-darkly.css" />
     <Content Include="Content\Themes\bootstrap-flatly.css" />
-    <Content Include="Content\Themes\bootstrap-lumen.css" />
     <Content Include="Content\Themes\bootstrap-readable.css" />
-    <Content Include="Content\Themes\bootstrap-sandstone.css" />
-    <Content Include="Content\Themes\bootstrap-slate.css" />
     <Content Include="Content\Themes\bootstrap-spacelab.css" />
-    <Content Include="Content\Themes\bootstrap-superhero.css" />
     <Content Include="Content\Themes\bootstrap-united.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

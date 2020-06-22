@@ -24,7 +24,7 @@ namespace WebApplication
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       //"~/Content/bootstrap.css",
-                      "~/Content/themes/bootstrap-cosmo.css",
+                      "~/Content/themes/bootstrap-united.css",
                       "~/Content/site.css"));
         }
     }
