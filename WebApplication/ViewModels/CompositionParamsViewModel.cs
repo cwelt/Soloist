@@ -1,4 +1,5 @@
-﻿using CW.Soloist.CompositionService.Midi;
+﻿using CW.Soloist.CompositionService.Compositors;
+using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
 using System;
@@ -16,7 +17,6 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Overall Note Duration Feel")]
         public OverallNoteDurationFeel OverallNoteDurationFeel { get; set; }
 
-
         [Required]
         [DisplayName("Musical Instrument")]
         public MusicalInstrument MusicalInstrument { get; set; }
@@ -27,5 +27,10 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Pitch Upper Bound")]
         public NotePitch MaxPitch { get; set; }
 
+        [DisplayName("Composition Algorithm Strategy")]
+        public CompositionStrategy CompositionStrategy { get; set; }
+
+        [DisplayName("Use Existing Melody as Seed")]
+        public bool useExistingMelodyAsSeed { get; set; }
     }
 }
