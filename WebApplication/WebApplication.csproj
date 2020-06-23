@@ -183,6 +183,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\CompositionParamsViewModel.cs" />
+    <Compile Include="ViewModels\Song.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -202,6 +203,8 @@
     <Content Include="Global.asax" />
     <Content Include="Content\site.css" />
     <Content Include="SampleData\after_20_years.mid" />
+    <Content Include="SampleData\beatles_here_there.mid" />
+    <Content Include="SampleData\here_there_chords.txt" />
     <Content Include="SampleData\twenty_years_chords.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

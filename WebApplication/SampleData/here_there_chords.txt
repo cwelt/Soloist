@@ -1,0 +1,58 @@
+4/4	G-Major-4			
+4/4	ASharp-Major-4			
+4/4	A-Minor-4	
+	
+4/4	G-Major-2			A-Minor7-2
+4/4	B-Minor-2			C-Major-2
+4/4	G-Major-2			A-Minor7-2
+4/4	B-Minor-2			C-Major-2
+4/4	FSharp-Minor6-2			B-Dominant7-2	
+4/4	FSharp-Minor6-2			B-Dominant7-2	
+4/4	E-Minor-2			A-Minor-2
+4/4	A-Minor7-2			D-Dominant7-2
+
+4/4	G-Major-2			A-Minor7-2
+4/4	B-Minor-2			C-Major-2
+4/4	G-Major-2			A-Minor7-2
+4/4	B-Minor-2			C-Major-2
+4/4	FSharp-Minor6-2			B-Dominant7-2	
+4/4	FSharp-Minor6-2			B-Dominant7-2	
+4/4	E-Minor-2			A-Minor-2
+4/4	A-Minor7-2			D-Dominant7-2
+
+4/4	ASharp-Major-4			
+4/4	C-Minor7-2			D-Dominant7-2
+4/4	G-Minor-4	
+4/4	C-Minor7-2			D-Dominant7-2
+
+4/4	G-Major-2			A-Minor-2
+4/4	B-Minor-2			C-Major-2
+4/4	G-Major-2			A-Minor7-2
+4/4	B-Minor-2			C-Major-2
+
+4/4	FSharp-Minor6-2			B-Dominant7-2	
+4/4	FSharp-Minor6-2			B-Dominant7-2	
+4/4	E-Minor-2			A-Minor-2
+4/4	A-Minor7-2			D-Dominant7-2
+
+4/4	ASharp-Major-4			
+4/4	C-Minor7-2			D-Dominant7-2
+4/4	G-Minor-4	
+4/4	C-Minor7-2			D-Dominant7-2
+
+4/4	G-Major-2			A-Minor-2
+4/4	B-Minor-2			C-Major-2
+4/4	G-Major-2			A-Minor7-2
+4/4	B-Minor-2			C-Major-2
+4/4	FSharp-Minor6-2			B-Dominant7-2	
+4/4	FSharp-Minor6-2			B-Dominant7-2	
+4/4	E-Minor-2			A-Minor-2
+4/4	A-Minor7-2			D-Dominant7-2
+
+4/4	G-Major-2			A-Minor7-2
+4/4	B-Minor-2			C-Major-2
+4/4	G-Major-2			A-Minor7-2
+4/4	B-Minor-2			C-Major-2
+
+4/4	G-Major-4		
+4/4	G-Major-4		

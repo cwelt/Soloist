@@ -24,9 +24,9 @@ namespace CW.Soloist.WebApplication.Controllers
             {
                 CompositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy,
                 MusicalInstrument = MusicalInstrument.AcousticGrandPiano,
-                OverallNoteDurationFeel = OverallNoteDurationFeel.Extreme,
+                OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
                 MinPitch = NotePitch.E2,
-                MaxPitch = NotePitch.E7,
+                MaxPitch = NotePitch.E6,
                 useExistingMelodyAsSeed = true
                 
             };
@@ -35,8 +35,12 @@ namespace CW.Soloist.WebApplication.Controllers
         [HttpPost]
         public FileResult Compose(CompositionParamsViewModel model)
         {
-            var chordFilePath = this.HttpContext.Server.MapPath("/SampleData/twenty_years_chords.txt");
-            var midiFilePath = this.HttpContext.Server.MapPath("/SampleData/after_20_years.mid");
+
+
+            Song song = model.Songs.Where(s => s.Id == model.SongId).First();
+
+            var chordFilePath = this.HttpContext.Server.MapPath(song.ChordPath);
+            var midiFilePath = this.HttpContext.Server.MapPath(song.MidiPath);
 
             Composition composition = new Composition(chordFilePath, midiFilePath, 1);
             IMidiFile midiFile = composition.Compose(
