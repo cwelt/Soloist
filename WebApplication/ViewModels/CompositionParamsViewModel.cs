@@ -39,20 +39,35 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         public List<Song> Songs { get; set; } = new List<Song>
         {
-                new Song
-                {
-                    Id = 1,
-                    Description = "Beatles - Here There and Everywhere",
-                    ChordPath = "/SampleData/here_there_chords.txt",
-                    MidiPath = "/SampleData/beatles_here_there.mid"
-                },
-                new Song
+                 new Song
                 {
                     Id = 2,
                     Description = "Shmulik Kraus - After 20 Years",
                     ChordPath = "/SampleData/twenty_years_chords.txt",
                     MidiPath = "/SampleData/after_20_years.mid"
                 }
+          /*  ,new Song
+                {
+                    Id = 1,
+                    Description = "Beatles - Here There and Everywhere",
+                    ChordPath = "/SampleData/here_there_chords.txt",
+                    MidiPath = "/SampleData/beatles_here_there.mid"
+                },
+
+                new Song
+                {
+                    Id = 3,
+                    Description = "Arik Einstein - Yoshev Al Ha-Gader",
+                    ChordPath = "/SampleData/Klepter-Gader.txt",
+                    MidiPath = "/SampleData/YoshevGader.mid"
+                },
+                                new Song
+                {
+                    Id = 4,
+                    Description = "Gloria Gaynor - I Will Survive",
+                    ChordPath = "/SampleData/survive.txt",
+                    MidiPath = "/SampleData/Survive.mid"
+                }*/
         };
 
         public SelectList SongSelectList { get; set; }
@@ -61,7 +76,7 @@ namespace CW.Soloist.WebApplication.ViewModels
         {
             SongSelectList = new SelectList(Songs.OrderBy(s => s.Description), nameof(Song.Id), "Description", SongId);
         }
-            
+
 
     }
 }

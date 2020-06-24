@@ -23,11 +23,11 @@ namespace CW.Soloist.WebApplication.Controllers
             CompositionParamsViewModel viewModel = new CompositionParamsViewModel
             {
                 CompositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy,
-                MusicalInstrument = MusicalInstrument.AcousticGrandPiano,
-                OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
+                MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
+                OverallNoteDurationFeel = OverallNoteDurationFeel.Intense,
                 MinPitch = NotePitch.E2,
                 MaxPitch = NotePitch.E6,
-                useExistingMelodyAsSeed = true
+                useExistingMelodyAsSeed = false
                 
             };
             return View(viewModel);
@@ -57,27 +57,14 @@ namespace CW.Soloist.WebApplication.Controllers
 
 
             // save file and return it for client to download
-            string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
+            string directoryPath = this.HttpContext.Server.MapPath("/Outputs/");
+            //string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
 
             Directory.CreateDirectory(directoryPath);
             string filePath = _midiFile.SaveFile(directoryPath);
 
             byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
             string fileName = Path.GetFileName(filePath);
-
-            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
-        }
-
-        public FileResult DownloadFile(IMidiFile midiFile)
-        {
-            //string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
-            string directoryPath = this.HttpContext.Server.MapPath("/Outputs/");
-
-            string filePath = _midiFile.SaveFile(directoryPath);
-
-
-            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
-            string fileName = Path.GetFileNameWithoutExtension(filePath);
 
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
