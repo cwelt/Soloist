@@ -53,30 +53,49 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// </summary>
         protected internal void PopulateFirstGeneration()
         {
-            MelodyCandidate candidate, seedCandidate;
+            MelodyCandidate candidate, seedCandidate, reversedCandidate;
 
-            foreach (var initializer in _initializers)
+            // initialize basic candidates with generic arpeggeio & scale note sequences 
+            foreach (Action<IEnumerable<IBar>> initializer in _initializers)
             {
+                // create a new empty candidate melody 
                 candidate = new MelodyCandidate(_currentGeneration, ChordProgression);
+
+                // initialize it with current iterated initializer 
                 initializer(candidate.Bars);
+
+                // duplicate the newly created candidate 
+                reversedCandidate = new MelodyCandidate(_currentGeneration, candidate.Bars, true);
+
+                // reverse the duplicated candidate note 
+                ReverseAllNotesMutation(reversedCandidate);
+
+                // add the new candidates to candidate collection 
                 _candidates.Add(candidate);
+                _candidates.Add(reversedCandidate);
             }
+
 
             if (Seed != null)
             {
+                // encapsulate the bar collection from the seed in a candidate entity 
                 seedCandidate = new MelodyCandidate(_currentGeneration, Seed, includeExistingMelody: true);
-                //_candidates.Insert(0, candidate);
 
-                int n = Seed.Count / 4;
+                // define the number of points for the crossover 
+                int n = Seed.Count / 3;
+
+                // initialize a list of offspring candidates that would be returned from the crossover
                 List<MelodyCandidate> offSpringCandidatesList = new List<MelodyCandidate>();
 
+                // crossover all the existing candidates with the seed candidate 
                 foreach (var generatedCandidate in _candidates)
                 {
                     var list = new List<MelodyCandidate> { seedCandidate, generatedCandidate };
-                    var offspringCandidates = NPointCrossover(list, n);
+                    ICollection<MelodyCandidate> offspringCandidates = NPointCrossover(list, n);
                     offSpringCandidatesList.AddRange(offspringCandidates);
                 }
 
+                // replace old candidates (parents) with their mixed offsprings 
                 _candidates.Clear();
                 _candidates.AddRange(offSpringCandidatesList);
             }
