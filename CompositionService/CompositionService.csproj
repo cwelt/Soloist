@@ -57,7 +57,7 @@
     <Compile Include="Compositors\Compositor.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\Initializers.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\MelodyCandidate.cs" />
-    <Compile Include="Compositors\GeneticAlgorithm\Mutations.cs" />
+    <Compile Include="Compositors\GeneticAlgorithm\Mutators.cs" />
     <Compile Include="Compositors\Scalerator\ScaleratorCompositor.cs" />
     <Compile Include="ICompositionParamsDTO.cs" />
     <Compile Include="UtilEnums\NodeSequenceMode.cs" />
