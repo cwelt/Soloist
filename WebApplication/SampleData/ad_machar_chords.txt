@@ -1,38 +1,38 @@
 4/4	D-Minor-4			
-4/4	F-Major7-4			
+4/4	F-Major-4			
 4/4	C-Major-4			
 4/4	G-Minor-4	
 4/4	BFlat-Major7-4			
-4/4	F-Major7-4			
+4/4	F-Major-4			
 4/4	C-Major-4			
-4/4	C-Dominant7-4	
+4/4	C-Major-4	
 	
 4/4	D-Minor-4			
-4/4	F-Major7-4			
+4/4	F-Major-4			
 4/4	C-Major-4			
 4/4	G-Minor-4	
 4/4	BFlat-Major7-4			
-4/4	F-Major7-4			
+4/4	F-Major-4			
 4/4	C-Major-4			
-4/4	C-Dominant7-4	
+4/4	C-Major-4		
 
 4/4	D-Minor-4			
-4/4	F-Major7-4			
+4/4	F-Major-4			
 4/4	C-Major-4			
 4/4	G-Minor-4	
 4/4	BFlat-Major7-4			
-4/4	F-Major7-4			
+4/4	F-Major-4			
 4/4	C-Major-4			
-4/4	C-Dominant7-4	
+4/4	C-Major-4		
 
 4/4	G-Minor-4			
 4/4	BFlat-Major7-4			
-4/4	F-Major7-4			
-4/4	C-Dominant7-4		
+4/4	F-Major-4			
+4/4	C-Major-4		
 4/4	G-Minor-4			
 4/4	BFlat-Major7-4			
-4/4	F-Major7-4			
-4/4	C-Dominant7-4	
+4/4	F-Major-4			
+4/4	C-Major-4	
 
 4/4	F-Major7-4	
 4/4	F-Major7-4				
