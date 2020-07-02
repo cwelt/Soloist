@@ -23,10 +23,10 @@ namespace CW.Soloist.WebApplication.Controllers
             CompositionParamsViewModel viewModel = new CompositionParamsViewModel
             {
                 CompositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy,
-                MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
-                OverallNoteDurationFeel = OverallNoteDurationFeel.Intense,
+                MusicalInstrument = MusicalInstrument.BrightAcousticPiano,
+                OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
                 MinPitch = NotePitch.E2,
-                MaxPitch = NotePitch.E6,
+                MaxPitch = NotePitch.C6,
                 useExistingMelodyAsSeed = false
                 
             };
@@ -42,7 +42,10 @@ namespace CW.Soloist.WebApplication.Controllers
             var chordFilePath = this.HttpContext.Server.MapPath(song.ChordPath);
             var midiFilePath = this.HttpContext.Server.MapPath(song.MidiPath);
 
-            Composition composition = new Composition(chordFilePath, midiFilePath, 1);
+            Composition composition = new Composition(
+                chordProgressionFilePath: chordFilePath,
+                midiFilePath: midiFilePath,
+                melodyTrackIndex: 1);
             IMidiFile midiFile = composition.Compose(
                 strategy: model.CompositionStrategy,
                 overallNoteDurationFeel: model.OverallNoteDurationFeel,

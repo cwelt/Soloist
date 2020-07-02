@@ -134,7 +134,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 13)
+                if (++i == 18)
                     terminateCondition = true;
             }
 

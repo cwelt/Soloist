@@ -202,8 +202,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\site.css" />
+    <Content Include="SampleData\ad_machar_chords.txt" />
     <Content Include="SampleData\after_20_years.mid" />
     <Content Include="SampleData\beatles_here_there.mid" />
+    <Content Include="SampleData\Evyatar Banai - Ad Machar.mid" />
     <Content Include="SampleData\here_there_chords.txt" />
     <Content Include="SampleData\Klepter-Gader.txt" />
     <Content Include="SampleData\Survive.mid" />
