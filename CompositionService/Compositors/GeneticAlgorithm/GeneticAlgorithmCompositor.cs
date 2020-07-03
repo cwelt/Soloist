@@ -236,7 +236,10 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// </summary>        
         protected internal void EvaluateFitness()
         {
-
+            foreach (MelodyCandidate candidate in _candidates)
+            {
+                float adjacentPitchesGrade = EvaluateAdjacentPitchesDistance(candidate);
+            }
         }
         #endregion
 
