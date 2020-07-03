@@ -16,5 +16,7 @@ namespace CW.Soloist.Data.Models
         public string Album { get; set; }
         public IMidiFile Midi { get; set; }
         public IEnumerable<IChord> Chords { get; set; }
+        public string MidiFilePath { get; set; }
+        public string ChordsFilePath { get; set; }
     }
 }
