@@ -30,6 +30,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             ulong numOfExtremeIntervals = 0;
             float adjacentDistance = 0;
             float fitness = 0;
+            int maxDistance = (int)maxInterval;
 
             // retrieve and filter all pitches which are not hold/rest notes
             NotePitch[] pitches = candidate.Bars.GetAllPitches().ToArray();
@@ -41,13 +42,13 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 adjacentDistance = Math.Abs(pitches[i + 1] - pitches[i]);
 
                 // update accumulator if interval exceeds the max interval parameter
-                if (adjacentDistance > (int)maxInterval)
+                if (adjacentDistance > maxDistance)
                     numOfExtremeIntervals++;
             }
 
             // set fitness for the extreme interval ratio 
             totalNumOfIntervals = (ulong)pitches.Length - 1;
-            fitness = (totalNumOfIntervals - numOfExtremeIntervals) / totalNumOfIntervals;
+            fitness = (totalNumOfIntervals - numOfExtremeIntervals) / (float)totalNumOfIntervals;
 
             // return result
             return fitness;
