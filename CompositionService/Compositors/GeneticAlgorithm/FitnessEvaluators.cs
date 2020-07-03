@@ -23,7 +23,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// consecutive notes. Any interval that exceeds this one would be considered extreme.
         /// </param>
         /// <returns></returns>
-        float EvaluateAdjacentIntervals(MelodyCandidate candidate, byte maxInterval = 7)
+        float EvaluateAdjacentIntervals(MelodyCandidate candidate, PitchInterval maxInterval = PitchInterval.PerfectFifth)
         {
             // initialize counters 
             ulong totalNumOfIntervals = 0;
@@ -41,7 +41,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 adjacentDistance = Math.Abs(pitches[i + 1] - pitches[i]);
 
                 // update accumulator if interval exceeds the max interval parameter
-                if (adjacentDistance > maxInterval)
+                if (adjacentDistance > (int)maxInterval)
                     numOfExtremeIntervals++;
             }
 
