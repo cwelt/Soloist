@@ -238,7 +238,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         {
             foreach (MelodyCandidate candidate in _candidates)
             {
-                float adjacentPitchesGrade = EvaluateAdjacentPitchesDistance(candidate);
+                float adjacentPitchesGrade = EvaluateAdjacentPitchesInterval(candidate);
             }
         }
         #endregion
