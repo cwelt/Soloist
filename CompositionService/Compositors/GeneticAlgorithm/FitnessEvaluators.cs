@@ -23,7 +23,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// consecutive notes. Any interval that exceeds this one would be considered extreme.
         /// </param>
         /// <returns></returns>
-        float EvaluateAdjacentPitchesInterval(MelodyCandidate candidate, byte maxInterval = 7)
+        float EvaluateAdjacentIntervals(MelodyCandidate candidate, byte maxInterval = 7)
         {
             // initialize counters 
             ulong totalNumOfIntervals = 0;
