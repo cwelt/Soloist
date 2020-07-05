@@ -52,9 +52,12 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             // get the rest of the candidates (the elder ones)
             elderGenerationCandidates = _candidates.Except(currentGenerationCandidates);
 
-            // sort the populations in descending order by their fitness 
-            currentGenerationCandidates.OrderByDescending(c => c.FitnessGrade);
-            elderGenerationCandidates.OrderByDescending(c => c.FitnessGrade);
+            // sort the populations in descending order by their fitness evaluation
+            currentGenerationCandidates = currentGenerationCandidates
+                .OrderByDescending(c => c.FitnessGrade);
+
+            elderGenerationCandidates = elderGenerationCandidates
+                .OrderByDescending(c => c.FitnessGrade);
 
             // count number of elements in each population 
             currentGenerationCandidatesCount = currentGenerationCandidates.Count();
@@ -79,8 +82,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             {
                 int remainingPlaces = maxPopulationSize - nextGenerationCandidates.Count;
                 List<MelodyCandidate> remainingCandidates = _candidates
-                    .Except(bestCandidatesOfCurrentGeneration)
-                    .Except(bestCandidatesOfElderGenerations)
+                    .Except(nextGenerationCandidates)
                     .OrderByDescending(c => c.FitnessGrade)
                     .ToList();
 
