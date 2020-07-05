@@ -52,7 +52,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 musicalInstrument: model.MusicalInstrument,
                 minPitch: model.MinPitch,
                 maxPitch: model.MaxPitch, 
-                useExistingMelodyAsSeed: model.useExistingMelodyAsSeed);
+                useExistingMelodyAsSeed: model.useExistingMelodyAsSeed)[0];
 
             _midiFile = midiFile;
 

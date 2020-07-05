@@ -10,10 +10,10 @@ namespace CW.Soloist.CompositionService.Compositors.Scalerator
 {
     internal class ScaleratorCompositor : Compositor
     {
-        private protected override IList<IBar> GenerateMelody()
+        private protected override IEnumerable<IList<IBar>> GenerateMelody()
         {
             ScaleratorInitializer(ChordProgression);
-            return ChordProgression;
+            return new[] { ChordProgression };
         }
     }
 }

@@ -10,10 +10,10 @@ namespace CW.Soloist.CompositionService.Compositors.Arpeggiator
 {
     internal class ArpeggiatorCompositor : Compositor
     {
-        private protected override IList<IBar> GenerateMelody()
+        private protected override IEnumerable<IList<IBar>> GenerateMelody()
         {
             ArpeggiatorInitializer(ChordProgression);
-            return ChordProgression;
+            return new [] { ChordProgression };
         }
     }
 }

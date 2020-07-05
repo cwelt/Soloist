@@ -99,7 +99,7 @@ namespace DesktopClient
                 if(!string.IsNullOrWhiteSpace(_chordsFilePath) && !string.IsNullOrWhiteSpace(_midiFilePath))
                 {
                     _composition = new Composition(_chordsFilePath, _midiFilePath, melodyTrackIndex: 1);
-                    _midiFile = _composition.Compose();
+                    _midiFile = _composition.Compose()[0];
                     lblMidiTitle.Text += ": " + _midiFile.Title;
                     lblMidiBpm.Text += ": " + _midiFile.BeatsPerMinute.ToString();
                     lblMidiTimeSignature.Text += ": " + _midiFile.KeySignature.ToString();

@@ -83,7 +83,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 seedCandidate = new MelodyCandidate(_currentGeneration, Seed, includeExistingMelody: true);
 
                 // define the number of points for the crossover 
-                int n = Seed.Count / 3;
+                int n = Seed.Count / 4;
 
                 // initialize a list of offspring candidates that would be returned from the crossover
                 List<MelodyCandidate> offSpringCandidatesList = new List<MelodyCandidate>();
@@ -106,7 +106,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
         #region GenerateMelody()
         /// <inheritdoc/>
-        private protected override IList<IBar> GenerateMelody()
+        private protected override IEnumerable<IList<IBar>> GenerateMelody()
         {
             // get first generatiion 
             PopulateFirstGeneration();
@@ -135,13 +135,15 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 13)
+                if (++i == 100)
                     terminateCondition = true;
             }
 
             // TODO: convert internal genome representation of each candidate in to a MIDI track chunk representation
-            int randomIndex = new Random().Next(_candidates.Count);
-            return _candidates[randomIndex].Bars;
+            var composedMelodies = _candidates
+                .OrderByDescending(c => c.FitnessGrade)
+                .Select(c => c.Bars);
+            return composedMelodies;
         }
         #endregion
 

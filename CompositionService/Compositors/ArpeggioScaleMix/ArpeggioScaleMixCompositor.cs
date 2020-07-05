@@ -11,10 +11,10 @@ namespace CW.Soloist.CompositionService.Compositors.ArpeggioScaleMix
 
     internal class ArpeggioScaleMixCompositor : Compositor
     {
-        private protected override IList<IBar> GenerateMelody()
+        private protected override IEnumerable<IList<IBar>> GenerateMelody()
         {
             ScaleArpeggioeMixInitializer(ChordProgression);
-            return ChordProgression;
+            return new[] { ChordProgression };
         }
     }
 }

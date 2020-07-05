@@ -154,7 +154,7 @@ namespace CW.Soloist.CompositionService
         /// <param name="compositionParams"> Data transfer object containing all the various 
         /// additional parameters for composition preferences and constriants.</param>
         /// <returns></returns>
-        public IMidiFile Compose(ICompositionParamsDTO compositionParams)
+        public IMidiFile[] Compose(ICompositionParamsDTO compositionParams)
         {
             return Compose(
                 strategy: compositionParams.CompositionStrategy,
@@ -179,7 +179,7 @@ namespace CW.Soloist.CompositionService
         /// <param name="maxPitch"></param>
         /// <param name="useExistingMelodyAsSeed"></param>
         /// <returns></returns>
-        public IMidiFile Compose(
+        public IMidiFile[] Compose(
             CompositionStrategy strategy = CompositionStrategy.GeneticAlgorithmStrategy,
             OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
             MusicalInstrument musicalInstrument = MusicalInstrument.AcousticGrandPiano,
@@ -229,20 +229,28 @@ namespace CW.Soloist.CompositionService
                     $"current range: minPitch={(byte)minPitch}, maxPitch={(byte)maxPitch}");
 
             // compose a new melody 
-            IList<IBar> composedMelody = _compositor.Compose(
+            IList<IBar>[] composedMelodies = _compositor.Compose(
                 chordProgression: ChordProgression,
                 melodyInitializationSeed: _melodySeed,
                 overallNoteDurationFeel: overallNoteDurationFeel,
                 minPitch: minPitch,
-                maxPitch: maxPitch);
+                maxPitch: maxPitch)
+                .ToArray();
 
-            // Embed the new generated melody into the midi file
-            MidiOutputFile.EmbedMelody(composedMelody, musicalInstrument);
+            // Embed each new generated melody into a new separate midi file
+            IMidiFile[] midiOutputs = new IMidiFile[composedMelodies.Length];
+            for (int i = 0; i < composedMelodies.Length; i++)
+            {
+                // TODO LATER: Clone the playback explictly 
+                midiOutputs[i] = new DryWetMidiAdapter(_midiInputFilePath);
+                midiOutputs[i].ExtractMelodyTrack((byte)_melodyTrackIndex);
+                midiOutputs[i].EmbedMelody(composedMelodies[i], musicalInstrument);
+            }
 
             // save output
             //MidiOutputFile.SaveFile(fileNamePrefix: _midiInputFileName);
 
-            return MidiOutputFile;
+            return midiOutputs;
         }
 
         #region ReadChordsFromFile()

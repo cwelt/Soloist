@@ -55,7 +55,7 @@ namespace CW.Soloist.CompositionService.Compositors
         /// <param name="minPitch"> Lowest bound of a note pitch for the composition. </param>
         /// <param name="maxPitch"> Upper bound of a note pitch for the composition. </param>
         /// <returns> The composition of solo-melody</returns>
-        internal IList<IBar> Compose(
+        internal IEnumerable<IList<IBar>> Compose(
             IList<IBar> chordProgression,
             IList<IBar> melodyInitializationSeed = null,
             OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
@@ -68,7 +68,7 @@ namespace CW.Soloist.CompositionService.Compositors
         }
 
 
-        private protected abstract IList<IBar> GenerateMelody();
+        private protected abstract IEnumerable<IList<IBar>> GenerateMelody();
         private protected virtual void InitializeCompositionParams(
             IList<IBar> chordProgression,
             IList<IBar> melodyInitializationSeed = null,

@@ -1,15 +1,11 @@
 ﻿using CW.Soloist.CompositionService;
 using CW.Soloist.CompositionService.Compositors;
-using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
 using System;
 using System.Configuration;
 using System.Globalization;
-using System.IO;
-using System.Text;
-using System.Threading;
 
 namespace ConsoleClient
 {
@@ -37,18 +33,21 @@ namespace ConsoleClient
 
             // create a new composition with injected strategy
             var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: 1);
-            var newMidiFile = composition.Compose(
+            var newMidiFiles = composition.Compose(
                 compositionStrategy,
                 musicalInstrument: MusicalInstrument.VoiceOohs,
-                overallNoteDurationFeel: OverallNoteDurationFeel.Medium,
+                overallNoteDurationFeel: OverallNoteDurationFeel.Extreme,
                 pitchRangeSource: PitchRangeSource.MidiFile,
                 minPitch: NotePitch.E2,
                 maxPitch: NotePitch.E6,
                 useExistingMelodyAsSeed: true);
 
-            newMidiFile.SaveFile(fileNamePrefix: "consoleTest");
+            for (int i = 0; i < newMidiFiles.Length; i++)
+            {
+                newMidiFiles[i].SaveFile(fileNamePrefix: $"consoleTest_{i+1}_");
+            }
 
-            newMidiFile.Play();
+            newMidiFiles[0].Play();
             //newMidiFile.Stop();
         }
     }
