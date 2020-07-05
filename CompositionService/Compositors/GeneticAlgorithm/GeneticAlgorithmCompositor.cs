@@ -11,8 +11,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
     /// for use by a <see cref="Composition"/> context instance. </summary>
     internal partial class GeneticAlgorithmCompositor : Compositor
     {
-        private uint _currentGeneration;
-        private List<MelodyCandidate> _candidates;
+        private protected uint _currentGeneration;
+        private protected List<MelodyCandidate> _candidates;
+        private protected const int MaxNumberOfCandidates = 60;
         private protected Action<MelodyCandidate, int?>[] _mutations;
         private protected Action<IEnumerable<IBar>>[] _initializers;
 
@@ -232,7 +233,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
         #region EvaluateFitness()
         /// <summary>
-        /// Evaluate the candidate solution's fitness.
+        /// Evaluates the candidate solution's fitness, i.e., grades (score).
         /// </summary>        
         protected internal void EvaluateFitness()
         {
@@ -244,14 +245,6 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         }
         #endregion
 
-        #region SelectNextGeneration()
-        /// <summary>
-        /// Select the best evaluated solutions. 
-        /// </summary>
-        protected internal void SelectNextGeneration()
-        {
 
-        }
-        #endregion
     }
 }
