@@ -23,13 +23,30 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// consecutive notes. Any interval that exceeds this one would be considered extreme.
         /// </param>
         /// <returns></returns>
-        float EvaluateAdjacentIntervals(MelodyCandidate candidate, PitchInterval maxInterval = PitchInterval.PerfectFifth)
+        double EvaluateAdjacentIntervals(MelodyCandidate candidate, PitchInterval maxInterval = PitchInterval.PerfectFifth)
         {
             // initialize counters 
             ulong totalNumOfIntervals = 0;
+            ulong numOfDiatonicSteps = 0;
+            ulong numOfChordSteps = 0;
+            ulong numOfDissonants = 0;
+            ulong numOfPerfectConsonants = 0;
+            ulong numOfImperfectConsonants = 0;
+            ulong numOfTritones = 0;
+            ulong numOfBigLeaps = 0;
             ulong numOfExtremeIntervals = 0;
-            float adjacentDistance = 0;
-            float fitness = 0;
+            int adjacentDistance = 0;
+
+            // initialize metrics 
+            double bigLeapIntervalMetric;
+            double extremeIntervalMetric;
+            double diatonicStepsMetric;
+            double chordStepsMetric;
+            double intervalTypeMetric;
+
+
+            double fitness = 0;
+            PitchInterval interval;
             int maxDistance = (int)maxInterval;
 
             // retrieve and filter all pitches which are not hold/rest notes
@@ -41,16 +58,83 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 // calculate pitch distance between the two adjacent notes 
                 adjacentDistance = Math.Abs(pitches[i + 1] - pitches[i]);
 
-                // update accumulator if interval exceeds the max interval parameter
+                // update extreme interval counter if necessary 
                 if (adjacentDistance > maxDistance)
                     numOfExtremeIntervals++;
+
+                // update relevant counters according to step size 
+                Enum.TryParse(adjacentDistance.ToString(), out interval);
+                switch (interval)
+                {
+                    case PitchInterval.Unison:
+                        numOfPerfectConsonants++;
+                        break;
+                    case PitchInterval.MinorSecond:
+                    case PitchInterval.MajorSecond:
+                        numOfDissonants++;
+                        numOfDiatonicSteps++;
+
+                        break;
+                    case PitchInterval.MinorThird:
+                    case PitchInterval.MajorThird:
+                        numOfChordSteps++;
+                        numOfImperfectConsonants++;
+                        break;
+                    case PitchInterval.PerfectFourth:
+                        numOfPerfectConsonants++;
+                        break;
+                    case PitchInterval.Tritone:
+                        numOfTritones++;
+                        break;
+                    case PitchInterval.PerfectFifth:
+                        numOfChordSteps++;
+                        numOfPerfectConsonants++;
+                        break;
+                    case PitchInterval.MinorSixth:
+                    case PitchInterval.MajorSixth:
+                        numOfImperfectConsonants++;
+                        break;
+                    case PitchInterval.MinorSeventh:
+                    case PitchInterval.MajorSeventh:
+                        numOfDissonants++;
+                        break;
+                    case PitchInterval.Octave:
+                        numOfChordSteps++;
+                        numOfPerfectConsonants++;
+                        break;
+                    default:
+                        numOfBigLeaps++;
+                        break;
+                }
             }
 
-            // set fitness for the extreme interval ratio 
+            // set total number of intervals 
             totalNumOfIntervals = (ulong)pitches.Length - 1;
-            fitness = (totalNumOfIntervals - numOfExtremeIntervals) / (float)totalNumOfIntervals;
 
-            // return result
+            // calculate big leap interval ratio metric 
+            bigLeapIntervalMetric = (totalNumOfIntervals - numOfExtremeIntervals) / (float)totalNumOfIntervals;
+
+            // calculate diatonic steps ratio metric
+            diatonicStepsMetric = numOfDiatonicSteps / totalNumOfIntervals;
+
+            // calculate chord steps ratio metric
+            chordStepsMetric = numOfChordSteps / totalNumOfIntervals;
+
+            // calculate chord steps ratio metric with weighted sum according to interval type
+            intervalTypeMetric =
+                ((numOfPerfectConsonants * 1.0) +
+                (numOfImperfectConsonants * 0.8) +
+                (numOfDissonants * 0.6) +
+                (numOfTritones * 0.4) +
+                (numOfBigLeaps * 0.2)) / totalNumOfIntervals;
+
+            // calculate total weighted fitness according to the different metrics
+            fitness = (0.40 * diatonicStepsMetric) +
+                      (0.30 * chordStepsMetric) +
+                      (0.20 * bigLeapIntervalMetric) +
+                      (0.10 * intervalTypeMetric);
+
+            // return fitness result
             return fitness;
         }
     }

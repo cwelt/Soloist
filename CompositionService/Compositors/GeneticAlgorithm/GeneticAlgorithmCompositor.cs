@@ -48,60 +48,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         }
         #endregion
 
-        #region PopulateFirstGeneration()
-        /// <summary>
-        /// Initialize first generation of solution candidates. 
-        /// </summary>
-        protected internal void PopulateFirstGeneration()
-        {
-            MelodyCandidate candidate, seedCandidate, reversedCandidate;
-
-            // initialize basic candidates with generic arpeggeio & scale note sequences 
-            foreach (Action<IEnumerable<IBar>> initializer in _initializers)
-            {
-                // create a new empty candidate melody 
-                candidate = new MelodyCandidate(_currentGeneration, ChordProgression);
-
-                // initialize it with current iterated initializer 
-                initializer(candidate.Bars);
-
-                // duplicate the newly created candidate 
-                reversedCandidate = new MelodyCandidate(_currentGeneration, candidate.Bars, true);
-
-                // reverse the duplicated candidate note 
-                ReverseAllNotesMutation(reversedCandidate);
-
-                // add the new candidates to candidate collection 
-                _candidates.Add(candidate);
-                _candidates.Add(reversedCandidate);
-            }
-
-
-            if (Seed != null)
-            {
-                // encapsulate the bar collection from the seed in a candidate entity 
-                seedCandidate = new MelodyCandidate(_currentGeneration, Seed, includeExistingMelody: true);
-
-                // define the number of points for the crossover 
-                int n = Seed.Count / 4;
-
-                // initialize a list of offspring candidates that would be returned from the crossover
-                List<MelodyCandidate> offSpringCandidatesList = new List<MelodyCandidate>();
-
-                // crossover all the existing candidates with the seed candidate 
-                foreach (var generatedCandidate in _candidates)
-                {
-                    var list = new List<MelodyCandidate> { seedCandidate, generatedCandidate };
-                    ICollection<MelodyCandidate> offspringCandidates = NPointCrossover(list, n);
-                    offSpringCandidatesList.AddRange(offspringCandidates);
-                }
-
-                // replace old candidates (parents) with their mixed offsprings 
-                _candidates.Clear();
-                _candidates.AddRange(offSpringCandidatesList);
-            }
-        }
-        #endregion
+        
 
 
         #region GenerateMelody()
@@ -135,8 +82,20 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 100)
+                if (++i == 13)
                     terminateCondition = true;
+            }
+
+
+            foreach (var item in _candidates)
+            {
+                
+                Console.WriteLine($"Grade: {item.FitnessGrade}, bar:");
+                foreach (var note in item.Bars[0].Notes)
+                {
+                    Console.WriteLine(note);
+                }
+                Console.WriteLine("-----------------\n\n\n\n");
             }
 
             // TODO: convert internal genome representation of each candidate in to a MIDI track chunk representation
@@ -160,7 +119,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         {
             Random random = new Random();
 
-            for (int i = 0; i < candidate.Bars.Count; i++)
+            for (int i = 0; i < candidate.Bars.Count; i = i+2)
             {
                 switch(random.Next(17))
                 {
@@ -223,7 +182,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         {
             foreach (MelodyCandidate candidate in _candidates)
             {
-                float adjacentPitchesGrade = EvaluateAdjacentIntervals(candidate);
+                double adjacentPitchesGrade = EvaluateAdjacentIntervals(candidate);
                 candidate.FitnessGrade = adjacentPitchesGrade * 100;
             }
         }

@@ -46,6 +46,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 chordProgressionFilePath: chordFilePath,
                 midiFilePath: midiFilePath,
                 melodyTrackIndex: 1);
+
             IMidiFile midiFile = composition.Compose(
                 strategy: model.CompositionStrategy,
                 overallNoteDurationFeel: model.OverallNoteDurationFeel,

@@ -56,7 +56,7 @@
     <Compile Include="Compositors\GeneticAlgorithm\FitnessEvaluators.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\GeneticAlgorithmCompositor.cs" />
     <Compile Include="Compositors\Compositor.cs" />
-    <Compile Include="Compositors\GeneticAlgorithm\Initializers.cs" />
+    <Compile Include="Compositors\GeneticAlgorithm\Initialization.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\MelodyCandidate.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\Mutators.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\Selectors.cs" />
