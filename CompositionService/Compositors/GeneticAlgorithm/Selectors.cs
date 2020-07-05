@@ -66,7 +66,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             bestCandidatesOfCurrentGeneration = currentGenerationCandidates
                 .Take(Math.Min(currentGenerationCandidatesCount / 2, maxPopulationSize));
 
-            bestCandidatesOfElderGenerations = currentGenerationCandidates
+            bestCandidatesOfElderGenerations = elderGenerationCandidates
                 .Take(Math.Min(elderGenerationCandidatesCount / 2, maxPopulationSize));
 
             nextGenerationCandidates = bestCandidatesOfCurrentGeneration
