@@ -135,7 +135,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 7)
+                if (++i == 13)
                     terminateCondition = true;
             }
 
@@ -148,25 +148,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
         
 
-        #region Crossover()
-        /// <summary>
-        /// Crossover two solution candidates and generate new solutions. 
-        /// </summary>
-        protected internal void Crossover()
-        {
-            Random random = new Random();
-            int numOfCandidates = _candidates.Count;
-
-            var candidate1 = _candidates[random.Next(numOfCandidates)];
-            var candidate2 = _candidates[random.Next(numOfCandidates)];
-            var crossoverParticipants = new List<MelodyCandidate> { candidate1, candidate2 };
-
-            var newCandidates = NPointCrossover(crossoverParticipants, _candidates.Count / 2);
-            _candidates.Remove(candidate1);
-            _candidates.Remove(candidate2);
-            _candidates.AddRange(newCandidates);
-        }
-        #endregion
+       
 
         #region Mutate()
         /// <summary>

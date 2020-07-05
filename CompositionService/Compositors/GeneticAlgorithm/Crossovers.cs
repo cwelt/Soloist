@@ -9,6 +9,29 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 {
     internal partial class GeneticAlgorithmCompositor : Compositor
     {
+        #region Crossover()
+        /// <summary>
+        /// Crossover solution candidates and generate new solutions. 
+        /// </summary>
+        protected internal void Crossover()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                Random random = new Random();
+                int numOfCandidates = _candidates.Count;
+
+                var candidate1 = _candidates[random.Next(numOfCandidates)];
+                var candidate2 = _candidates[random.Next(numOfCandidates)];
+                var candidate3 = _candidates[random.Next(numOfCandidates)];
+                var crossoverParticipants = new List<MelodyCandidate> { candidate1, candidate2, candidate3 };
+
+                var newCandidates = NPointCrossover(crossoverParticipants, _candidates.Count / 4);
+                _candidates.AddRange(newCandidates);
+            }
+        }
+        #endregion
+
+
         ICollection<MelodyCandidate> NPointCrossover(IList<MelodyCandidate> participants, int n)
         {
             // assure N isn't too big 
