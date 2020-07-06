@@ -23,6 +23,7 @@ namespace ConsoleClient
             // midi (playback) file path 
             string filePath = ConfigurationManager.AppSettings["midiFile"];
             string filePathTest = ConfigurationManager.AppSettings["midiFileTest"];
+            string chordsPathTest = ConfigurationManager.AppSettings["chordsFileTest"];
             string playbackOnlyfilePath = ConfigurationManager.AppSettings["midiFilePlayback"];
 
             // get chords from file... 
@@ -36,10 +37,10 @@ namespace ConsoleClient
             var newMidiFiles = composition.Compose(
                 compositionStrategy,
                 musicalInstrument: MusicalInstrument.VoiceOohs,
-                overallNoteDurationFeel: OverallNoteDurationFeel.Medium,
-                pitchRangeSource: PitchRangeSource.MidiFile,
-                minPitch: NotePitch.E2,
-                maxPitch: NotePitch.E6,
+                overallNoteDurationFeel: OverallNoteDurationFeel.Intense,
+                pitchRangeSource: PitchRangeSource.Custom,
+                minPitch: NotePitch.A2,
+                maxPitch: NotePitch.C6,
                 useExistingMelodyAsSeed: true);
 
             for (int i = 0; i < newMidiFiles.Length; i++)

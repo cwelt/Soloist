@@ -2,6 +2,7 @@
 using CW.Soloist.CompositionService.UtilEnums;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
@@ -48,8 +49,6 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         }
         #endregion
 
-        
-
 
         #region GenerateMelody()
         /// <inheritdoc/>
@@ -82,16 +81,16 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 13)
+                if (++i == 120)
                     terminateCondition = true;
             }
 
 
-            foreach (var item in _candidates)
+            foreach (var c in _candidates)
             {
                 
-                Console.WriteLine($"Grade: {item.FitnessGrade}, bar:");
-                foreach (var note in item.Bars[0].Notes)
+                Console.WriteLine($"Generation: {c.Generation}, Grade: {c.FitnessGrade}, bar:");
+                foreach (var note in c.Bars[3].Notes)
                 {
                     Console.WriteLine(note);
                 }
@@ -174,19 +173,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         }
         #endregion
 
-        #region EvaluateFitness()
-        /// <summary>
-        /// Evaluates the candidate solution's fitness, i.e., grades (score).
-        /// </summary>        
-        protected internal void EvaluateFitness()
-        {
-            foreach (MelodyCandidate candidate in _candidates)
-            {
-                double adjacentPitchesGrade = EvaluateAdjacentIntervals(candidate);
-                candidate.FitnessGrade = adjacentPitchesGrade * 100;
-            }
-        }
-        #endregion
+
 
 
     }

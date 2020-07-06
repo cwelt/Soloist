@@ -15,7 +15,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// </summary>
         protected internal void Crossover()
         {
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 10; i++)
             {
                 Random random = new Random();
                 int numOfCandidates = _candidates.Count;

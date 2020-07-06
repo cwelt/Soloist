@@ -37,5 +37,24 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 .Select<INote, NotePitch>(note => note.Pitch)
                 .Where(pitch => pitch != NotePitch.HoldNote && pitch != NotePitch.RestNote));
         }
+
+        /// <summary>
+        ///  Retreives all note pitches that are contained in the given bar,
+        ///  either including rest and hold note, or excluding them, 
+        ///  according to <paramref name="includeRestHoldNotes"/> flag.
+        ///  By default rest and hold notes are filtered, i.e., excluded. 
+        /// </summary>
+        /// <remarks> This method is an overload of 
+        /// <see cref="GetAllPitches(IEnumerable{IBar}, bool)"/>
+        /// which carries the same request for a bar sequence. 
+        /// </remarks>
+        /// <param name="bar"> The bar for whom to retrieve it's pitches. </param>
+        /// <param name="includeRestHoldNotes"> Flag indicator for either including or excluding rest and hold notes.</param>
+        /// <returns> Sequence of all note pitches from the given bar sequence. </returns>
+        public static IEnumerable<NotePitch> GetAllPitches(this IBar bar, bool includeRestHoldNotes = false)
+        {
+            // delegate request to overloaded version which handles collections of bars
+            return GetAllPitches(new[] { bar }, includeRestHoldNotes);
+        }
     }
 }

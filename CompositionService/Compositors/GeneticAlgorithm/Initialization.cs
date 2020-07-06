@@ -48,7 +48,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 reversedSeedCandidate = new MelodyCandidate(_currentGeneration, Seed, includeExistingMelody: true);
 
                 // define the number of points for the crossover 
-                int n = Seed.Count / 4;
+                int n = 1; // Seed.Count / 4;
 
                 // initialize a list of offspring candidates that would be returned from the crossover
                 List<MelodyCandidate> offSpringCandidatesList = new List<MelodyCandidate>();
