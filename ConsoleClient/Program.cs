@@ -6,6 +6,7 @@ using CW.Soloist.CompositionService.UtilEnums;
 using System;
 using System.Configuration;
 using System.Globalization;
+using System.Linq;
 
 namespace ConsoleClient
 {
@@ -43,12 +44,13 @@ namespace ConsoleClient
                 maxPitch: NotePitch.C6,
                 useExistingMelodyAsSeed: true);
 
+            var bestCompositions = newMidiFiles.Take(10);
             for (int i = 0; i < newMidiFiles.Length; i++)
             {
                 newMidiFiles[i].SaveFile(fileNamePrefix: $"consoleTest_{i+1}_");
             }
 
-            newMidiFiles[0].Play();
+            bestCompositions.First().Play();
             //newMidiFile.Stop();
         }
     }

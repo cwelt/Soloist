@@ -14,7 +14,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
     {
         private protected uint _currentGeneration;
         private protected List<MelodyCandidate> _candidates;
-        private protected const int MaxNumberOfCandidates = 60;
+        private protected const int MaxPopulationSize = 60;
         private protected Action<MelodyCandidate, int?>[] _mutations;
         private protected Action<IEnumerable<IBar>>[] _initializers;
 
