@@ -133,8 +133,8 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             // initialize an empty list of next generation candidates  
             List<MelodyCandidate> nextGenerationCandidates = new List<MelodyCandidate>(MaxPopulationSize);
 
-            // spin the roulette wheel until we have enough candidats for next generation
-            while (nextGenerationCandidates.Count < MaxPopulationSize)
+            // spin the roulette wheel until we have enough candidates for next generation
+            while (nextGenerationCandidates.Count < MaxPopulationSize && _candidates.Count > 0)
             {
                 // initialize the tracking accumulator 
                 accumulator = 0;
