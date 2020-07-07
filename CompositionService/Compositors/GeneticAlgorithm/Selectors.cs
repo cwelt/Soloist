@@ -19,7 +19,8 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         protected internal void SelectNextGeneration()
         {
             // delegate selection process to a dedicated selection method
-            RouletteWheelSelection();
+            //RouletteWheelSelection();
+            PlusSelection();
         }
         #endregion
 

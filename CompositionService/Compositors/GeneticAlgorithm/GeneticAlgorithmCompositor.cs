@@ -69,7 +69,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 Crossover();
 
                 // modify parts of individuals 
-                foreach (var candidate in _candidates)
+                foreach (var candidate in _candidates.Where(c => c.Generation == _currentGeneration))
                 {
                     Mutate(candidate);
                 }

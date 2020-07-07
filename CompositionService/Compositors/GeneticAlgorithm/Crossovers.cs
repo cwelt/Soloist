@@ -15,7 +15,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// </summary>
         protected internal void Crossover()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 15; i++)
             {
                 Random random = new Random();
                 int numOfCandidates = _candidates.Count;
@@ -23,7 +23,6 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 var candidate1 = _candidates[random.Next(numOfCandidates)];
                 var candidate2 = _candidates[random.Next(numOfCandidates)];
                 var crossoverParticipants = new List<MelodyCandidate> { candidate1, candidate2 };
-
                 var newCandidates = NPointCrossover(crossoverParticipants, _candidates.Count / 4);
                 _candidates.AddRange(newCandidates);
             }

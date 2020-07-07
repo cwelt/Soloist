@@ -26,13 +26,13 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double contourStabilityGrade = EvaluateContourStability(candidate);
                 double syncopationsGrade = EvaluateSyncopation(candidate);
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
-                    (25 * extremeIntervalsGrade) +
-                    (15 * adjacentPitchesGrade) +
-                    (20 * pitchVarietyGrade) +
-                    (5 * pitchRangeGrade) +
-                    (10 * contourDirectionGrade) + 
-                    (10 * contourStabilityGrade) + 
-                    (15 * syncopationsGrade)
+                    (40 * extremeIntervalsGrade) +
+                    (30 * adjacentPitchesGrade) +
+                    (30 * pitchVarietyGrade) +
+                    (10 * pitchRangeGrade) +
+                    (20 * contourDirectionGrade) + 
+                    (25 * contourStabilityGrade) + 
+                    (25 * syncopationsGrade)
                     );
             }
         }
@@ -177,15 +177,15 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             // initialize counters & accumuators  
             ulong totalNumOfIntervals = 0;
             ulong numOfExtremeIntervals = 0;
+            ulong overallDeviation = 0;
             int adjacentDistance = 0;
-            double overallDistance = 0;
 
             // init max pitch range 
             int pitchRange = MaxPitch - MinPitch;
 
             // initialize metrics 
             double extremeIntervalMetric;
-            double overallDistanceMetric;
+            double overallDeviationMetric;
 
             // convert max interval nullable int to int
             int maxDistance = (int)maxInterval;
@@ -199,12 +199,13 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 // calculate pitch distance between the two adjacent notes 
                 adjacentDistance = Math.Abs(pitches[i + 1] - pitches[i]);
 
-                // accumulate the distance relatively to the overall pitch range  
-                overallDistance += (double)adjacentDistance / pitchRange;
-
-                // update extreme interval counter if necessary 
+                // if this pitch is extreme, update counter & deviation accumulator 
                 if (adjacentDistance > maxDistance)
+                {
                     numOfExtremeIntervals++;
+                    overallDeviation += (ulong)(adjacentDistance - maxDistance);
+                }
+
             }
 
             // set total number of intervals 
@@ -213,11 +214,12 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             // calculate ratio of extreme intervals which exceed the requested max interval
             extremeIntervalMetric = (totalNumOfIntervals - numOfExtremeIntervals) / (float)totalNumOfIntervals;
 
-            // calculate metric of overal distance average 
-            overallDistanceMetric = 1 - (overallDistance / totalNumOfIntervals);
+            // calculate metric of overal deviation from max interval  
+            overallDeviationMetric = (numOfExtremeIntervals == 0) ? 1
+                : numOfExtremeIntervals / overallDeviation;
 
             // return weighted fitness according to the two different metrics
-            return (0.5 * extremeIntervalMetric) + (0.5 * overallDistanceMetric);
+            return (0.4 * extremeIntervalMetric) + (0.6 * overallDeviationMetric);
         }
         #endregion
 
