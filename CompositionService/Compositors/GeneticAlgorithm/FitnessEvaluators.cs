@@ -23,14 +23,15 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double pitchVarietyGrade = EvaluatePitchVariety(candidate);
                 double pitchRangeGrade = EvaluatePitchRange(candidate);
                 double contourDirectionGrade = EvaluateContourDirection(candidate);
-                double contourstabilityGrade = EvaluateContourStability(candidate);
+                double contourStabilityGrade = EvaluateContourStability(candidate);
+                double syncopeGrade = EvaluateSyncopation(candidate);
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
                     (30 * extremeIntervalsGrade) +
                     (15 * adjacentPitchesGrade) +
                     (25 * pitchVarietyGrade) +
                     (5 * pitchRangeGrade) +
                     (15 * contourDirectionGrade) + 
-                    (10 * contourstabilityGrade)
+                    (10 * contourStabilityGrade)
                     );
             }
         }
@@ -456,15 +457,19 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             float barDuration, noteDuration;
             float noteStartTime = 0;
             uint syncopationCounter = 0;
+            IBar bar;
+            INote note;
 
-            foreach (IBar bar in candidate.Bars)
+            for (int i = 0; i < candidate.Bars.Count; i++)
             {
+                bar = candidate.Bars[i];
                 barDuration = (float)bar.TimeSignature.Numerator / bar.TimeSignature.Denominator;
                 noteStartTime = 0;
 
-                foreach (INote note in bar.Notes)
+                for (int j = 0; j < bar.Notes.Count; j++)
                 {
-                    noteDuration = (float)note.Duration.Numerator / note.Duration.Denominator;
+                    note = bar.Notes[j];
+                    noteDuration = note.GetDurationInContext(bar, candidate.Bars, j, i);
 
                     /* consider a note to be syncoped if it is a quarter beat or longer,
                      * it does not start on an offbeat of the bar, 

@@ -147,6 +147,10 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <returns> True if the starting beat is an off-beat of the subject bar, false otherwise. </returns>
         public static float GetDurationInContext(this INote note, IBar barContext, IList<IBar> barSequenceContext, int? noteIndex = null, int? barIndex = null)
         {
+            // initialization 
+            INote nextNote;
+            int nextNoteIndex, nextBarIndex;
+
             // initialize base duration of the subject note
             float noteDuration = (float)note.Duration.Numerator / note.Duration.Denominator;
 
@@ -159,20 +163,16 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 return noteDuration;
 
 
-            bool checkConsecutiveNote = true;
-            while (checkConsecutiveNote && barIndex < barSequenceContext.Count)
+            while((nextNote = barSequenceContext.GetSuccessorNote(excludeRestHoldNotes: false,
+                (int)barIndex, (int)noteIndex, out nextBarIndex, out nextNoteIndex))
+                ?.Pitch == NotePitch.HoldNote)
             {
-                
+                noteDuration += (float)nextNote.Duration.Numerator / nextNote.Duration.Denominator;
+                noteIndex = nextNoteIndex;
+                barIndex = nextBarIndex;
             }
 
-
-
-
-
-            return -1;
-
-
-
+            return noteDuration;
         }
         #endregion
 
@@ -206,7 +206,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 for (int j = startingNoteIndex; j >= 0; j--)
                 {
                     note = melodyBarsContext[i].Notes[j];
-                    if (excludeRestHoldNotes || (note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote))
+                    if (!excludeRestHoldNotes || (note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote))
                     {
                         // set out params with the indices values and return the preceding note 
                         precedingNoteBarIndex = i;
@@ -236,6 +236,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <param name="noteIndex"> Index of the note of which it's predecessor is wanted. </param>
         /// <param name="succeedingNoteBarIndex">Index of the bar which contains the successor note. </param>
         /// <param name="succeedingNoteIndex">Index of the successor note inside his containing note sequence. </param>
+        /// <returns> Succeeding note in the melody, or null if no successor note is found. </returns>
         public static INote GetSuccessorNote(this IList<IBar> melodyBarsContext, bool excludeRestHoldNotes, int barIndex, int noteIndex, out int succeedingNoteBarIndex, out int succeedingNoteIndex)
         {
             // initialization 
@@ -251,7 +252,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 for (int j = startingNoteIndex; j < melodyBarsContext[i].Notes.Count; j++)
                 {
                     note = melodyBarsContext[i].Notes[j];
-                    if (excludeRestHoldNotes || (note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote))
+                    if (!excludeRestHoldNotes || (note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote))
                     {
                         // set out params with the indices values and return the succeeding note 
                         succeedingNoteBarIndex = i;
