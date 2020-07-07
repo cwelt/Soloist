@@ -72,7 +72,6 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 foreach (var candidate in _candidates)
                 {
                     Mutate(candidate);
-                    ToggleToHoldNoteMutation(candidate, 1);
                 }
                 
                 // rate each individual 
@@ -82,7 +81,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 1)
+                if (++i == 120)
                     terminateCondition = true;
             }
 

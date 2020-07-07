@@ -24,14 +24,15 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double pitchRangeGrade = EvaluatePitchRange(candidate);
                 double contourDirectionGrade = EvaluateContourDirection(candidate);
                 double contourStabilityGrade = EvaluateContourStability(candidate);
-                double syncopeGrade = EvaluateSyncopation(candidate);
+                double syncopationsGrade = EvaluateSyncopation(candidate);
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
-                    (30 * extremeIntervalsGrade) +
+                    (25 * extremeIntervalsGrade) +
                     (15 * adjacentPitchesGrade) +
-                    (25 * pitchVarietyGrade) +
+                    (20 * pitchVarietyGrade) +
                     (5 * pitchRangeGrade) +
-                    (15 * contourDirectionGrade) + 
-                    (10 * contourStabilityGrade)
+                    (10 * contourDirectionGrade) + 
+                    (10 * contourStabilityGrade) + 
+                    (15 * syncopationsGrade)
                     );
             }
         }
@@ -446,34 +447,49 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
         #region EvaluateSyncopation()
         /// <summary>
-        /// Evaluates fitness according to the melody's pitch range. 
-        /// This fitness is calculated as the ration between the user's requested pitch range, 
-        /// and the actual candidate's melody pitch range.
+        /// Evaluates fitness according to the amount of existing syncopations. 
+        /// This fitness is calculated as the ratio between the amount of existing syncopations
+        /// in the melody, and the total amount of real pitched notes, i.e., not hold and rest
+        /// notes. 
+        /// <para>
+        /// This evaluation considers a note to be a syncopation if it a pitch note,
+        /// it starts on an "off-beat" (not on beginning or middle of bar), 
+        /// and it's length is a quarter beat length or longer.
+        /// </para>
         /// </summary>
         /// <param name="candidate"> The melody candidate to evaluate. </param>
         /// <returns> The fitness outcome score for the requested evaluation. </returns>
         private protected double EvaluateSyncopation(MelodyCandidate candidate)
         {
+            // initialization 
+            IBar bar;
+            INote note;
             float barDuration, noteDuration;
             float noteStartTime = 0;
             uint syncopationCounter = 0;
-            IBar bar;
-            INote note;
 
+            // scan all bars of the subject candidate 
             for (int i = 0; i < candidate.Bars.Count; i++)
             {
+                // get current bar's duration  
                 bar = candidate.Bars[i];
                 barDuration = (float)bar.TimeSignature.Numerator / bar.TimeSignature.Denominator;
+                
+                // reset note start time in relation to it's containing bar 
                 noteStartTime = 0;
 
+                // scan all notes in current bar 
                 for (int j = 0; j < bar.Notes.Count; j++)
                 {
+                    // fetch current note 
                     note = bar.Notes[j];
+
+                    // get the duration note in context of the melody it resides in 
                     noteDuration = note.GetDurationInContext(bar, candidate.Bars, j, i);
 
                     /* consider a note to be syncoped if it is a quarter beat or longer,
                      * it does not start on an offbeat of the bar, 
-                     * and it is not a hold or rest note*/
+                     * and it is not a hold note or a rest note*/
                     if (noteDuration >= Duration.QuaterNoteFraction && 
                         bar.IsOffBeatNote(noteStartTime, barDuration) &&
                         note.Pitch != NotePitch.RestNote && 
@@ -481,11 +497,14 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                         syncopationCounter++;
                 }
             }
-            
-            // return fitness as ratio between the number of syncopes and total notes
-            return (double)0 / 1;
+
+            // return fitness as ratio between the number of syncopes and total "real" notes
+            return (float)syncopationCounter / candidate.Bars
+                .SelectMany(b => b.Notes)
+                .Where(n => n.Pitch != NotePitch.RestNote && 
+                            n.Pitch != NotePitch.HoldNote)
+                .Count();
         }
         #endregion
-
     }
 }
