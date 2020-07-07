@@ -132,19 +132,31 @@ namespace CW.Soloist.CompositionService.MusicTheory
         }
         #endregion
 
-        #region IsOffBeatNote(this IBar bar, float startingBeat, float? barLength = null)
+        #region GetDurationInContext()
+
         /// <summary>
-        /// Determines whether the given starting beat starts on an off-beat in the subject  
-        /// bar, or whether it starts on an on-beat.
-        /// The note is considered to be an off-beat if it does not start on a strong beat,
-        /// i.e., it does not start in the beginning of the bar nor in the middle of the bar.
+        /// <para> Gets duration of the note in context of melody which contains it.</para>
+        /// A note's duration length could be extended by hold notes. A Hold note 
+        /// holds it's predecessor note pitch for an additional length which is set to
+        /// the hold's note duration. Therefore, in the context of note sequence in 
+        /// a melody, the note's length isn't just it's own duration length. Rather,
+        /// it should include it's immediate successor consecutive hold note, if any 
+        /// exist. This method takes a note and it's given context, and returns the 
+        /// "real" note's duration length, in the context of it's bar and the bar sequence
+        /// which includes the bar it resides in.
         /// </summary>
-        /// <param name="bar"> The subject bar in question.</param>
-        /// <param name="startingBeat">The starting time of the beat in question, 
-        /// in relation to it's containning bar. </param>
-        /// <param name="barLength"> Length of the bar. On continuous calls on the same bar,
-        /// pass this value explictly to acheive better performance. </param>
-        /// <returns> True if the starting beat is an off-beat of the subject bar, false otherwise. </returns>
+        /// <remarks> If the indices of the note or bar don't match the given context, 
+        /// then the basic standalone duration of subject note it returned.
+        /// </remarks>
+        /// <param name="note"> The subject note. </param>
+        /// <param name="barContext"> The bar that contains the subject note.</param>
+        /// <param name="barSequenceContext"> The bar sequence which contains the bar which the note resides in.</param>
+        /// <param name="noteIndex"> The index of the note in it's containing bar If this index
+        /// parameter value is set to null, then the note's index would be set to the index of 
+        /// the first occourence of the subject note in it's containing bar. /param>
+        /// <param name="barIndex">The index of the bar in it's containing bar sequence.</param>
+        /// <returns>The full duration length of the subject note, which includes the 
+        /// length from immediate succeeding consecutive hold notes in the given bar context. </returns>
         public static float GetDurationInContext(this INote note, IBar barContext, IList<IBar> barSequenceContext, int? noteIndex = null, int? barIndex = null)
         {
             // initialization 
@@ -162,7 +174,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
             if (noteIndex == -1 || barIndex == -1)
                 return noteDuration;
 
-
+            // as long as the next note is a hold note, add it's duration to subject note's duration.
             while((nextNote = barSequenceContext.GetSuccessorNote(excludeRestHoldNotes: false,
                 (int)barIndex, (int)noteIndex, out nextBarIndex, out nextNoteIndex))
                 ?.Pitch == NotePitch.HoldNote)
@@ -172,6 +184,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 barIndex = nextBarIndex;
             }
 
+            // return the calculated duration 
             return noteDuration;
         }
         #endregion
