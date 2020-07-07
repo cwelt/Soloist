@@ -137,9 +137,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             // find adjacent preceding or succeeding sounded note (not a rest or a hold note)
             int adjacentNoteIndex, adjacentNoteBarIndex;
             INote adjacentNote =
-                GetPredecessorNote(melody.Bars, excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex)
+                melody.Bars.GetPredecessorNote(excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex)
                 ??
-                GetSuccessorNote(melody.Bars, excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex);
+                melody.Bars.GetSuccessorNote(excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex);
 
             // assure an adjacent note has been found   
             if (adjacentNote != null)

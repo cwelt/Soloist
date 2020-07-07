@@ -443,7 +443,44 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         }
         #endregion
 
-        
+        #region EvaluateSyncopation()
+        /// <summary>
+        /// Evaluates fitness according to the melody's pitch range. 
+        /// This fitness is calculated as the ration between the user's requested pitch range, 
+        /// and the actual candidate's melody pitch range.
+        /// </summary>
+        /// <param name="candidate"> The melody candidate to evaluate. </param>
+        /// <returns> The fitness outcome score for the requested evaluation. </returns>
+        private protected double EvaluateSyncopation(MelodyCandidate candidate)
+        {
+            float barDuration, noteDuration;
+            float noteStartTime = 0;
+            uint syncopationCounter = 0;
+
+            foreach (IBar bar in candidate.Bars)
+            {
+                barDuration = (float)bar.TimeSignature.Numerator / bar.TimeSignature.Denominator;
+                noteStartTime = 0;
+
+                foreach (INote note in bar.Notes)
+                {
+                    noteDuration = (float)note.Duration.Numerator / note.Duration.Denominator;
+
+                    /* consider a note to be syncoped if it is a quarter beat or longer,
+                     * it does not start on an offbeat of the bar, 
+                     * and it is not a hold or rest note*/
+                    if (noteDuration >= Duration.QuaterNoteFraction && 
+                        bar.IsOffBeatNote(noteStartTime, barDuration) &&
+                        note.Pitch != NotePitch.RestNote && 
+                        note.Pitch != NotePitch.HoldNote)
+                        syncopationCounter++;
+                }
+            }
+            
+            // return fitness as ratio between the number of syncopes and total notes
+            return (double)0 / 1;
+        }
+        #endregion
 
     }
 }
