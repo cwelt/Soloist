@@ -43,6 +43,9 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <summary> Duration of a single beat </summary>
         public byte Denominator { get; set; }
 
+        /// <inheritdoc cref="IDuration.Fraction"/>
+        public float Fraction => (float)Numerator / Denominator;
+
         #region Constructors
         /// <summary>
         /// Constructs an instance of <see cref="IDuration"/> 

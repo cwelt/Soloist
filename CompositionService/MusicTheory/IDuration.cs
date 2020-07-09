@@ -45,6 +45,12 @@ namespace CW.Soloist.CompositionService.MusicTheory
         IDuration Add(IDuration duration);
 
         /// <summary>
+        /// Length of the duration as a fraction. 
+        /// For exmaple, a duration of 1/4 has a fraction of 0.25.
+        /// </summary>
+        float Fraction { get; }
+
+        /// <summary>
         /// Utility method which determins whether this duration's 
         /// denominator is a power of two or not.
         /// </summary>
