@@ -41,8 +41,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 // select a random number of crossover points between 1 to 3 
                 numOfCrossoverPoints = random.Next(1, 4);
 
-                /* do the crossover, either with a wise selection of crossover points (80%)
-                 * or a random selection (20%). */
+                /* do the crossover, 
+                 * either with a wise selection of crossover points (80% probability)
+                 * or a random selection (20% probability). */
                 if (random.NextDouble() > 0.2)
                 {
                     newCandidates = NPointCrossover(

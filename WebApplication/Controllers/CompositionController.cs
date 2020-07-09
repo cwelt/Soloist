@@ -23,8 +23,8 @@ namespace CW.Soloist.WebApplication.Controllers
             CompositionParamsViewModel viewModel = new CompositionParamsViewModel
             {
                 CompositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy,
-                MusicalInstrument = MusicalInstrument.BrightAcousticPiano,
-                OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
+                MusicalInstrument = MusicalInstrument.OverdrivenGuitar,
+                OverallNoteDurationFeel = OverallNoteDurationFeel.Intense,
                 MinPitch = NotePitch.E2,
                 MaxPitch = NotePitch.C6,
                 useExistingMelodyAsSeed = false
@@ -35,7 +35,6 @@ namespace CW.Soloist.WebApplication.Controllers
         [HttpPost]
         public FileResult Compose(CompositionParamsViewModel model)
         {
-
 
             Song song = model.Songs.Where(s => s.Id == model.SongId).First();
 

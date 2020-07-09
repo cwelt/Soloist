@@ -31,20 +31,36 @@ namespace CW.Soloist.CompositionService.Compositors
         internal byte DefaultDurationDenomniator { get; private protected set; } = Duration.EighthNoteDenominator;
         internal float DefaultDurationFraction { get; private protected set; } = Duration.EighthNoteFraction;
 
-        internal byte ShortestDuration { get; private protected set; } = 16;
+        private protected readonly float[] PossibleDurationFractions =
+        {
+            Duration.HalfNoteFraction,
+            Duration.QuaterNoteFraction,
+            Duration.EighthNoteFraction,
+            Duration.SixteenthNoteFraction,
+            Duration.ThirtySecondNoteFraction
+        };
+
+
+        internal byte LongestAllowedDurationDenominator { get; private protected set; } = 2;
+        internal float LongestAllowedFraction { get; private protected set; } = Duration.HalfNoteFraction;
+        internal byte ShortestAllowedDurationDenominator { get; private protected set; } = 16;
+        internal float ShortestAllowedFraction { get; private protected set; } = Duration.SixteenthNoteFraction;
+        internal byte DefaultNumOfNotesInBar { get; private protected set; }
+
+
 
 
         /// <summary> Minimum octave of note pitch range for the composition. </summary>
         public byte MinOctave { get; private protected set; } = 4;
 
         /// <summary> Maximum octave of note pitch range for the composition. </summary>
-        public byte MaxOctave { get; private protected set;  } = 5;
+        public byte MaxOctave { get; private protected set; } = 5;
 
         /// <summary> Lowest bound of a note pitch for the composition. </summary>
-        public NotePitch MinPitch { get; private protected set; } = NotePitch.E2; 
+        public NotePitch MinPitch { get; private protected set; } = NotePitch.E2;
 
         /// <summary> Upper bound of a  note pitch for the composition. </summary>
-        public NotePitch MaxPitch { get; private protected set; } = NotePitch.E6; 
+        public NotePitch MaxPitch { get; private protected set; } = NotePitch.E6;
 
 
         /// <summary> Compose a solo-melody over a given playback. </summary>
@@ -106,18 +122,22 @@ namespace CW.Soloist.CompositionService.Compositors
         }
 
 
-
         #region NoteSequenceInitializer()
-        private protected void NoteSequenceInitializer(IEnumerable<IBar> bars, 
+        private protected void NoteSequenceInitializer(IEnumerable<IBar> barCollection,
             NoteSequenceMode mode = NoteSequenceMode.BarZigzag,
             ChordNoteMappingSource mappingSource = ChordNoteMappingSource.Chord,
             bool toggleMappingSource = true)
         {
+            IList<IBar> bars = barCollection.ToList();
+
+            IDuration[] chordsNotesDurations;
+            IDuration noteDuration;
+
             // durtion length of a single chord
             float chordDurationFraction;
 
             // number of notes of default duration length that fit in chord's duration length
-            byte numberOfNotes;
+            int numberOfNotes;
 
             // indices for the collection of the mapped notes  
             int j = 0, first, middle, last;
@@ -135,8 +155,10 @@ namespace CW.Soloist.CompositionService.Compositors
             int step = ((mode == NoteSequenceMode.Ascending) ? 1 : -1);
 
             // populate bars with mapped notes 
-            foreach (IBar bar in bars)
+            for (int barIndex = 0; barIndex < bars.Count; barIndex++)
             {
+                IBar bar = bars[barIndex];
+
                 // remove any old existing "garbage" notes 
                 bar.Notes.Clear();
 
@@ -144,15 +166,13 @@ namespace CW.Soloist.CompositionService.Compositors
                 if (mode == NoteSequenceMode.BarZigzag)
                     step *= -1;
 
-                foreach (IChord chord in bar.Chords)
+                for (int chordIndex = 0; chordIndex < bar.Chords.Count; chordIndex++)
                 {
+                    IChord chord = bar.Chords[chordIndex];
+
                     // if CHORD zigzag mode is requested, toggle step direction on each chord change 
                     if (mode == NoteSequenceMode.ChordZigzag)
                         step *= -1;
-
-                    // calculate amount of notes that fit in current chord 
-                    chordDurationFraction = chord.Duration.Numerator / (float)(chord.Duration.Denominator);
-                    numberOfNotes = (byte)(chordDurationFraction / DefaultDurationFraction);
 
                     // update chord-note mapping source if toggle is requested
                     if (toggleMappingSource)
@@ -162,7 +182,7 @@ namespace CW.Soloist.CompositionService.Compositors
                     if (mappingSource == ChordNoteMappingSource.Chord)
                         chordMappedNotes = chord.GetArpeggioNotes(MinPitch, MaxPitch).ToArray();
                     else chordMappedNotes = chord.GetScaleNotes(MinPitch, MaxPitch).ToArray();
-                    
+
                     // initialize indices for the mapped notes collection 
                     first = 0;
                     middle = chordMappedNotes.Length / 2;
@@ -185,10 +205,19 @@ namespace CW.Soloist.CompositionService.Compositors
                     // if not zigzag mode, just reset index back to middle of the collection 
                     else j = middle;
 
-                    // do the actual note population in current bar from the mapped collection 
+                    // calculate amount of notes that fit in current chord 
+                    chordDurationFraction = chord.Duration.Numerator / (float)(chord.Duration.Denominator);
+
+                    chordsNotesDurations = GenerateDurations(chordDurationFraction);
+                    numberOfNotes = chordsNotesDurations.Length;
+
+                    /* build the actual note population in current bar from the mapped notes collection 
+                     * and the generated duration sequences */
                     for (int i = 0; i < numberOfNotes; i++)
                     {
-                        bar.Notes.Add(new Note(chordMappedNotes[j], DefaultDuration));
+                        noteDuration = chordsNotesDurations[i];
+
+                        bar.Notes.Add(new Note(chordMappedNotes[j], noteDuration));
                         if (j == first || j == last)
                             j = middle;
                         else j += step;
@@ -199,6 +228,162 @@ namespace CW.Soloist.CompositionService.Compositors
                 }
             }
         }
+        #endregion
+
+        #region Generate Duration Sequences 
+
+        #region Generate Durations Based on Overall Density Feel
+        /// <summary>
+        /// Generates a sequence of durartions that sum up to <paramref name="timeSpanLength"/>
+        /// parameter, where the duration density, i.e., number of notes, is based on the 
+        /// <paramref name="durationDefaultLength"/> parameter, or on the 
+        /// <see cref="DefaultDurationFraction"/> property if the input parameter is set to null.
+        /// </summary>
+        /// <param name="timeSpanLength"> The time span length as a fraction of a whole bar, 
+        /// which the duration sequence should up to. For exmaple, for half a bar this 
+        /// parameter should be set to 0.5. </param>
+        /// <param name="durationDefaultLength"> Default length for individual durations in the 
+        /// resulting sequence. This length must fit inside the total time span length. 
+        /// If it invalidly exceeds it, the method would set the default independently 
+        /// to the highest possible length which is shorter or equal to total time span. </param>
+        /// <returns></returns>
+        private IDuration[] GenerateDurations(float timeSpanLength, float? durationDefaultLength = null)
+        {
+            // initialization 
+            int randomIndex;
+            float[] possibleFractions;
+            Random random = new Random();
+            List<float> durationFractions = new List<float>();
+            float defaultFraction = durationDefaultLength ?? DefaultDurationFraction;
+
+            /* assure default fraction does not exceed the overall time span length
+             * and reset default if necessary */
+            if (defaultFraction > timeSpanLength)
+            {
+                defaultFraction = PossibleDurationFractions
+                    .Where(fraction => fraction <= timeSpanLength)
+                    .Max(fraction => fraction);
+            }
+
+            // Reserve half of the time span length to default length durations 
+            int numberOfDefaultDurations = (int)(timeSpanLength / DefaultDurationFraction) / 2;
+            for (int i = 0; i < numberOfDefaultDurations; i++)
+                durationFractions.Add(DefaultDurationFraction);
+
+            // update time span to the remaining length  
+            timeSpanLength /= 2;
+
+            // fill up the reamining length with random duration lengths 
+            while (timeSpanLength > 0)
+            {
+                // fetch possible relevant duration fraction lengths 
+                possibleFractions = PossibleDurationFractions
+                    .Where(fraction => fraction <= timeSpanLength
+                                    && fraction >= ShortestAllowedFraction
+                                    && fraction <= LongestAllowedFraction)
+                    .ToArray();
+
+                // randmoly select one possible fraction length 
+                randomIndex = random.Next(possibleFractions.Length);
+
+                // add the fraction to the result list 
+                durationFractions.Add(possibleFractions[randomIndex]);
+
+                // update the remaining time span length 
+                timeSpanLength -= possibleFractions[randomIndex];
+            }
+
+            // shuffle the order of the fractions 
+            durationFractions.Shuffle();
+
+            // return a projection of duration out of the fraction list 
+            return durationFractions
+                .Select(fraction => new Duration(1, (byte)(1 / fraction)))
+                .ToArray();
+        }
+        #endregion
+
+        #region Generate Durations Based on an Existing melody 
+        /// <summary>
+        /// Generates a sequence of durations <strong> based on an existing melody </strong> .
+        /// This method parses the existing melody notes durations, and returns a 3D 
+        /// duration array with the following structure: 
+        /// <para>[Bar] [Chord] [Durations of notes for this chord].</para>
+        /// <para> The resulting array could be used to retrieve duration for new 
+        /// generated notes under a given chord. </para>
+        /// <para> The durations themselves are based on the duration from the existing 
+        /// melody, with a possible shuffle per chord, according to input parameter
+        /// flag, see <paramref name="randomlyShuffleDurations"/>. </para>
+        /// </summary>
+        /// <param name="existingMelodyBars"> The existing melody which should serve as 
+        /// a reference base for generated duration sequence. </param>
+        /// <param name="randomlyShuffleDurations"> Flag to indicate wheter to 
+        /// randomly shuffle the durations or not. If set to true (default), the 
+        /// durations for a given chord might be shuffled  (depends on a "toss of a coin"). 
+        /// If set to false, the original durations are returned. </param>
+        /// <returns> 
+        /// A 3D duration array with the following structure:
+        /// <para>[Bar] [Chord] [Durations of notes for this chord].</para>
+        /// </returns>
+        private protected virtual IDuration[][][] GenerateDurations(
+            IList<IBar> existingMelodyBars,
+            bool randomlyShuffleDurations = true)
+        {
+            // initialization 
+            IBar bar;
+            IChord chord;
+            int nextNoteIndex;
+            Random random = new Random();
+            IList<int> potentialChordNoteIndices;
+            IEnumerable<int> filterdChordNoteIndices;
+
+            // initialize a 3D array of durations [bar][chord][chord's notes' durations]
+            IDuration[][][] durations = new IDuration[existingMelodyBars.Count][][];
+
+            // iterate through all bars to fill up the 3D array with durations 
+            for (int i = 0; i < existingMelodyBars.Count; i++)
+            {
+                // fetch current bar 
+                bar = existingMelodyBars[i];
+
+                // build array for the chords in current bar 
+                durations[i] = new IDuration[existingMelodyBars[i].Chords.Count][];
+
+                // initialize index of the next note in bar 
+                nextNoteIndex = 0;
+
+                // iterate through all the chords in current bar 
+                for (int j = 0; j < existingMelodyBars[i].Chords.Count; j++)
+                {
+                    // fetch current chord 
+                    chord = existingMelodyBars[i].Chords[j];
+
+                    // get indices of the current chord's notes 
+                    bar.GetOverlappingNotesForChord(chordIndex: j, out potentialChordNoteIndices);
+
+                    // filter out overlapping note indices if such exist 
+                    filterdChordNoteIndices = potentialChordNoteIndices
+                        .Where(index => index >= nextNoteIndex);
+
+                    // update index for next note in bar 
+                    nextNoteIndex = filterdChordNoteIndices.Max(noteIndex => noteIndex) + 1;
+
+                    // extract durations of the indiced notes into the 3D array  
+                    durations[i][j] = filterdChordNoteIndices
+                        .Select(chordNoteIndex => bar.Notes[chordNoteIndex].Duration)
+                        .ToArray();
+
+                    // randomly shuffle the durations order 
+                    if (random.NextDouble() > 0.5)
+                        durations[i][j].Shuffle();
+                }
+            }
+
+            // return the 3D duration array of [bars][chords][chord notes durations]
+            return durations;
+        }
+        #endregion
+
         #endregion
 
         #region Arpeggiator Initializers
@@ -380,7 +565,7 @@ namespace CW.Soloist.CompositionService.Compositors
 
             // find candidate notes which are long enough for the given split ratio 
             INote[] candidateNotes = bar.Notes
-                .Where(note => note.Duration.Denominator <= ShortestDuration / ratioDenominator)
+                .Where(note => note.Duration.Denominator <= ShortestAllowedDurationDenominator / ratioDenominator)
                 .ToArray();
 
             // assure there is at least one candidate note which long enough for splitting  
@@ -451,7 +636,7 @@ namespace CW.Soloist.CompositionService.Compositors
         private protected virtual void PermutateNotes(IBar bar, IEnumerable<IChord> chords = null, Permutation permutation = Permutation.Shuffled)
         {
             /* if no subset of chords has been requested, 
-             * set it to the entire bar chord sequence */ 
+             * set it to the entire bar chord sequence */
             chords = chords ?? bar.Chords;
 
             foreach (IChord chord in chords)

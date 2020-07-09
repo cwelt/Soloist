@@ -26,12 +26,12 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double contourStabilityGrade = EvaluateContourStability(candidate);
                 double syncopationsGrade = EvaluateSyncopation(candidate);
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
-                    (40 * extremeIntervalsGrade) +
-                    (30 * adjacentPitchesGrade) +
-                    (30 * pitchVarietyGrade) +
+                    (20 * extremeIntervalsGrade) +
+                    (15 * adjacentPitchesGrade) +
+                    (10 * pitchVarietyGrade) +
                     (10 * pitchRangeGrade) +
-                    (20 * contourDirectionGrade) + 
-                    (25 * contourStabilityGrade) + 
+                    (5 * contourDirectionGrade) + 
+                    (15 * contourStabilityGrade) + 
                     (25 * syncopationsGrade)
                     );
             }

@@ -37,14 +37,14 @@ namespace ConsoleClient
             var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: 1);
             var newMidiFiles = composition.Compose(
                 compositionStrategy,
-                musicalInstrument: MusicalInstrument.Violin,
+                musicalInstrument: MusicalInstrument.Clarinet,
                 overallNoteDurationFeel: OverallNoteDurationFeel.Extreme,
                 pitchRangeSource: PitchRangeSource.Custom,
                 minPitch: NotePitch.C2,
                 maxPitch: NotePitch.C5,
                 useExistingMelodyAsSeed: true);
 
-            var bestCompositions = newMidiFiles.Take(10).ToArray();
+            var bestCompositions = newMidiFiles.Take(5).ToArray();
             for (int i = 0; i < bestCompositions.Count(); i++)
             {
                 bestCompositions[i].SaveFile(fileNamePrefix: $"consoleTest_{i+1}_");

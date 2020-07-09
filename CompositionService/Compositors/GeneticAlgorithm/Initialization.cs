@@ -69,7 +69,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
                 // add seed and all crossover offsprings to the candidate list 
                 _candidates.AddRange(offSpringCandidatesList);
-                _candidates.AddRange(new[] { seedCandidate, reversedSeedCandidate });
+                _candidates.AddRange(new[] {seedCandidate, reversedSeedCandidate });
             }
         }
         #endregion

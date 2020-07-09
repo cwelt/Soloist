@@ -39,21 +39,20 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         public List<Song> Songs { get; set; } = new List<Song>
         {
-
-                             new Song
+            new Song
                 {
                     Id = 1,
-                    Description = "Evyatar Banai - Ad Machar",
-                    ChordPath = "/SampleData/ad_machar_chords.txt",
-                    MidiPath = "/SampleData/Evyatar Banai - Ad Machar.mid"
+                    Description = "Shmulik Kraus - After 20 Years",
+                    ChordPath = "/SampleData/twenty_years_chords.txt",
+                    MidiPath = "/SampleData/after_20_years.mid"
                 },
             new Song
                 {
                     Id = 2,
-                    Description = "Shmulik Kraus - After 20 Years",
-                    ChordPath = "/SampleData/twenty_years_chords.txt",
-                    MidiPath = "/SampleData/after_20_years.mid"
-                }
+                    Description = "Evyatar Banai - Ad Machar",
+                    ChordPath = "/SampleData/ad_machar_chords.txt",
+                    MidiPath = "/SampleData/Evyatar Banai - Ad Machar.mid"
+                },
           /*  ,new Song
                 {
                     Id = 1,
