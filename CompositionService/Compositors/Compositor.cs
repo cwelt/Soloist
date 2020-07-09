@@ -259,6 +259,7 @@ namespace CW.Soloist.CompositionService.Compositors
         {
             // initialization 
             int randomIndex;
+            int randomRatio;
             float[] possibleFractions;
             Random random = new Random();
             List<float> durationFractions = new List<float>();
@@ -273,13 +274,19 @@ namespace CW.Soloist.CompositionService.Compositors
                     .Max(fraction => fraction);
             }
 
-            // Reserve half of the time span length to default length durations 
-            int numberOfDefaultDurations = (int)(timeSpanLength / DefaultDurationFraction) / 2;
-            for (int i = 0; i < numberOfDefaultDurations; i++)
+            /* Randomly determine if to reserve the entire time span for the default  
+             * duration's lengths or just half of it . */ 
+            randomRatio = random.NextDouble() > 0.25 ? 2 : 1;
+            
+            // calcuate amount of reserved durations according to the random selection above
+            int reservedDefaultDurations = (int)(timeSpanLength / DefaultDurationFraction) / randomRatio;
+
+            // add the reserved duration lengths to the result list 
+            for (int i = 0; i < reservedDefaultDurations; i++)
                 durationFractions.Add(DefaultDurationFraction);
 
-            // update time span to the remaining length  
-            timeSpanLength /= 2;
+            // update time span according to the remaining length after the reservation 
+            timeSpanLength -= reservedDefaultDurations * DefaultDurationFraction;
 
             // fill up the reamining length with random duration lengths 
             while (timeSpanLength > 0)
@@ -302,7 +309,8 @@ namespace CW.Soloist.CompositionService.Compositors
             }
 
             // shuffle the order of the fractions 
-            durationFractions.Shuffle();
+            if (durationFractions.Distinct().Count() > 1)
+                durationFractions.Shuffle();
 
             // return a projection of duration out of the fraction list 
             return durationFractions
