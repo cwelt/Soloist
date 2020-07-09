@@ -25,6 +25,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double contourDirectionGrade = EvaluateContourDirection(candidate);
                 double contourStabilityGrade = EvaluateContourStability(candidate);
                 double syncopationsGrade = EvaluateSyncopation(candidate);
+                double evaluateDensityGrade = EvaluateDensityBalance(candidate);
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
                     (20 * extremeIntervalsGrade) +
                     (15 * adjacentPitchesGrade) +
@@ -32,7 +33,8 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                     (10 * pitchRangeGrade) +
                     (5 * contourDirectionGrade) + 
                     (15 * contourStabilityGrade) + 
-                    (25 * syncopationsGrade)
+                    (25 * syncopationsGrade) +
+                    (30 * evaluateDensityGrade)
                     );
             }
         }
@@ -506,6 +508,35 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 .Where(n => n.Pitch != NotePitch.RestNote && 
                             n.Pitch != NotePitch.HoldNote)
                 .Count();
+        }
+        #endregion
+
+        #region EvaluateDensityBalance()
+        /// <summary>
+        /// Evaluates fitness according to the note density balance across the melodie's bars. 
+        /// <para> This fitness function objective is to assure the amount of notes in each bar 
+        /// are more or less balanced, and mitigate obscure sounding phrases of which  one bar
+        /// is very dense and another is very sparse, which in general leads to an un pleasant 
+        /// drastic change in feel.  
+        /// </para>
+        /// <para> Inorder to acheive this objective, the evaluation calculates the 
+        /// average of notes in each bar and the standard deviation, and gives a high score
+        /// to candidate of which their average and standard deviation are close.</para>
+        /// </summary>
+        /// <param name="candidate"> The melody candidate to evaluate. </param>
+        /// <returns> The fitness outcome score for the requested evaluation. </returns>
+        private protected double EvaluateDensityBalance(MelodyCandidate candidate)
+        {
+            // calculate averge number of notes in a bar 
+            int numOfNotesInBarAverage = (int)Math.Round(candidate.Bars.Average(b => b.Notes.Count));
+
+            // calculate the bar set standard deviation from the average 
+            double mutualStandardDeviation = Math.Sqrt(candidate.Bars
+                .Select(b => Math.Pow((numOfNotesInBarAverage - b.Notes.Count), 2))
+                .Average());
+
+            // return inversed ratio of distance of standard deviarion from average 
+            return 1 - (mutualStandardDeviation / numOfNotesInBarAverage);
         }
         #endregion
     }

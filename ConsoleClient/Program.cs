@@ -38,10 +38,10 @@ namespace ConsoleClient
             var newMidiFiles = composition.Compose(
                 compositionStrategy,
                 musicalInstrument: MusicalInstrument.Clarinet,
-                overallNoteDurationFeel: OverallNoteDurationFeel.Intense,
-                pitchRangeSource: PitchRangeSource.Custom,
+                overallNoteDurationFeel: OverallNoteDurationFeel.Extreme,
+                pitchRangeSource: PitchRangeSource.MidiFile,
                 minPitch: NotePitch.C2,
-                maxPitch: NotePitch.E5,
+                maxPitch: NotePitch.G5,
                 useExistingMelodyAsSeed: true);
 
             var bestCompositions = newMidiFiles.Take(5).ToArray();
