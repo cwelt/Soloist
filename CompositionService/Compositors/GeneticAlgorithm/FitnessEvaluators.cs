@@ -25,16 +25,18 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double contourDirectionGrade = EvaluateContourDirection(candidate);
                 double contourStabilityGrade = EvaluateContourStability(candidate);
                 double syncopationsGrade = EvaluateSyncopation(candidate);
-                double evaluateDensityGrade = EvaluateDensityBalance(candidate);
+                double densityBalanceGrade = EvaluateDensityBalance(candidate);
+                double accentedBeatsGrade = EvaluateAccentedBeats(candidate);
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
                     (20 * extremeIntervalsGrade) +
                     (15 * adjacentPitchesGrade) +
                     (10 * pitchVarietyGrade) +
                     (10 * pitchRangeGrade) +
-                    (5 * contourDirectionGrade) + 
-                    (15 * contourStabilityGrade) + 
+                    (5 * contourDirectionGrade) +
+                    (15 * contourStabilityGrade) +
                     (25 * syncopationsGrade) +
-                    (30 * evaluateDensityGrade)
+                    (30 * densityBalanceGrade) + 
+                    (25 * accentedBeatsGrade)
                     );
             }
         }
@@ -398,7 +400,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             int prevDirectionSign = 1;
 
             // init counters for sequences of consecutive notes in the same direction 
-            int directionalSequenceCounter = 0; 
+            int directionalSequenceCounter = 0;
             int directionalIntervalAccumulator = 0;
 
             // init individual pitch placeholders and get sequence of all pitches 
@@ -478,7 +480,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 // get current bar's duration  
                 bar = candidate.Bars[i];
                 barDuration = (float)bar.TimeSignature.Numerator / bar.TimeSignature.Denominator;
-                
+
                 // reset note start time in relation to it's containing bar 
                 noteStartTime = 0;
 
@@ -494,9 +496,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                     /* consider a note to be syncoped if it is a quarter beat or longer,
                      * it does not start on an offbeat of the bar, 
                      * and it is not a hold note or a rest note*/
-                    if (noteDuration >= Duration.QuaterNoteFraction && 
+                    if (noteDuration >= Duration.QuaterNoteFraction &&
                         bar.IsOffBeatNote(noteStartTime, barDuration) &&
-                        note.Pitch != NotePitch.RestNote && 
+                        note.Pitch != NotePitch.RestNote &&
                         note.Pitch != NotePitch.HoldNote)
                         syncopationCounter++;
                 }
@@ -505,7 +507,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             // return fitness as ratio between the number of syncopes and total "real" notes
             return (float)syncopationCounter / candidate.Bars
                 .SelectMany(b => b.Notes)
-                .Where(n => n.Pitch != NotePitch.RestNote && 
+                .Where(n => n.Pitch != NotePitch.RestNote &&
                             n.Pitch != NotePitch.HoldNote)
                 .Count();
         }
@@ -537,6 +539,107 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
             // return inversed ratio of distance of standard deviarion from average 
             return 1 - (mutualStandardDeviation / numOfNotesInBarAverage);
+        }
+        #endregion
+
+        #region EvaluateAccentedBeats()
+        /// <summary> 
+        /// Evaluates accented beats in each bar, in terms of the accented pitches and their 
+        /// preceding notes, regarding the transition they create towards the accented beats.
+        /// <para> In general, accented beats (for example beats 1 and 3 on a 4/4 bar) sound 
+        /// specially well when the note played on them is one of the underlying chord notes. </para>
+        /// <para> Moreover, when the preceding note creats a tension which is solved under the 
+        /// accented beat (for example a transition of half a tone, or a perfect fifth when there is 
+        /// a tritone interval in the background), the accented note sounds so much better. </para>
+        /// <para> This fitness function objective is to find such good accented beats with good
+        /// leading preceding notes and award this candidate accordingly, in relation to the overall 
+        /// amount of strong accented notes and their leading transitions. </para>
+        /// </summary>
+        /// <param name="candidate"> The melody candidate to evaluate. </param>
+        /// <returns> The fitness outcome score for the requested evaluation. </returns>
+        private protected double EvaluateAccentedBeats(MelodyCandidate candidate)
+        {
+            // initialization 
+            IBar bar;
+            IChord chord;
+            int noteIndex = 0;
+            double weightedSum;
+            INote note, precedingNote;
+            IList<int> chordNotesIndices;
+            IEnumerable<NotePitch> chordMappedPitches;
+
+            // total accented beats (beats that are not off-beats)
+            int strongBeatsCounter = 0;
+
+            // interval between a strong beat note & it's preceding note 
+            int transitionDistance = 0;
+
+            // chord notes that fall on strong beats 
+            int goodPrecedingNotesCounter = 0;
+
+            // offbeats that lead to a strong beat via a minor/major second, or perfect 4th/5th
+            int goodNotesOnStrongBeatsCounter = 0; 
+
+            // start iterating all bars 
+            for (int barIndex = 0; barIndex < candidate.Bars.Count; barIndex++)
+            {
+                // fetch next bar 
+                bar = candidate.Bars[barIndex];
+
+                // iterate over all chords in bar 
+                for (int chordIndex = 0; chordIndex < bar.Chords.Count; chordIndex++)
+                {
+                    // fetch next chord 
+                    chord = bar.Chords[chordIndex];
+
+                    // get the good sounding pitches under this chord 
+                    chordMappedPitches = chord.GetArpeggioNotes(MinPitch, MaxPitch);
+
+                    // get the actual notes played under this chord 
+                    bar.GetOverlappingNotesForChord(chordIndex, out chordNotesIndices);
+
+                    // check if the actual notes are good 
+                    for (int i = 0; i < chordNotesIndices.Count; i++)
+                    {
+                        // fetch next note under the current chord 
+                        noteIndex = chordNotesIndices[i];
+                        note = bar.Notes[noteIndex];
+
+                        // the test is relevant only if this is an accented beat (NOT an off-beat)
+                        if (!note.IsOffBeatNote(bar))
+                        {
+                           // update the total amount of strong accented beats 
+                            strongBeatsCounter++;
+
+                            // bonus the candidate if current pitch sounds good under current chord 
+                            if (chordMappedPitches.Contains(note.Pitch))
+                                goodNotesOnStrongBeatsCounter++;
+
+                            // fetch preceding note to if it owns a bonus for a good transition
+                            precedingNote = candidate.Bars.GetPredecessorNote(true, barIndex, noteIndex, out int prevBarIndex, out int prevNoteIndex);
+
+                            // assure a preceding note has been found 
+                            if (precedingNote != null)
+                            {
+                                // calculate interval distance between current note and it's predecessor
+                                transitionDistance = Math.Abs((byte)note.Pitch - (byte)precedingNote.Pitch);
+
+                                // bonus if this a dominant or smooth transition towards the strong beat note
+                                if (transitionDistance <= (byte)PitchInterval.MajorSecond 
+                                    || (transitionDistance == (byte)PitchInterval.PerfectFourth && (byte)precedingNote.Pitch < (byte)note.Pitch)
+                                    || (transitionDistance == (byte)PitchInterval.PerfectFifth && (byte)precedingNote.Pitch > (byte)note.Pitch))
+                                    goodPrecedingNotesCounter++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // calculate weighted sum of bonuses for the good strong beats and their preceding notes 
+            weightedSum = (goodNotesOnStrongBeatsCounter * 0.5) + (goodPrecedingNotesCounter * 0.5);
+
+            // return evaluation grade as ratio between the total awarded bonus and overall strong beats
+            return weightedSum / strongBeatsCounter;
         }
         #endregion
     }

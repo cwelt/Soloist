@@ -38,7 +38,7 @@ namespace ConsoleClient
             var newMidiFiles = composition.Compose(
                 compositionStrategy,
                 musicalInstrument: MusicalInstrument.Clarinet,
-                overallNoteDurationFeel: OverallNoteDurationFeel.Extreme,
+                overallNoteDurationFeel: OverallNoteDurationFeel.Intense,
                 pitchRangeSource: PitchRangeSource.MidiFile,
                 minPitch: NotePitch.C2,
                 maxPitch: NotePitch.G5,
