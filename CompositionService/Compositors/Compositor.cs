@@ -123,21 +123,26 @@ namespace CW.Soloist.CompositionService.Compositors
 
 
         #region NoteSequenceInitializer()
+        /// <summary>
+        /// Initializes an entire note sequence for a given sequence of bars, 
+        /// based on custom user preferences such as melody contour direction 
+        /// and chord-note mapping source.
+        /// </summary>
+        /// <param name="barCollection"> The subject bar sequence that should be populated with notes.</param>
+        /// <param name="mode"> Melody Contour direction of added notes: ascending, descending, zigzag, etc. </param>
+        /// <param name="mappingSource"> Default mapping source for the notes: either from scale, chord, or a mix of the two (see <paramref name="toggleMappingSource"/> parameter). </param>
+        /// <param name="toggleMappingSource"> If set to true, the mapping source would be toggled constantly between scale and chord sources. </param>
         private protected void NoteSequenceInitializer(IEnumerable<IBar> barCollection,
             NoteSequenceMode mode = NoteSequenceMode.BarZigzag,
             ChordNoteMappingSource mappingSource = ChordNoteMappingSource.Chord,
             bool toggleMappingSource = true)
         {
-            IList<IBar> bars = barCollection.ToList();
-
-            IDuration[] chordsNotesDurations;
+            // initialization 
+            IBar bar;
+            IChord chord;
             IDuration noteDuration;
-
-            // durtion length of a single chord
-            float chordDurationFraction;
-
-            // number of notes of default duration length that fit in chord's duration length
-            int numberOfNotes;
+            IDuration[] chordsNotesDurations;
+            IList<IBar> bars = barCollection.ToList();
 
             // indices for the collection of the mapped notes  
             int j = 0, first, middle, last;
@@ -154,21 +159,24 @@ namespace CW.Soloist.CompositionService.Compositors
             // step for incrementing/decrementing note index in a given iteration 
             int step = ((mode == NoteSequenceMode.Ascending) ? 1 : -1);
 
-            // populate bars with mapped notes 
+            // start proccess of populating bars with mapped notes 
             for (int barIndex = 0; barIndex < bars.Count; barIndex++)
             {
-                IBar bar = bars[barIndex];
+                // fetch current bar 
+                bar = bars[barIndex];
 
-                // remove any old existing "garbage" notes 
+                // remove any old existing "garbage" notes if such exist
                 bar.Notes.Clear();
 
                 // if BAR zigzag mode is requested, toggle step direction on each bar change 
                 if (mode == NoteSequenceMode.BarZigzag)
                     step *= -1;
 
+                // populate notes for the individual chords in current bar 
                 for (int chordIndex = 0; chordIndex < bar.Chords.Count; chordIndex++)
                 {
-                    IChord chord = bar.Chords[chordIndex];
+                    // fetch current chord
+                    chord = bar.Chords[chordIndex];
 
                     // if CHORD zigzag mode is requested, toggle step direction on each chord change 
                     if (mode == NoteSequenceMode.ChordZigzag)
@@ -205,25 +213,25 @@ namespace CW.Soloist.CompositionService.Compositors
                     // if not zigzag mode, just reset index back to middle of the collection 
                     else j = middle;
 
-                    // calculate amount of notes that fit in current chord 
-                    chordDurationFraction = chord.Duration.Numerator / (float)(chord.Duration.Denominator);
-
-                    chordsNotesDurations = GenerateDurations(chordDurationFraction);
-                    numberOfNotes = chordsNotesDurations.Length;
+                    // generate a sequence of durations for current chord notes 
+                    chordsNotesDurations = GenerateDurations(chord.Duration.Fraction);
 
                     /* build the actual note population in current bar from the mapped notes collection 
                      * and the generated duration sequences */
-                    for (int i = 0; i < numberOfNotes; i++)
+                    for (int i = 0; i < chordsNotesDurations.Length; i++)
                     {
+                        // fetch a note duration 
                         noteDuration = chordsNotesDurations[i];
 
+                        // fetch a note for mapping and add it to note sequence 
                         bar.Notes.Add(new Note(chordMappedNotes[j], noteDuration));
                         if (j == first || j == last)
                             j = middle;
                         else j += step;
                     }
 
-                    // save last played pitch from the last chord
+                    /* save last played pitch from the last chord for selecting 
+                     * next note with minimum distance interval from it */
                     prevChordLastPitch = bar.Notes[bar.Notes.Count - 1].Pitch;
                 }
             }
