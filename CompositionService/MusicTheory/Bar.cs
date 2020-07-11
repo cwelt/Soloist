@@ -157,16 +157,16 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
             // calculate starting point for the given note inside this bar instance  
             for (int i = 0; i < noteIndex; i++)
-                noteStartTime += (float)Notes[i].Duration.Numerator / Notes[i].Duration.Denominator;
+                noteStartTime += Notes[i].Duration.Fraction;
 
             // calcualte the ending point for the given note inside this bar instance   
-            noteEndTime = noteEndTime + ((float)Notes[noteIndex].Duration.Numerator / Notes[noteIndex].Duration.Denominator);
+            noteEndTime = noteStartTime + Notes[noteIndex].Duration.Fraction;
 
             // add all notes that overlap the chord's time interval 
             foreach (IChord chord in Chords)
             {
                 chordStartTime = chordEndTime;
-                chordEndTime = chordEndTime + ((float)chord.Duration.Numerator / chord.Duration.Denominator);
+                chordEndTime = chordEndTime + chord.Duration.Fraction;
                 if (chordStartTime < noteEndTime && chordEndTime > noteStartTime)
                     noteChords.Add(chord);
             }

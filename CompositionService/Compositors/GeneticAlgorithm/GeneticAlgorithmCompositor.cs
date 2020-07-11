@@ -15,8 +15,11 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         private protected uint _currentGeneration;
         private protected List<MelodyCandidate> _candidates;
         private protected const int MaxPopulationSize = 60;
-        private protected Action<MelodyCandidate, int?>[] _mutations;
+
         private protected Action<IEnumerable<IBar>>[] _initializers;
+
+        private protected Action<MelodyCandidate, int?>[] _singleBarMutations;
+        private protected Action<MelodyCandidate>[] _entireMelodyMutations;
 
         #region Constructor 
         /// <summary>
@@ -24,20 +27,22 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// </summary>
         public GeneticAlgorithmCompositor()
         {
-            _mutations = new Action<MelodyCandidate, int?>[10];
 
             // register initializers for first generation
-            _initializers = new Action<IEnumerable<IBar>>[] {
-                ArpeggiatorInitializerAscending,
-                ArpeggiatorInitializerDescending,
-                ArpeggiatorInitializerChordZigzag,
-                ArpeggiatorInitializerBarZigzag,
-                ScaleratorInitializerAscending,
-                ScaleratorInitializerDescending,
-                ScaleratorInitializerChordZigzag,
-                ScaleratorInitializerBarZigzag
+            RegisterInitializers();
+
+            // register bar mutators 
+            RegisterMutators();
+
+            // register mutator which mutate the entire melody 
+            _entireMelodyMutations = new Action<MelodyCandidate>[] {
+                ReverseAllNotesMutation,
             };
+
+
         }
+
+
         #endregion
 
         #region InitializeCompositionParams()
@@ -69,10 +74,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 Crossover();
 
                 // modify parts of individuals 
-                foreach (var candidate in _candidates.Where(c => c.Generation == _currentGeneration))
-                {
-                    Mutate(candidate);
-                }
+                Mutate();
                 
                 // rate each individual 
                 EvaluateFitness();
@@ -81,102 +83,19 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 120)
+                if (++i == 32)
                     terminateCondition = true;
             }
 
 
-            foreach (var c in _candidates)
-            {
-                
-                Console.WriteLine($"Generation: {c.Generation}, Grade: {c.FitnessGrade}, bar:");
-                foreach (var note in c.Bars[3].Notes)
-                {
-                    Console.WriteLine(note);
-                }
-                Console.WriteLine("-----------------\n\n\n\n");
-            }
+            //foreach (var c in _candidates)
+            //Console.WriteLine($"Generation: {c.Generation}, Grade: {c.FitnessGrade}");
 
-            // TODO: convert internal genome representation of each candidate in to a MIDI track chunk representation
             var composedMelodies = _candidates
                 .OrderByDescending(c => c.FitnessGrade)
                 .Select(c => c.Bars);
             return composedMelodies;
         }
         #endregion
-
-
-        
-
-       
-
-        #region Mutate()
-        /// <summary>
-        /// Alter a candidate's solution state.
-        /// </summary>
-        protected internal void Mutate(MelodyCandidate candidate)
-        {
-            Random random = new Random();
-
-            
-
-            for (int i = 0; i < candidate.Bars.Count; i = i+2)
-            {
-                switch(random.Next(17))
-                {
-                    case 0:
-                        SyncopedNoteMutation(candidate);
-                        break;
-                    case 1:
-                        PermutateNotes(candidate.Bars[i], permutation: Permutation.Shuffled);
-                        break;
-                    case 2:
-                        ChordPitchMutation(candidate, i);
-                        break;
-                    case 3:
-                        DurationEqualSplitMutation(candidate, i);
-                        break;
-                    case 4:
-                        PermutateNotes(candidate.Bars[i], permutation: Permutation.Reversed);
-                        break;
-                    case 5:
-                        ToggleFromHoldNoteMutation(candidate);
-                        break;
-                    case 6:
-                        ScalePitchMutation(candidate, i);
-                        break;
-                    case 7:
-                        PermutateNotes(candidate.Bars[i], permutation: Permutation.Shuffled);
-                        break;
-                    case 8:
-                        DurationDelaySplitMutation(candidate, i);
-                        break;
-                    case 9:
-                        PermutateNotes(candidate.Bars[i], permutation: Permutation.SortedDescending);
-                        break;
-                    case 10:
-                        DurationAnticipationSplitMutation(candidate, i);
-                        break;
-                    case 11:
-                        DurationSplitOfARandomNote(candidate.Bars[i], DurationSplitRatio.Delay);
-                        break;
-                    case 12:
-                        ReverseBarNotesMutation(candidate, i);
-                        break;
-                    case 13:
-                        ReverseChordNotesMutation(candidate, i);
-                        break;
-                    case 14:
-                        ToggleToHoldNoteMutation(candidate, i);
-                        break;
-                }
-            }
-
-        }
-        #endregion
-
-
-
-
     }
 }

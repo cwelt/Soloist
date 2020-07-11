@@ -23,8 +23,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             ICollection<MelodyCandidate> newCandidates;
             Random random = new Random();
 
-            // crossover about 1/3 participants from the population 
-            for (int i = 0; i < MaxPopulationSize / 3; i++)
+            /* crossover about 1/6 participants from the population to create 
+             * approxiamtly 1/3 */
+            for (int i = 0; i < MaxPopulationSize / 4; i++)
             {
                 // fetch number of candidates 
                 numOfCandidates = _candidates.Count;

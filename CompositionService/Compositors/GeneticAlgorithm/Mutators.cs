@@ -8,30 +8,101 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 {
     internal partial class GeneticAlgorithmCompositor : Compositor
     {
-
-        private protected virtual void ChordPitchMutation(MelodyCandidate melody, int barIndex)
+       
+        private protected virtual void RegisterMutators()
         {
-            ChangePitchForARandomNote(melody.Bars[barIndex], mappingSource: ChordNoteMappingSource.Chord);
+            _singleBarMutations = new Action<MelodyCandidate, int?>[] 
+            {
+                ChordPitchMutation,
+                ScalePitchMutation,
+
+                DurationSplitMutation,
+
+                ReverseChordNotesMutation,
+                ReverseBarNotesMutation,
+
+                ToggleFromHoldNoteMutation,
+                ToggleToHoldNoteMutation,
+
+                SyncopedNoteMutation,
+            };
+        }
+        
+        
+        #region Mutate()
+        /// <summary>
+        /// Alter a candidate's solution state.
+        /// </summary>
+        protected internal void Mutate()
+        {
+            Random random = new Random();
+            int randomIndex;
+            Action<MelodyCandidate, int?> barMutation;
+
+            IEnumerable<MelodyCandidate> newbies, elders, candidatesForMutation;
+
+            newbies = _candidates.Where(c => c.Generation == _currentGeneration);
+
+            elders = _candidates.Except(newbies).Shuffle();
+
+            candidatesForMutation = newbies.Union(elders.Take(elders.Count() / 2));
+
+            foreach (var candidate in candidatesForMutation)
+            {
+                for (int i = 0; i < candidate.Bars.Count; i++)
+                {
+                    randomIndex = random.Next(_singleBarMutations.Length);
+                    barMutation = _singleBarMutations[randomIndex];
+                    barMutation(candidate, i);
+                }
+            }
+        }
+        #endregion
+
+
+        private protected virtual void ChordPitchMutation(MelodyCandidate melody, int? barIndex)
+        {
+            int selectedBarIndex = barIndex ?? new Random().Next(melody.Bars.Count);
+            ChangePitchForARandomNote(melody.Bars[selectedBarIndex], mappingSource: ChordNoteMappingSource.Chord);
         }
 
-        private protected virtual void ScalePitchMutation(MelodyCandidate melody, int barIndex)
+        private protected virtual void ScalePitchMutation(MelodyCandidate melody, int? barIndex)
         {
-            ChangePitchForARandomNote(melody.Bars[barIndex], mappingSource: ChordNoteMappingSource.Scale);
+            int index = barIndex ?? new Random().Next(melody.Bars.Count);
+            ChangePitchForARandomNote(melody.Bars[index], mappingSource: ChordNoteMappingSource.Scale);
         }
 
-        private protected virtual void DurationEqualSplitMutation(MelodyCandidate melody, int barIndex)
+        private protected virtual void DurationSplitMutation(MelodyCandidate melody, int? barIndex)
         {
-            DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Equal);
+            int index = barIndex ?? new Random().Next(melody.Bars.Count);
+            Action<MelodyCandidate, int?>[] durationSplitters =
+            {
+                DurationEqualSplitMutation,
+                DurationAnticipationSplitMutation,
+                DurationDelaySplitMutation
+            };
+
+            int randomIndex = new Random().Next(durationSplitters.Length);
+            Action<MelodyCandidate, int?> durationSplitMutation = durationSplitters[randomIndex];
+            durationSplitMutation(melody, barIndex);
         }
 
-        private protected virtual void DurationAnticipationSplitMutation(MelodyCandidate melody, int barIndex)
+        private protected virtual void DurationEqualSplitMutation(MelodyCandidate melody, int? barIndex)
         {
-            DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Anticipation);
+            int index = barIndex ?? new Random().Next(melody.Bars.Count);
+            DurationSplitOfARandomNote(melody.Bars[index], DurationSplitRatio.Equal);
         }
 
-        private protected virtual void DurationDelaySplitMutation(MelodyCandidate melody, int barIndex)
+        private protected virtual void DurationAnticipationSplitMutation(MelodyCandidate melody, int? barIndex)
         {
-            DurationSplitOfARandomNote(melody.Bars[barIndex], DurationSplitRatio.Delay);
+            int index = barIndex ?? new Random().Next(melody.Bars.Count);
+            DurationSplitOfARandomNote(melody.Bars[index], DurationSplitRatio.Anticipation);
+        }
+
+        private protected virtual void DurationDelaySplitMutation(MelodyCandidate melody, int? barIndex)
+        {
+            int index = barIndex ?? new Random().Next(melody.Bars.Count);
+            DurationSplitOfARandomNote(melody.Bars[index], DurationSplitRatio.Delay);
         }
 
         #region ReverseChordNotesMutation()
@@ -104,57 +175,23 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         }
         #endregion
 
-
-
         #region ToggleFromHoldNoteMutation()
         /// <summary>
         /// Replaces a random hold note with a concrete note pitch. 
-        /// <para> This method selectes a random bar from within the melody 
+        /// <para> This method selectes a bar from within the melody 
         /// that contains a hold note, and replaces it with a "regular" note 
         /// by setting the pitch to the adjacent preceding note, if such exists,
-        /// or to the adjacent succeeding note, otherwise. </para>
+        /// or otherwise, to the adjacent succeeding note. </para>
         /// </summary>
         /// <param name="melody"> The candidate melody which contains the bar sequence to operate on. </param>
-        /// <returns> True if a note replacement has been made successfully, false otherwise. </returns>
-        private protected virtual bool ToggleFromHoldNoteMutation(MelodyCandidate melody)
+        /// <param name="barIndex"> An index of specific requested bar to operate on, which 
+        /// contains a hold note. If set to null, or if requested bar does not contain any 
+        /// hold notes, then some other bar which contains a hold note would be selected, 
+        /// if such bar exists. </param>
+        private protected virtual void ToggleFromHoldNoteMutation(MelodyCandidate melody, int? barIndex)
         {
-            // find all bars which contain hold notes 
-            IList<IBar> barsWithHoldNotes = melody.Bars
-                .Where(bar => bar.Notes.Any(note => note.Pitch == NotePitch.HoldNote)).ToList();
-
-            // assure there at least one bar found 
-            if (!barsWithHoldNotes.Any())
-                return false;
-
-            // select a random bar from the collection found
-            IBar selectedBar = barsWithHoldNotes[new Random().Next(barsWithHoldNotes.Count)];
-            int selectedBarIndex = melody.Bars.IndexOf(selectedBar);
-
-            // get the hold note from the selected bar 
-            INote holdNote = selectedBar.Notes.First();
-            int holdNoteIndex = selectedBar.Notes.IndexOf(holdNote);
-
-            // find adjacent preceding or succeeding sounded note (not a rest or a hold note)
-            int adjacentNoteIndex, adjacentNoteBarIndex;
-            INote adjacentNote =
-                melody.Bars.GetPredecessorNote(excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex)
-                ??
-                melody.Bars.GetSuccessorNote(excludeRestHoldNotes: true, selectedBarIndex, holdNoteIndex, out adjacentNoteIndex, out adjacentNoteBarIndex);
-
-            // assure an adjacent note has been found   
-            if (adjacentNote != null)
-            {
-                // replace the hold note with the pitch found 
-                INote newNote = new Note(adjacentNote.Pitch, holdNote.Duration);
-                selectedBar.Notes.RemoveAt(holdNoteIndex);
-                selectedBar.Notes.Insert(holdNoteIndex, newNote);
-
-                // indicate the change has been made successfully
-                return true;
-            }
-
-            // indicate that no change has been made  
-            else return false;
+            // delegate actual mutation to base class 
+            ToggleAHoldNote(melody.Bars, barIndex);
         }
         #endregion
 
@@ -169,9 +206,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             IBar selectedBar = melody.Bars[(int)barIndex];
 
             // fetch potential notes for the toggle (filter rest, hold & first notes in bar)
-            IList<INote> relevantNotes = selectedBar.Notes.Where((note, noteIndex) => 
+            IList<INote> relevantNotes = selectedBar.Notes.Where((note, noteIndex) =>
                 noteIndex > 0 &&
-                note.Pitch != NotePitch.RestNote && 
+                note.Pitch != NotePitch.RestNote &&
                 note.Pitch != NotePitch.HoldNote).ToList();
 
             // assure at least one note as found 
@@ -193,133 +230,12 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         #endregion
 
         #region SyncopedNoteMutation()
-        /// <summary>
-        /// Syncopes a bar's first note by preceding it's start time to it's preceding bar,
-        /// on behalf of the duration of it' preceding note (last note from preceding bar).
-        /// <para> The bar containing the note to be syncoped must meet some requirments: 
-        /// It cannot be empty, nor it's preceding bar either. It cann't start with a 
-        /// hold note or a rest note, and it's first note and it's preceding note must 
-        /// have durations with a denominator which is a power of two. This constraint is 
-        /// held inorder to maintain balanced durations when making aritmetic operations 
-        /// on the duration of the syncoped note and it's preceding note. If the requested 
-        /// bar does not meet these constraints then a random bar which does is selected 
-        /// instead. If no such bar is found then this method retuns false. otherwise it returns true.
-        /// </para>
-        /// </summary>
-        /// <param name="melody"> The candidate melody which contains the bar sequence. </param>
-        /// <param name="barIndex"> The index of the bar which contains the requested 
-        /// note to be syncoped. If no index is mentioned or if the mentioned index is 
-        /// invalid in terms of the syncope operation, then a random bar would be selected instead.</param>
-        /// <returns> Ture if a successful syncope has been made, false otherwise. </returns>
-        private protected virtual bool SyncopedNoteMutation(MelodyCandidate melody, int? barIndex = null)
+        /// <summary> <inheritdoc cref="Compositor.SyncopizeANote(IList{IBar}, int?)"/></summary>
+        /// <param name="melody"> The candidate melody which contains the bar sequence to operate on. </param>
+        /// <param name="barIndex"> <inheritdoc cref="Compositor.SyncopizeANote(IList{IBar}, int?)"/> "</param>
+        private protected virtual void SyncopedNoteMutation(MelodyCandidate melody, int? barIndex = null)
         {
-            // initialization 
-            IBar selectedBar = null;
-            IBar precedingBar = null;
-            int selectedBarIndex = -1;
-
-            // if no specific legal bar index is requested then set it randomly  
-            if (!barIndex.HasValue || !IsBarLegalForSyncope(melody.Bars[(int)barIndex], (int)barIndex))
-            {
-                // select only bars which meet the operation's requirements 
-                IBar[] relevantBars = melody.Bars.Where(IsBarLegalForSyncope).ToArray();
-
-                // assure a valid bar for the syncope operation has been found 
-                if (!relevantBars.Any())
-                    return false;
-
-                // select a bar randomly from the bars found 
-                int randomIndex = new Random().Next(relevantBars.Length);
-                selectedBar = relevantBars[randomIndex];
-                selectedBarIndex = melody.Bars.IndexOf(selectedBar);
-            }
-            else // selected the requested valid bar from the input parameter 
-            {
-                selectedBarIndex = (int)barIndex;
-                selectedBar = melody.Bars[selectedBarIndex];
-            }
-
-            // fetch the first note from within the selected bar    
-            INote originalNote = selectedBar.Notes[0];
-
-            // fetch the preceding note (last note from the preceding bar)
-            int precedingBarIndex = selectedBarIndex - 1;
-            precedingBar = melody.Bars[precedingBarIndex];
-            int precedingNoteIndex = melody.Bars[precedingBarIndex].Notes.Count - 1;
-            INote precedingNote = melody.Bars[precedingBarIndex].Notes[precedingNoteIndex];
-
-            /* replace bar's first note with a new hold syncoped note which will hold the 
-             * pitch that would now be started early from the preceding bar */
-            INote newNote = new Note(NotePitch.HoldNote, originalNote.Duration);
-            selectedBar.Notes.RemoveAt(0);
-            selectedBar.Notes.Insert(0, newNote);
-
-            /* replace last note from preceding bar with new note that has the original's
-             * note pitch, and make original note hold the note from preceding bar: */
-
-            // case 1: preceding note's length is too short for splitting (8th note or shorter) - replace it directly
-            if ((precedingNote.Duration.Numerator / (float)precedingNote.Duration.Denominator) <= Duration.EighthNoteFraction)
-            {
-                INote newPrecedingNote = new Note(originalNote.Pitch, precedingNote.Duration);
-                precedingBar.Notes.RemoveAt(precedingNoteIndex);
-                precedingBar.Notes.Insert(precedingNoteIndex, newPrecedingNote);
-            }
-
-            /* case 2: preceding note is long enough for splitting. 
-             * split preceding note into two new notes:
-             * the first would retain it's original pitch, and the second 
-             * would contain the selected note's pitch from the succeeding bar 
-             * inorder to form a syncope.
-             * The duration of the second note would be set to an 8th note,
-             * and the duration of the first note would be set to the remainding length. */
-            else
-            {
-                INote newPrecedingNote1, newPrecedingNote2;
-                //if (precedingNote.Duration.Denominator )
-                Duration eigthDuration = new Duration(1, 8);
-                newPrecedingNote1 = new Note(precedingNote.Pitch, precedingNote.Duration.Subtract(eigthDuration));
-                newPrecedingNote2 = new Note(originalNote.Pitch, eigthDuration);
-
-                // replace the old preceding note with the two new preceding notes 
-                precedingBar.Notes.RemoveAt(precedingNoteIndex);
-                precedingBar.Notes.Insert(precedingNoteIndex, newPrecedingNote1);
-                precedingBar.Notes.Insert(precedingNoteIndex + 1, newPrecedingNote2);
-            }
-
-            // return true to indicate a successful change has been made 
-            return true;
-
-            #region Local Function - isBarLegalForSyncope()
-            //local function for validation candidate bar for syncope
-            bool IsBarLegalForSyncope(IBar bar, int index)
-            {
-                // assure the bar has a preceding bar before it 
-                if (index <= 0 || index >= melody.Bars.Count)
-                    return false;
-
-                // assure the the bar and it's preceding bar are not empty 
-                IBar predecessorBar = melody.Bars[index - 1];
-                if (!bar.Notes.Any() || !predecessorBar.Notes.Any())
-                    return false;
-
-                // assure first note of bar is not a rest or hold note 
-                if (bar.Notes[0].Pitch == NotePitch.HoldNote ||
-                    bar.Notes[0].Pitch == NotePitch.RestNote)
-                    return false;
-
-                /* assure bar's first note and it's preceding note from
-                 * last the preceding bar have a denominator which is a 
-                 * power of two, inorder to keep the durations balanced */
-                int predecessorNoteIndex = predecessorBar.Notes.Count - 1;
-                INote predecessorNote = predecessorBar.Notes[predecessorNoteIndex];
-                if (!bar.Notes[0].Duration.IsDenominatorPowerOfTwo() ||
-                    !predecessorNote.Duration.IsDenominatorPowerOfTwo())
-                    return false;
-
-                // all required validations passed, return true 
-                return true;
-            }
-            #endregion
+            SyncopizeANote(melody.Bars, barIndex);
         }
         #endregion
 

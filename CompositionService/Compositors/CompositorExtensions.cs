@@ -13,18 +13,22 @@ namespace CW.Soloist.CompositionService.Compositors
     {
         #region Shuffle<T>()
         /// <summary>
-        /// Shuffles a list of elements of type <typeparamref name="T"/> in place 
+        /// Shuffles a List of elements of type <typeparamref name="T"/> in place 
         /// using <a href="https://bit.ly/2ArSevh">Durstenfeld's implementation</a>  
-        ///  of the <a href="https://bit.ly/2B5jhfQ"> Fisher-Yates shuffle algorithm.</a>
+        /// of the <a href="https://bit.ly/2B5jhfQ"> Fisher-Yates shuffle algorithm.</a>
+        /// <para> Remarks: The actual shuffle is done <strong> in place</strong>, therefore
+        /// it is not necessary to save the returned result, however, it is returned explictly
+        /// so that it may be used in a fluent programming fashion along with all other 
+        /// IList<typeparamref name="T"/> extensions. </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
-        public static void Shuffle<T>(this IList<T> list)
+        public static IList<T> Shuffle<T>(this IList<T> list)
         {
             // initialization 
-            Random randomizer = new Random();
             int j; // random index 
             T temp; // type of elemens in the list 
+            Random randomizer = new Random();
 
             for (int i = 0; i < list.Count - 1; i++)
             {
@@ -36,6 +40,18 @@ namespace CW.Soloist.CompositionService.Compositors
                 list[i] = list[j];
                 list[j] = temp;
             }
+
+            return list;
+        }
+
+        /// <summary> Returns the given sequence in a shuffled order.  </summary>
+        /// <typeparam name="T"> Type of the elements in the given sequence. </typeparam>
+        /// <param name="sequence"> Sequence of <typeparamref name="T"/> elements to shuffle.</param>
+        /// <returns> The given sequence in a shuffled order. </returns>
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> sequence)
+        {
+            // delegate the actual shuffle to the Fisher-Yates algorithm implementation
+            return sequence.ToList().Shuffle();
         }
         #endregion
 

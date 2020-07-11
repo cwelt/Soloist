@@ -203,11 +203,12 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <param name="precedingNoteBarIndex"> Index of the bar which contains the preceding note.</param>
         /// <param name="precedingNoteIndex">Index of the preceding note inside his containing note sequence.</param>
         /// <returns> Preceding note in the melody, or null if no predecessor note is found. </returns>
-        public static INote GetPredecessorNote(this IList<IBar> melodyBarsContext, bool excludeRestHoldNotes, int barIndex, int noteIndex, out int precedingNoteBarIndex, out int precedingNoteIndex)
+        public static INote GetPredecessorNote(this IEnumerable<IBar> melodyBarsContext, bool excludeRestHoldNotes, int barIndex, int noteIndex, out int precedingNoteBarIndex, out int precedingNoteIndex)
         {
             // initialization 
             INote note = null;
             int startingNoteIndex = 0;
+            IList<IBar> bars = melodyBarsContext.ToList();
 
             /* start scanning backwards from current bar & current note:
              * outer loop is for bars, inner loop for notes in the individual bars */
@@ -215,10 +216,10 @@ namespace CW.Soloist.CompositionService.MusicTheory
             {
                 /* in current bar start searching right before the given note.
                  * in the rest of the bars start from the right edge end of the bar. */
-                startingNoteIndex = ((i == barIndex) ? (noteIndex - 1) : (melodyBarsContext[i].Notes.Count - 1));
+                startingNoteIndex = ((i == barIndex) ? (noteIndex - 1) : (bars[i].Notes.Count - 1));
                 for (int j = startingNoteIndex; j >= 0; j--)
                 {
-                    note = melodyBarsContext[i].Notes[j];
+                    note = bars[i].Notes[j];
                     if (!excludeRestHoldNotes || (note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote))
                     {
                         // set out params with the indices values and return the preceding note 
@@ -250,21 +251,22 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <param name="succeedingNoteBarIndex">Index of the bar which contains the successor note. </param>
         /// <param name="succeedingNoteIndex">Index of the successor note inside his containing note sequence. </param>
         /// <returns> Succeeding note in the melody, or null if no successor note is found. </returns>
-        public static INote GetSuccessorNote(this IList<IBar> melodyBarsContext, bool excludeRestHoldNotes, int barIndex, int noteIndex, out int succeedingNoteBarIndex, out int succeedingNoteIndex)
+        public static INote GetSuccessorNote(this IEnumerable<IBar> melodyBarsContext, bool excludeRestHoldNotes, int barIndex, int noteIndex, out int succeedingNoteBarIndex, out int succeedingNoteIndex)
         {
             // initialization 
             INote note = null;
             int startingNoteIndex = 0;
+            IList<IBar> bars = melodyBarsContext.ToList();
 
             // start scanning forwards from current bar & current note 
-            for (int i = barIndex; i < melodyBarsContext.Count; i++)
+            for (int i = barIndex; i < bars.Count; i++)
             {
                 /* in current bar start searching right after the given note.
                  * in the rest of the bars start from the right beginning of the bar. */
                 startingNoteIndex = ((i == barIndex) ? (noteIndex + 1) : 0);
-                for (int j = startingNoteIndex; j < melodyBarsContext[i].Notes.Count; j++)
+                for (int j = startingNoteIndex; j < bars[i].Notes.Count; j++)
                 {
-                    note = melodyBarsContext[i].Notes[j];
+                    note = bars[i].Notes[j];
                     if (!excludeRestHoldNotes || (note.Pitch != NotePitch.RestNote && note.Pitch != NotePitch.HoldNote))
                     {
                         // set out params with the indices values and return the succeeding note 

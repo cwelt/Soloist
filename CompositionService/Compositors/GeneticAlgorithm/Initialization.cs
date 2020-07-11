@@ -10,6 +10,24 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 {
     internal partial class GeneticAlgorithmCompositor : Compositor
     {
+        #region RegisterInitializers()
+        private void RegisterInitializers()
+        {
+            _initializers = new Action<IEnumerable<IBar>>[]
+            {
+                ArpeggiatorInitializerAscending,
+                ArpeggiatorInitializerDescending,
+                ArpeggiatorInitializerChordZigzag,
+                ArpeggiatorInitializerBarZigzag,
+                ScaleratorInitializerAscending,
+                ScaleratorInitializerDescending,
+                ScaleratorInitializerChordZigzag,
+                ScaleratorInitializerBarZigzag
+            };
+        }
+        #endregion
+
+
         #region PopulateFirstGeneration()
         /// <summary>
         /// Initialize first generation of solution candidates. 

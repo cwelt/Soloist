@@ -28,15 +28,15 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double densityBalanceGrade = EvaluateDensityBalance(candidate);
                 double accentedBeatsGrade = EvaluateAccentedBeats(candidate);
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
-                    (20 * extremeIntervalsGrade) +
-                    (15 * adjacentPitchesGrade) +
-                    (10 * pitchVarietyGrade) +
-                    (10 * pitchRangeGrade) +
+                    (30 * extremeIntervalsGrade) +
+                    (50 * adjacentPitchesGrade) +
+                    (20 * pitchVarietyGrade) +
+                    (15 * pitchRangeGrade) +
                     (5 * contourDirectionGrade) +
-                    (15 * contourStabilityGrade) +
+                    (20 * contourStabilityGrade) +
                     (25 * syncopationsGrade) +
-                    (30 * densityBalanceGrade) + 
-                    (25 * accentedBeatsGrade)
+                    (25 * densityBalanceGrade) + 
+                    (50 * accentedBeatsGrade)
                     );
             }
         }
