@@ -87,7 +87,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
             // init 
             IDuration noteDuration;
             float beatAccumulator = 0; // accumulates preceding notes length
-            
+
             // find starting point in bar for the given note 
             int noteIndex = contextBar.Notes.IndexOf(note);
 
@@ -126,7 +126,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
                     (float)bar.TimeSignature.Numerator / bar.TimeSignature.Denominator;
 
             // assure this beat is not the first or halfway beat of the bar 
-            if ((startingBeat != 0) && ((barDuration % 2 != 0) || (startingBeat / barLength !=Duration.HalfNoteFraction)))
+            if ((startingBeat != 0) && ((barDuration % 2 != 0) || (startingBeat / barLength != Duration.HalfNoteFraction)))
                 return true;
             return false;
         }
@@ -175,7 +175,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 return noteDuration;
 
             // as long as the next note is a hold note, add it's duration to subject note's duration.
-            while((nextNote = barSequenceContext.GetSuccessorNote(excludeRestHoldNotes: false,
+            while ((nextNote = barSequenceContext.GetSuccessorNote(excludeRestHoldNotes: false,
                 (int)barIndex, (int)noteIndex, out nextBarIndex, out nextNoteIndex))
                 ?.Pitch == NotePitch.HoldNote)
             {
@@ -282,5 +282,26 @@ namespace CW.Soloist.CompositionService.MusicTheory
             return null;
         }
         #endregion
+
+        #region ReduceFractionToLowestTerms()
+        /// <summary>
+        /// Simplifies the fraction of the duration by reducing the numerator 
+        /// and denominator by their greatest common divisor. 
+        /// For example, 6/8 would be reduced to 3/4. 
+        /// </summary>
+        internal static IDuration ReduceFractionToLowestTerms(this IDuration duration)
+        {
+            byte gcd = (byte)Duration.GreatestCommonDivisor(duration.Numerator, duration.Denominator);
+
+            duration.Numerator /= gcd;
+            duration.Denominator /= gcd;
+
+            return duration;
+
+
+        }
+        #endregion
+
+
     }
 }

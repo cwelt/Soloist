@@ -79,7 +79,7 @@ namespace CW.Soloist.CompositionService.Midi
             TimeSignatureEvent timeSignatureEvent = (from e in _metaEvents
                                       where e.EventType == MidiEventType.TimeSignature
                                       select e)?.First() as TimeSignatureEvent;
-            KeySignature = new Duration(timeSignatureEvent.Numerator, timeSignatureEvent.Denominator);
+            KeySignature = new Duration(timeSignatureEvent.Numerator, timeSignatureEvent.Denominator, false);
 
 
             // set number of bars property
@@ -338,7 +338,7 @@ namespace CW.Soloist.CompositionService.Midi
 
             // if an explicit key signature for this bar was found, assemble an duration from it
             if (barKeySignature != null)
-                return new Duration((byte)barKeySignature.Value.Numerator, (byte)barKeySignature.Value.Denominator);
+                return new Duration((byte)barKeySignature.Value.Numerator, (byte)barKeySignature.Value.Denominator, false);
 
             // if no explicit key signature exists for this specific bar, return the default key signature from meta events
             else return KeySignature;

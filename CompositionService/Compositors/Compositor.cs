@@ -624,26 +624,24 @@ namespace CW.Soloist.CompositionService.Compositors
                     break;
             }
 
-
             // set the pitches for the two new notes after the split
             NotePitch firstPitch, secondPitch;
 
-            firstPitch = existingNote.Pitch;
+            // if notes are hold or rest notes, retain them this way 
+            if (existingNote.Pitch == NotePitch.HoldNote || existingNote.Pitch == NotePitch.RestNote)
+                secondPitch = firstPitch = existingNote.Pitch;
 
-            IChord chord = bar.GetOverlappingChordsForNote(bar.Notes.IndexOf(existingNote)).First();
-            NotePitch minPitch = (NotePitch)((byte)firstPitch - PitchInterval.MajorSecond);
-            NotePitch maxPitch = (NotePitch)((byte)firstPitch + PitchInterval.MajorSecond);
-
-            secondPitch = firstPitch;
-            var asasdsa = MusicTheoryServices
-                .GetNotes(chord, ChordNoteMappingSource.Scale, minPitch, maxPitch)
-                .Except(new [] { firstPitch }).Shuffle();
-
-            if (asasdsa.Count() == 0)
+            // otherwise, set second pitch to one of the scale nearst pitches 
+            else
             {
-                Console.WriteLine($"\n\n\n\n\nPitch is {firstPitch}, note: {existingNote}, " +
-                    $"min pitch: {minPitch}, max: {maxPitch} \n\n\n\n\n");
-                return false; ;
+                firstPitch = existingNote.Pitch;
+                IChord chord = bar.GetOverlappingChordsForNote(bar.Notes.IndexOf(existingNote)).First();
+                NotePitch minPitch = (NotePitch)((byte)firstPitch - PitchInterval.MajorSecond);
+                NotePitch maxPitch = (NotePitch)((byte)firstPitch + PitchInterval.MajorSecond);
+
+                secondPitch = MusicTheoryServices
+                    .GetNotes(chord, ChordNoteMappingSource.Scale, minPitch, maxPitch)
+                    .Except(new[] { firstPitch }).Shuffle().First();
             }
 
             // create two new notes with preseted durations & pitches

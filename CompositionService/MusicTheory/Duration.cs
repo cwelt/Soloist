@@ -26,8 +26,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
         internal const float EighthNoteFraction = 0.125F;
         internal const float SixteenthNoteFraction = 0.0625F;
         internal const float ThirtySecondNoteFraction = 0.03125F;
-        internal const float TripletEighthNoteFraction = 1 / 12;
-        internal const float TripletSixteenthNoteFraction = 1 / 24;
+        internal const float TripletEighthNoteFraction = 1F / 12;
+        internal const float TripletSixteenthNoteFraction = 1F / 24;
         internal const byte WholeNoteDenominator = 1;
         internal const byte HalfNoteDenominator = 2;
         internal const byte QuaterNoteDenominator = 4;
@@ -49,14 +49,23 @@ namespace CW.Soloist.CompositionService.MusicTheory
         #region Constructors
         /// <summary>
         /// Constructs an instance of <see cref="IDuration"/> 
-        /// with a duration of <paramref name="nominator"/> / <paramref name="denominator"/>.
+        /// with a duration of <paramref name="numerator"/> / <paramref name="denominator"/>.
         /// </summary>
-        /// <param name="nominator"></param>
+        /// <param name="numerator"></param>
         /// <param name="denominator"></param>
-        public Duration(byte nominator = 1, byte denominator = 4)
+        public Duration(byte numerator = 1, byte denominator = 4, bool reduceToLowestTerms = true)
         {
-            Numerator = nominator;
-            Denominator = denominator;
+            if (reduceToLowestTerms)
+            {
+                byte gcd = (byte)GreatestCommonDivisor(numerator, denominator);
+                Numerator = (byte)(numerator / gcd);
+                Denominator = (byte)(denominator / gcd);
+            }
+            else
+            {
+                Numerator = numerator;
+                Denominator = denominator;
+            }
         }
 
         /// <summary>
@@ -64,20 +73,21 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// based on the <paramref name="duration"/> parameter values.
         /// </summary>
         /// <param name="duration"></param>
-        public Duration(IDuration duration)
-            : this(duration.Numerator, duration.Denominator) { }
+        public Duration(IDuration duration, bool reduceToLowestTerms = true)
+            : this(duration.Numerator, duration.Denominator, reduceToLowestTerms) { }
         #endregion
 
 
         public IDuration Subtract(IDuration duration)
         {
-            return MusicTheoryServices.DurationAritmetic(MusicTheoryServices.AritmeticOperation.Subtract, this, duration);
+            return MusicTheoryServices.DurationAritmetic(MusicTheoryServices.AritmeticOperation.Subtract, this, duration)
+                .ReduceFractionToLowestTerms();
         }
-
 
         public IDuration Add(IDuration duration)
         {
-            return MusicTheoryServices.DurationAritmetic(MusicTheoryServices.AritmeticOperation.Add, this, duration);
+            return MusicTheoryServices.DurationAritmetic(MusicTheoryServices.AritmeticOperation.Add, this, duration)
+                .ReduceFractionToLowestTerms();
         }
 
         public override string ToString() => $"{Numerator}/{Denominator}";
@@ -100,6 +110,34 @@ namespace CW.Soloist.CompositionService.MusicTheory
             /* // alternative implemntation which is more compact but less clear 
             return (int)Math.Ceiling(Math.Log(Denominator) / Math.Log(2))
                 == (int)Math.Floor(Math.Log(Denominator) / Math.Log(2)); */
+        }
+
+        public static bool operator <= (Duration duration1, IDuration duration2)
+        {
+            return duration1.Fraction <= duration2.Fraction;
+        }
+
+        public static bool operator >= (Duration duration1, IDuration duration2)
+        {
+            return duration1.Fraction >= duration2.Fraction;
+        }
+
+        public static bool operator < (Duration duration1, IDuration duration2)
+        {
+            return duration1.Fraction < duration2.Fraction;
+        }
+
+        public static bool operator > (Duration duration1, IDuration duration2)
+        {
+            return duration1.Fraction > duration2.Fraction;
+        }
+
+        //  function for calculating gcd with euclids'es algorithm
+        internal static int GreatestCommonDivisor(int a, int b)
+        {
+            if (b == 0)
+                return a;
+            return GreatestCommonDivisor(b, a % b);
         }
     }
 }

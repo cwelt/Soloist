@@ -37,12 +37,12 @@ namespace ConsoleClient
             var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: 1);
             var newMidiFiles = composition.Compose(
                 compositionStrategy,
-                musicalInstrument: MusicalInstrument.PanFlute,
-                overallNoteDurationFeel: OverallNoteDurationFeel.Slow,
+                musicalInstrument: MusicalInstrument.BrightAcousticPiano,
+                overallNoteDurationFeel: OverallNoteDurationFeel.Extreme,
                 pitchRangeSource: PitchRangeSource.Custom,
-                minPitch: NotePitch.C4,
-                maxPitch: NotePitch.E5,
-                useExistingMelodyAsSeed: true);
+                minPitch: NotePitch.C3,
+                maxPitch: NotePitch.A5,
+                useExistingMelodyAsSeed: false);
 
             var bestCompositions = newMidiFiles.Take(5).ToArray();
             for (int i = 0; i < bestCompositions.Count(); i++)

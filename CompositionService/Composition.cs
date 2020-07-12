@@ -322,7 +322,7 @@ namespace CW.Soloist.CompositionService
                         customErrorMessage = $"Invalid time signature format in line {lineNumber}: '{lineTokens[0]}'. The required format is 'numerator/denominator', for example 4/4.";
                         throw new FormatException(genericErrorMessage + customErrorMessage);
                     }
-                    bar = new Bar(new Duration(barNumerator, barDenominator));
+                    bar = new Bar(new Duration(barNumerator, barDenominator, false));
 
                     // set bar's chords (rest of tokens in line)
                     for (int i = 1; i < lineTokens.Length; i++)
@@ -401,25 +401,6 @@ namespace CW.Soloist.CompositionService
 
             // return the cloned bars
             return clonedBars;
-        }
-        #endregion
-
-
-        #region TEST ChordNoteMapping
-        // TODO: DELETE ME!!!
-        public static void TestChordNoteMapping()
-        {
-            // test chord-note mapping
-            foreach (var chordType in Enum.GetValues(typeof(ChordType)))
-            {
-                IChord chord = new Chord(NoteName.C, (ChordType)chordType, new Duration());
-                Console.Write($"{chordType}: ");
-                foreach (var note in chord.GetScaleNotes(4, 5))
-                {
-                    Console.Write(note + " ");
-                }
-                Console.WriteLine();
-            }
         }
         #endregion
     }

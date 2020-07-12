@@ -57,7 +57,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// an empy list of chords and an empty list of notes.
         /// </summary>
         public Bar()
-            : this(new Duration(4, 4), new List<IChord>(), new List<INote>()) { }
+            : this(new Duration(4, 4, false), new List<IChord>(), new List<INote>()) { }
 
         /// <summary>
         /// Constructs an empty bar with the given time signature. />
@@ -85,7 +85,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// </summary>
         /// <param name="bar"></param>
         public Bar(IBar bar)
-            : this(new Duration(bar.TimeSignature), bar.Chords)
+            : this(new Duration(bar.TimeSignature, false), bar.Chords)
         {
             this.Notes = new List<INote>(bar.Notes.Count);
             foreach (INote note in bar.Notes)
@@ -107,16 +107,16 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
             // calculate starting point for the given chord inside this bar instance  
             for (int i = 0; i < chordIndex; i++)
-                chordStartTime += (float)Chords[i].Duration.Numerator / Chords[i].Duration.Denominator;
+                chordStartTime += Chords[i].Duration.Fraction;
 
             // calcualte the ending point for the given chord inside this bar instance   
-            chordEndTime = chordStartTime + ((float)Chords[chordIndex].Duration.Numerator / Chords[chordIndex].Duration.Denominator);
+            chordEndTime = chordStartTime + Chords[chordIndex].Duration.Fraction;
 
             // add all notes that overlap the chord's time interval 
             for (int i = 0; i < Notes.Count; i++)
             {
                 noteStartTime = noteEndTime;
-                noteEndTime = noteStartTime + ((float)Notes[i].Duration.Numerator / Notes[i].Duration.Denominator);
+                noteEndTime = noteStartTime + Notes[i].Duration.Fraction;
                 if (noteStartTime < chordEndTime && noteEndTime > chordStartTime)
                 {
                     chordNotes.Add(Notes[i]);
