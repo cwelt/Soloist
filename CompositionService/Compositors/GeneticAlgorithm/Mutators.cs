@@ -18,6 +18,8 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
                 DurationSplitMutation,
 
+                SwapTwoNotesMutation,
+
                 ReverseChordNotesMutation,
                 ReverseBarNotesMutation,
 
@@ -236,6 +238,42 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         private protected virtual void SyncopedNoteMutation(MelodyCandidate melody, int? barIndex = null)
         {
             SyncopizeANote(melody.Bars, barIndex);
+        }
+        #endregion
+
+        #region SwapTwoNotesMutation()
+        /// <summary>
+        /// Swaps the positions of two notes in the given bar, 
+        /// or in a randomly selected bar if <paramref name="barIndex"/> is null.
+        /// </summary>
+        /// <param name="melody"> The candidate melody to operate on.</param>
+        /// <param name="barIndex"> Index of the bar to do the swap in. If no bar index supplied, then a random bar would be selected. </param>
+        private protected virtual void SwapTwoNotesMutation(MelodyCandidate melody, int? barIndex = null)
+        {
+            // initialization 
+            INote note1, note2;
+            int note1Index, note2Index;
+            Random random = new Random();
+
+            // if no specific bar has been requested then set it randomly 
+            int selectedBarIndex = barIndex ?? random.Next(melody.Bars.Count);
+            IBar bar = melody.Bars[selectedBarIndex];
+
+            // assure selected bar contains at least two notes 
+            if (bar.Notes.Count < 2)
+                return;
+
+            // select two random notes from within the selected bar 
+            note1Index = random.Next(1, bar.Notes.Count);
+            note2Index = random.Next(0, note1Index); // assure selected indices are distinct 
+            note1 = bar.Notes[note1Index];
+            note2 = bar.Notes[note2Index];
+
+            // swap the notes positions in the bar   
+            bar.Notes.RemoveAt(note1Index);
+            bar.Notes.Insert(note1Index, note2);
+            bar.Notes.RemoveAt(note2Index);
+            bar.Notes.Insert(note2Index, note1);
         }
         #endregion
 
