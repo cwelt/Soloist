@@ -565,7 +565,7 @@ namespace CW.Soloist.CompositionService.Compositors
         }
         #endregion
 
-        #region DurationSplitOfARandomNote()
+        #region NoteDurationSplit()
         /// <summary>
         /// Replaces a random note in the given bar with two new shorter notes 
         /// with durations that sum up together to the original's note duration. 
@@ -583,14 +583,15 @@ namespace CW.Soloist.CompositionService.Compositors
         /// <param name="bar"> The bar in which to make the note's duration split. </param>
         /// <param name="ratio"> The ratio of the duration split. </param>
         /// <returns> True if a split has been made, false otherwise. </returns>
-        private protected virtual bool DurationSplitOfARandomNote(IBar bar, DurationSplitRatio ratio)
+        private protected virtual bool NoteDurationSplit(IBar bar, DurationSplitRatio ratio)
         {
             // extract denominator from the given ratio 
             int ratioDenominator = ((ratio == DurationSplitRatio.Equal) ? 2 : 4);
 
             // find candidate notes which are long enough for the given split ratio 
             INote[] candidateNotesForSplit = bar.Notes
-                .Where(note => note.Duration.Denominator <= ShortestAllowedDurationDenominator / ratioDenominator)
+                .Where(note => note.Duration.Denominator <= DefaultDurationDenomniator &&
+                       note.Duration.Denominator <= ShortestAllowedDurationDenominator / ratioDenominator)
                 .ToArray();
 
             // assure there is at least one candidate note which long enough for splitting  

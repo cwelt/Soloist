@@ -16,7 +16,10 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// </summary>        
         protected internal void EvaluateFitness()
         {
-            foreach (MelodyCandidate candidate in _candidates)
+            /* evaluate fitness for all "dirty" candidates, i.e., either new 
+             * candidates from current generation which have not been evaluated yet,
+             * or candidates that changed since last evaluation */
+            foreach (MelodyCandidate candidate in _candidates.Where(c => c.IsDirty))
             {
                 double adjacentPitchesGrade = EvaluateSmoothMovement(candidate);
                 double extremeIntervalsGrade = EvaluateExtremeIntervals(candidate);
@@ -28,17 +31,21 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double densityBalanceGrade = EvaluateDensityBalance(candidate);
                 double accentedBeatsGrade = EvaluateAccentedBeats(candidate);
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
-                    (30 * extremeIntervalsGrade) +
-                    (50 * adjacentPitchesGrade) +
-                    (20 * pitchVarietyGrade) +
+                    (20 * extremeIntervalsGrade) +
+                    (25 * adjacentPitchesGrade) +
+                    (15 * pitchVarietyGrade) +
                     (15 * pitchRangeGrade) +
                     (5 * contourDirectionGrade) +
-                    (20 * contourStabilityGrade) +
-                    (25 * syncopationsGrade) +
-                    (25 * densityBalanceGrade) + 
-                    (50 * accentedBeatsGrade)
+                    (15 * contourStabilityGrade) +
+                    (20 * syncopationsGrade) +
+                    (15 * densityBalanceGrade) + 
+                    (25 * accentedBeatsGrade)
                     );
             }
+
+            // clean IsDirty flag from all candidates 
+            foreach (MelodyCandidate candidate in _candidates)
+                candidate.IsDirty = false;
         }
         #endregion
 

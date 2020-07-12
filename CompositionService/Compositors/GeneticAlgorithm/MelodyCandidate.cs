@@ -12,7 +12,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
         /// <summary> List of bars which contain the melody of this candidate. </summary>
         internal IList<IBar> Bars { get; set; }
-        private protected bool isDirty { get; } = false;
+        protected internal bool IsDirty { get; set; } = true;
 
         /// <summary>
         ///  Constructs a new candidate with the given generation, based on the 
@@ -35,6 +35,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         {
             // initialize the generation of the current candidate 
             Generation = generation;
+
+            // mark new candidate as "dirty" for evaluation 
+            IsDirty = true;
 
             // initialize bar sequence 
             if (includeExistingMelody)

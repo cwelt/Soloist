@@ -18,8 +18,12 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
         private protected Action<IEnumerable<IBar>>[] _initializers;
 
-        private protected Action<MelodyCandidate, int?>[] _singleBarMutations;
+        private protected Dictionary<Action<MelodyCandidate, int?>, double> _barMutations;
         private protected Action<MelodyCandidate>[] _entireMelodyMutations;
+        private protected const double MutationProbabilityStep = 0.025;
+        private protected const double MaxNumberOfIterations = 50;
+        private protected const double MinMutationProbability = 0.05;
+
 
         #region Constructor 
         /// <summary>
@@ -83,13 +87,20 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 SelectNextGeneration();
 
                 //MelodyGenome.CurrentGeneration++;
-                if (++i == 32)
+                if (++i == MaxNumberOfIterations || _candidates.Select(c => c.FitnessGrade).Max() >= 92
+                    && _currentGeneration > 30)
+                {
                     terminateCondition = true;
+                }
+
+                Console.WriteLine($"Generation: {_currentGeneration}, " +
+                    $"Average: {_candidates.Select(c => c.FitnessGrade).Average() : 0.00}\t" +
+                    $"Best: {_candidates.Select(c => c.FitnessGrade).Max() : 0.00}\t" +
+                    $"Lowest: { _candidates.Select(c => c.FitnessGrade).Min() : 0.00}\n");
             }
 
 
-            //foreach (var c in _candidates)
-            //Console.WriteLine($"Generation: {c.Generation}, Grade: {c.FitnessGrade}");
+            
 
             var composedMelodies = _candidates
                 .OrderByDescending(c => c.FitnessGrade)

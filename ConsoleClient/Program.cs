@@ -37,7 +37,7 @@ namespace ConsoleClient
             var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: 1);
             var newMidiFiles = composition.Compose(
                 compositionStrategy,
-                musicalInstrument: MusicalInstrument.BrightAcousticPiano,
+                musicalInstrument: MusicalInstrument.ElectricGrandPiano,
                 overallNoteDurationFeel: OverallNoteDurationFeel.Extreme,
                 pitchRangeSource: PitchRangeSource.Custom,
                 minPitch: NotePitch.C3,

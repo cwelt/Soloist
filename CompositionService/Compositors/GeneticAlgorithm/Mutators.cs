@@ -8,55 +8,78 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 {
     internal partial class GeneticAlgorithmCompositor : Compositor
     {
-       
+
         private protected virtual void RegisterMutators()
         {
-            _singleBarMutations = new Action<MelodyCandidate, int?>[] 
+            _barMutations = new Dictionary<Action<MelodyCandidate, int?>, double>
             {
-                ChordPitchMutation,
-                ScalePitchMutation,
-
-                DurationSplitMutation,
-
-                SwapTwoNotesMutation,
-
-                ReverseChordNotesMutation,
-                ReverseBarNotesMutation,
-
-                ToggleFromHoldNoteMutation,
-                ToggleToHoldNoteMutation,
-
-                SyncopedNoteMutation,
+                [ChordPitchMutation]            = 1F,
+                [ScalePitchMutation]            = 1F,
+                [DurationSplitMutation]         = 0.25,
+                [DurationUnifyMutation]         = 0.25,
+                [SwapTwoNotesMutation]          = 1F,
+                [ReverseChordNotesMutation]     = 1F,
+                [ReverseBarNotesMutation]       = 1F,
+                [ToggleFromHoldNoteMutation]    = 1F,
+                [ToggleToHoldNoteMutation]      = 1F,
+                [SyncopedNoteMutation]          = 0.8
             };
         }
-        
-        
+
+
         #region Mutate()
         /// <summary>
-        /// Alter a candidate's solution state.
+        /// Alter the state of candidate solutions.
         /// </summary>
         protected internal void Mutate()
         {
-            Random random = new Random();
+            // initialization 
             int randomIndex;
-            Action<MelodyCandidate, int?> barMutation;
-
+            Random random = new Random();
+            Action<MelodyCandidate, int?> mutationMethod;
+            double mutationProbability, randomProbability;
             IEnumerable<MelodyCandidate> newbies, elders, candidatesForMutation;
 
-            newbies = _candidates.Where(c => c.Generation == _currentGeneration);
+            // fetch the new born candidates from current generation  
+            newbies = _candidates.Where(c => c.Generation == _currentGeneration).Shuffle();
 
+            // fetch the elder existing candidates from previous generations
             elders = _candidates.Except(newbies).Shuffle();
 
-            candidatesForMutation = newbies.Union(elders.Take(elders.Count() / 2));
+            // union some candidates from both populations, new born and elders
+            candidatesForMutation = newbies
+                .Take((int)(newbies.Count() * 0.75))
+                .Union(elders.Take(elders.Count() / 2));
 
+            // modify each candidate individually 
             foreach (var candidate in candidatesForMutation)
             {
+                // modify each bar individually 
                 for (int i = 0; i < candidate.Bars.Count; i++)
                 {
-                    randomIndex = random.Next(_singleBarMutations.Length);
-                    barMutation = _singleBarMutations[randomIndex];
-                    barMutation(candidate, i);
+                    // select a random mutation from the bar mutation dictionary 
+                    randomIndex = random.Next(_barMutations.Count);
+                    mutationMethod = _barMutations.Keys.ElementAt(randomIndex);
+                    mutationProbability = _barMutations.Values.ElementAt(randomIndex);
+
+                    /* conditionlly invoke selected mutation method according to it's
+                     * mutation probability and a randomly selected probability */
+                    randomProbability = random.NextDouble();
+                    if (mutationProbability > randomProbability)
+                        mutationMethod(candidate, i);
                 }
+
+                // mark the current candidate as "dirty" for fitness evalutation
+                candidate.IsDirty = true;
+            }
+
+            // update mutation probabilities 
+            for (int i = 0; i < _barMutations.Count; i++)
+            {
+                var mutationEntry = _barMutations.ElementAt(i);
+                if (_barMutations[mutationEntry.Key] - MutationProbabilityStep >= MinMutationProbability)
+                    _barMutations[mutationEntry.Key] -= MutationProbabilityStep;
+                else _barMutations[mutationEntry.Key] = MinMutationProbability;
             }
         }
         #endregion
@@ -73,6 +96,44 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             int index = barIndex ?? new Random().Next(melody.Bars.Count);
             ChangePitchForARandomNote(melody.Bars[index], mappingSource: ChordNoteMappingSource.Scale);
         }
+
+
+        #region DurationUnifyMutation()
+        /// <summary>
+        /// Swaps the positions of two notes in the given bar, 
+        /// or in a randomly selected bar if <paramref name="barIndex"/> is null.
+        /// </summary>
+        /// <param name="melody"> The candidate melody to operate on.</param>
+        /// <param name="barIndex"> Index of the bar to do the swap in. If no bar index supplied, then a random bar would be selected. </param>
+        private protected virtual void DurationUnifyMutation(MelodyCandidate melody, int? barIndex = null)
+        {
+            // initialization 
+            INote note1, note2;
+            int note1Index, note2Index;
+            Random random = new Random();
+
+            // if no specific bar has been requested then set it randomly 
+            int selectedBarIndex = barIndex ?? random.Next(melody.Bars.Count);
+            IBar bar = melody.Bars[selectedBarIndex];
+
+            // assure selected bar contains at least two notes 
+            if (bar.Notes.Count < 2)
+                return;
+
+            // randomly select two consecutive notes from within the selected bar 
+            note1Index = random.Next(1, bar.Notes.Count);
+            note2Index = note1Index - 1;
+            note1 = bar.Notes[note1Index];
+            note2 = bar.Notes[note2Index];
+
+            // swap the notes positions in the bar   
+            var newDuration = note1.Duration.Add(note2.Duration) as Duration;
+            var note = new Note(note1.Pitch, newDuration);
+            bar.Notes.RemoveAt(note1Index);
+            bar.Notes.Insert(note1Index, note);
+            bar.Notes.RemoveAt(note2Index);
+        }
+        #endregion
 
         private protected virtual void DurationSplitMutation(MelodyCandidate melody, int? barIndex)
         {
@@ -92,19 +153,19 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         private protected virtual void DurationEqualSplitMutation(MelodyCandidate melody, int? barIndex)
         {
             int index = barIndex ?? new Random().Next(melody.Bars.Count);
-            DurationSplitOfARandomNote(melody.Bars[index], DurationSplitRatio.Equal);
+            NoteDurationSplit(melody.Bars[index], DurationSplitRatio.Equal);
         }
 
         private protected virtual void DurationAnticipationSplitMutation(MelodyCandidate melody, int? barIndex)
         {
             int index = barIndex ?? new Random().Next(melody.Bars.Count);
-            DurationSplitOfARandomNote(melody.Bars[index], DurationSplitRatio.Anticipation);
+            NoteDurationSplit(melody.Bars[index], DurationSplitRatio.Anticipation);
         }
 
         private protected virtual void DurationDelaySplitMutation(MelodyCandidate melody, int? barIndex)
         {
             int index = barIndex ?? new Random().Next(melody.Bars.Count);
-            DurationSplitOfARandomNote(melody.Bars[index], DurationSplitRatio.Delay);
+            NoteDurationSplit(melody.Bars[index], DurationSplitRatio.Delay);
         }
 
         #region ReverseChordNotesMutation()
@@ -243,8 +304,11 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
         #region SwapTwoNotesMutation()
         /// <summary>
-        /// Swaps the positions of two notes in the given bar, 
+        /// Swaps the positions of two chord notes in the given bar,  
         /// or in a randomly selected bar if <paramref name="barIndex"/> is null.
+        /// <para>A random chord in the selected bar is selected, and two randomly
+        /// selected notes which are played under this chord's time span are swapped
+        /// by their positions.</para>
         /// </summary>
         /// <param name="melody"> The candidate melody to operate on.</param>
         /// <param name="barIndex"> Index of the bar to do the swap in. If no bar index supplied, then a random bar would be selected. </param>
@@ -252,20 +316,26 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         {
             // initialization 
             INote note1, note2;
-            int note1Index, note2Index;
+            IList<int> noteIndices;
             Random random = new Random();
+            int note1Index, note2Index, randomIndex1, randomIndex2, chordIndex;
 
             // if no specific bar has been requested then set it randomly 
             int selectedBarIndex = barIndex ?? random.Next(melody.Bars.Count);
             IBar bar = melody.Bars[selectedBarIndex];
 
-            // assure selected bar contains at least two notes 
-            if (bar.Notes.Count < 2)
+            chordIndex = random.Next(bar.Chords.Count);
+            bar.GetOverlappingNotesForChord(chordIndex, out noteIndices);
+
+            // assure selected chord in bar contains at least two notes 
+            if (noteIndices.Count < 2)
                 return;
 
-            // select two random notes from within the selected bar 
-            note1Index = random.Next(1, bar.Notes.Count);
-            note2Index = random.Next(0, note1Index); // assure selected indices are distinct 
+            // select two random notes from withing the selected chord notes  
+            randomIndex1 = random.Next(1, noteIndices.Count);
+            randomIndex2 = random.Next(0, randomIndex1);
+            note1Index = noteIndices[randomIndex1];
+            note2Index = noteIndices[randomIndex2];
             note1 = bar.Notes[note1Index];
             note2 = bar.Notes[note2Index];
 

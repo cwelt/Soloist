@@ -297,8 +297,6 @@ namespace CW.Soloist.CompositionService.MusicTheory
             duration.Denominator /= gcd;
 
             return duration;
-
-
         }
         #endregion
 
