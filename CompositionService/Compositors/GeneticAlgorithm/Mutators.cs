@@ -100,15 +100,18 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
         #region DurationUnifyMutation()
         /// <summary>
-        /// Swaps the positions of two notes in the given bar, 
-        /// or in a randomly selected bar if <paramref name="barIndex"/> is null.
+        /// Randomly selects two consecutive notes in the given bar, or in a randomly selected
+        /// bar if <paramref name="barIndex"/> is null, and unifies thw two consecutive notes 
+        /// into one note by removing the consecutive note entirely and adding it's 
+        /// duration length to the first note. 
         /// </summary>
         /// <param name="melody"> The candidate melody to operate on.</param>
-        /// <param name="barIndex"> Index of the bar to do the swap in. If no bar index supplied, then a random bar would be selected. </param>
+        /// <param name="barIndex"> Index of the bar to do the unification in. If no bar index supplied, then a random bar would be selected. </param>
         private protected virtual void DurationUnifyMutation(MelodyCandidate melody, int? barIndex = null)
         {
             // initialization 
-            INote note1, note2;
+            INote note1, note2, newNote;
+            IDuration newDuration;
             int note1Index, note2Index;
             Random random = new Random();
 
@@ -126,11 +129,14 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             note1 = bar.Notes[note1Index];
             note2 = bar.Notes[note2Index];
 
-            // swap the notes positions in the bar   
-            var newDuration = note1.Duration.Add(note2.Duration) as Duration;
-            var note = new Note(note1.Pitch, newDuration);
+            /* create a new note with the pitch of the first note and overall duration 
+             * duration of the sum of the two notes durations */
+            newDuration = note1.Duration.Add(note2.Duration);
+            newNote = new Note(note1.Pitch, newDuration);
+
+            // replace the two consecutive note with the new note 
             bar.Notes.RemoveAt(note1Index);
-            bar.Notes.Insert(note1Index, note);
+            bar.Notes.Insert(note1Index, newNote);
             bar.Notes.RemoveAt(note2Index);
         }
         #endregion
