@@ -3,6 +3,7 @@ using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -45,6 +46,17 @@ namespace SoloistWebClient.Controllers
             ViewBag.Message = "Feel free to contact me in one of the following medium channels.";
 
             return View();
+        }
+
+        public FileResult Seminar()
+        {
+            // save file and return it for client to download
+            string seminarPaperPath = this.HttpContext.Server.MapPath("/FileServer/GA_Seminar.pdf");
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(seminarPaperPath);
+            string fileName = Path.GetFileName(seminarPaperPath);
+
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
     }
 }

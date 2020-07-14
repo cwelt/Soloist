@@ -230,6 +230,7 @@
     <Content Include="SampleData\YoshevGader.mid" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="FileServer\GA_Seminar.pdf" />
     <None Include="Properties\PublishProfiles\soloist - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\soloist - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />

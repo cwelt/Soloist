@@ -3,36 +3,39 @@
 }
 
 <div class="jumbotron">
-    <h1>Soloist</h1>
+    <h1 style="color:gold; font-weight:bold">Soloist</h1>
     <p class="lead">
-        Soloist is a free web application for assisting the process of
-        composing a solo-melody over a given playback and it's underlying
+        Soloist is an open-source free web application for assisting the process of
+        composing a solo-melody improvisation over a given playback and it's underlying
         chord progression.
     </p>
     <p>
-        <a href="@Url.Action("Index", "Composition")" class="btn btn-primary btn-lg">Learn more! &raquo;</a>
+        <a href="@Url.Action("About", "Home")" class="btn btn-primary btn-lg">Learn more! &raquo;</a>
         <a href="@Url.Action("Index", "Composition")" class="btn btn-primary btn-lg">Try it now! &raquo;</a>
     </p>
 </div>
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="@Url.Action("Index", "Composition")">Learn more &raquo;</a></p>
+        <h2 style="color:lightgreen">The Theory Behind</h2>
+        <h3 style="color:#b6ff00">Algorithmic Composition and Genetic Algorithms</h3>
+        <h4> Soloist implements a genetic algorithm for generating the melody output. 
+            This algorithm maintains a set of candidate melodies which it changes and
+            evaluates in an iterative proccess, untill eventually the melody which is 
+            evaluated as the best one is selected as the final output. </h4>
+        <p><a class="btn btn-default" href="@Url.Action("Seminar", "Home")">Learn more &raquo;</a></p>
     </div>
+
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="@Url.Action("Index", "Composition")">Learn more &raquo;</a></p>
+        <h2 style="color:lightgreen">Getting started</h2>
+        <h4>
+            Upload a MIDI file and chord progression for your favorite songs, or alternatively
+            select a song from the pre-existing samples, adjust the composition algorithm
+            parameters as you choose and that's it! your song would be able for download
+            with the new generated melody improvisation.
+        </h4>
+        <p><a class="btn btn-default" href="@Url.Action("Documentation", "Home")">Learn more &raquo;</a></p>
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="@Url.Action("Index", "Composition")">Learn more &raquo;</a></p>
-    </div>
+
+
 </div>
