@@ -1,6 +1,7 @@
 using Autofac;
 using Autofac.Integration.Mvc;
-using CW.Soloist.Data.Repositories;
+using CW.Soloist.DataAccess;
+using CW.Soloist.DataAccess.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
