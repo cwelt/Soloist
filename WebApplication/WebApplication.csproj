@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\CompositionController.cs" />
+    <Compile Include="Controllers\SongsController.cs" />
     <Compile Include="Filters\ActionFilters\CrawlerFilter.cs" />
     <Compile Include="Filters\ExceptionFilters\CustomExceptionHandler.cs" />
     <Compile Include="Filters\ActionFilters\LogRequestFilter.cs" />
@@ -286,6 +287,11 @@
     <Content Include="Views\Home\Documentation.cshtml" />
     <Content Include="Views\Composition\Index.cshtml" />
     <Content Include="Views\Composition\Compose.cshtml" />
+    <Content Include="Views\Songs\Create.cshtml" />
+    <Content Include="Views\Songs\Delete.cshtml" />
+    <Content Include="Views\Songs\Details.cshtml" />
+    <Content Include="Views\Songs\Edit.cshtml" />
+    <Content Include="Views\Songs\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
