@@ -3,7 +3,10 @@ using CW.Soloist.CompositionService.Compositors;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
+using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.DataAccess.EntityFramework;
 using CW.Soloist.WebApplication.ViewModels;
+using SoloistWebClient.Controllers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,30 +19,36 @@ namespace CW.Soloist.WebApplication.Controllers
     public class CompositionController : Controller
     {
         private IMidiFile _midiFile;
+        private SoloistContext db = new SoloistContext();
 
         // GET: Composition
         public ActionResult Index()
         {
             CompositionParamsViewModel viewModel = new CompositionParamsViewModel
             {
+                Songs = db.Songs.ToList(),
+                SongSelectList = new SelectList(db.Songs.OrderBy(s => s.Title), "Id", "Title"),
                 CompositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy,
-                MusicalInstrument = MusicalInstrument.OverdrivenGuitar,
-                OverallNoteDurationFeel = OverallNoteDurationFeel.Intense,
-                MinPitch = NotePitch.E2,
+                MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
+                OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
+                MinPitch = NotePitch.G4,
                 MaxPitch = NotePitch.C6,
-                useExistingMelodyAsSeed = false
+                useExistingMelodyAsSeed = true
                 
             };
+
+            @ViewBag.Title = "Compose!!!";
             return View(viewModel);
         }
         [HttpPost]
         public FileResult Compose(CompositionParamsViewModel model)
         {
+            Song song = db.Songs.Where(s => s.Id == model.SongId)?.First();
 
-            Song song = model.Songs.Where(s => s.Id == model.SongId).First();
-
-            var chordFilePath = this.HttpContext.Server.MapPath(song.ChordPath);
-            var midiFilePath = this.HttpContext.Server.MapPath(song.MidiPath);
+            var path = HomeController.GetFileServerPath();
+            path += $@"Songs\{song.Id}\";
+            var chordFilePath = path + song.ChordsFileName;
+            var midiFilePath = path + song.MidiFileName;
 
             Composition composition = new Composition(
                 chordProgressionFilePath: chordFilePath,
@@ -60,7 +69,7 @@ namespace CW.Soloist.WebApplication.Controllers
 
 
             // save file and return it for client to download
-            string directoryPath = this.HttpContext.Server.MapPath("/Outputs/");
+            string directoryPath = $@"{HomeController.GetFileServerPath()}Outputs\{song.Id}\";
             //string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
 
             Directory.CreateDirectory(directoryPath);

@@ -51,12 +51,20 @@ namespace SoloistWebClient.Controllers
         public FileResult Seminar()
         {
             // save file and return it for client to download
-            string seminarPaperPath = this.HttpContext.Server.MapPath("/FileServer/GA_Seminar.pdf");
+
+            string seminarPaperPath = this.HttpContext.Server.MapPath("/App_Data/Seminar/GA_Seminar.pdf");
 
             byte[] fileBytes = System.IO.File.ReadAllBytes(seminarPaperPath);
             string fileName = Path.GetFileName(seminarPaperPath);
 
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
+
+        internal static string GetFileServerPath(HttpServerUtilityBase server = null)
+        {
+            if (server != null )
+                return server.MapPath(@"~\App_Data\");
+            else return AppDomain.CurrentDomain.BaseDirectory + @"App_Data\";
         }
     }
 }

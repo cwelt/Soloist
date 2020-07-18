@@ -201,7 +201,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\CompositionParamsViewModel.cs" />
-    <Compile Include="ViewModels\Song.cs" />
+    <Compile Include="ViewModels\SongViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -222,7 +222,6 @@
     <Content Include="Content\site.css" />
     <Content Include="SampleData\ad_machar_chords.txt" />
     <Content Include="SampleData\after_20_years.mid" />
-    <Content Include="SampleData\beatles_here_there.mid" />
     <Content Include="SampleData\Evyatar Banai - Ad Machar.mid" />
     <Content Include="SampleData\here_there_chords.txt" />
     <Content Include="SampleData\Klepter-Gader.txt" />
@@ -232,7 +231,7 @@
     <Content Include="SampleData\YoshevGader.mid" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="FileServer\GA_Seminar.pdf" />
+    <Content Include="App_Data\Seminar\GA_Seminar.pdf" />
     <None Include="Properties\PublishProfiles\soloist - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\soloist - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
@@ -294,8 +293,8 @@
     <Content Include="Views\Songs\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
-    <Folder Include="Outputs\" />
+    <Folder Include="App_Data\Logs\" />
+    <Folder Include="App_Data\Songs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
