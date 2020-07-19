@@ -22,3 +22,12 @@ select,
 textarea {
     max-width: 280px;
 }
+
+/* custom styling for validation errors */
+.input-validation-error {
+    color: red;
+}
+
+field-validation-error {
+    border: 2px solid red;
+}

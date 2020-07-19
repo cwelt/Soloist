@@ -13,10 +13,12 @@ namespace CW.Soloist.WebApplication.ViewModels
         public int Id { get; set; }
         
         [Required]
+        [StringLength(30)]
         [DisplayName("Song Name")]
         public string Title { get; set; }
 
         [Required]
+        [StringLength(70)]
         public string Artist { get; set; }
         public string Description { get; set; }
 
@@ -32,8 +34,5 @@ namespace CW.Soloist.WebApplication.ViewModels
         public HttpPostedFileBase ChordProgressionFile { get; set; }
 
         public String ChordProgression { get; set; }
-
-
-
     }
 }

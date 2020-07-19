@@ -12,9 +12,7 @@
     method: FormMethod.Post,
     htmlAttributes: new { enctype = "multipart/form-data" }))
 {
-    @Html.AntiForgeryToken()
 
-    <hr />
     @Html.ValidationSummary(true, "Please fix the following errors.", new { @class = "text-danger" })
 
     <!-- Song Title -->
@@ -30,7 +28,6 @@
         @Html.TextBoxFor(m => m.Artist, new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.Artist, "", new { @class = "text-danger" })
     </div>
-
 
     <!-- Melody Track Index -->
     <div class="form-group">
@@ -57,6 +54,11 @@
     <div class="form-group">
         <input type="submit" value="Save" class="btn btn-primary btn-lg btn-block center-block" />
     </div>
+
+    @* Generate hidden form with cookie for client to check against
+        when submitting the form in order to protect him from cross-
+        site request forgery (CSRF) attakcs. *@
+    @Html.AntiForgeryToken()
 }
 
 <!-- Song Index Redirection -->
@@ -65,3 +67,11 @@
 </div>
 
 
+
+
+@* Enable Client Side Validations with JQuery of the Constraints Defined
+    in the Data Annotation Attribiutes in the Model Class.  *@
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
