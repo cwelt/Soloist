@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CW.Soloist.CompositionService.Midi;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -19,10 +20,12 @@ namespace CW.Soloist.WebApplication.ViewModels
         public string Artist { get; set; }
         public string Description { get; set; }
 
-
         [Required]
         [DisplayName("MIDI File")]
         public HttpPostedFileBase MidiFile { get; set; }
+
+        [DisplayName("Melody Track Number In MIDI File")]
+        public MelodyTrackIndex? MelodyTrackIndex { get; set; }
 
         [Required]
         [DisplayName("Chords File")]

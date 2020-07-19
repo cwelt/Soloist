@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using CW.Soloist.WebApplication.ViewModels;
 using System.IO;
 using System;
+using CW.Soloist.CompositionService.Midi;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
@@ -61,12 +62,13 @@ namespace CW.Soloist.WebApplication.Controllers
                  * check that files are not empty of course. 
                  * check that files are not too large. 
                  * */
-                 
+
                 // Create a new song instance 
                 Song song = new Song
                 {
                     Title = songViewModel.Title,
                     Artist = songViewModel.Artist,
+                    MelodyTrackIndex = songViewModel.MelodyTrackIndex,  
                     MidiFileName = songViewModel.MidiFile.FileName,
                     ChordsFileName = songViewModel.ChordProgressionFile.FileName,
                 };

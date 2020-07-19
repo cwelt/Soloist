@@ -3,6 +3,7 @@ using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
 using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.CompositionService;
 using System;
 using System.Collections;
 using System.Collections.Generic;

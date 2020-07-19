@@ -65,6 +65,10 @@
     <Compile Include="Migrations\202007150708153_InitialModel.designer.cs">
       <DependentUpon>202007150708153_InitialModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202007190435075_AddMelodyTrackIndexToSongTable.cs" />
+    <Compile Include="Migrations\202007190435075_AddMelodyTrackIndexToSongTable.designer.cs">
+      <DependentUpon>202007190435075_AddMelodyTrackIndexToSongTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\ISongRepostiory.cs" />
@@ -98,6 +102,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202007150708153_InitialModel.resx">
       <DependentUpon>202007150708153_InitialModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007190435075_AddMelodyTrackIndexToSongTable.resx">
+      <DependentUpon>202007190435075_AddMelodyTrackIndexToSongTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
