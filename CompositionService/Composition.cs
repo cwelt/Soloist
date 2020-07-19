@@ -146,6 +146,7 @@ namespace CW.Soloist.CompositionService
                     midiFile: new DryWetMidiAdapter(midiFilePath), melodyTrackIndex) {}
         #endregion
 
+        #region Compose(ICompositionParamsDTO compositionParams)
         /// <summary>
         /// <inheritdoc cref="Compose(CompositionStrategy, OverallNoteDurationFeel, MusicalInstrument, PitchRangeSource, NotePitch, NotePitch, bool)"/>
         /// <para> This is an overloaded version which gathers all the input parameters in a single structure.
@@ -165,7 +166,9 @@ namespace CW.Soloist.CompositionService
                 maxPitch: compositionParams.MaxPitch,
                 useExistingMelodyAsSeed: compositionParams.UseExistingMelodyAsSeed);
         }
+        #endregion
 
+        #region Compose
         /// <summary>
         /// Composes a solo-melody over this composition's midi playback file and chord progression,
         /// using the additional preferences and constraints parameters. 
@@ -224,9 +227,8 @@ namespace CW.Soloist.CompositionService
             }
 
             // validate pitch range is at least one octave long (12 semi-tones) 
-            if ((byte)maxPitch - (byte)minPitch < MusicTheoryServices.SemitonesInOctave)
-                throw new ArgumentException($"Error: Pitch range must be at least one octave long!\n" +
-                    $"current range: minPitch={(byte)minPitch}, maxPitch={(byte)maxPitch}");
+            if (!isPitchRangeValid((int)minPitch, (int)maxPitch, out string errorMessage))
+                throw new ArgumentException(errorMessage);
 
             // compose a new melody 
             IList<IBar>[] composedMelodies = _compositor.Compose(
@@ -252,6 +254,10 @@ namespace CW.Soloist.CompositionService
 
             return midiOutputs;
         }
+        #endregion
+
+
+
 
         #region ReadChordsFromFile()
         /// <summary>
@@ -403,5 +409,31 @@ namespace CW.Soloist.CompositionService
             return clonedBars;
         }
         #endregion
+
+
+        /// <summary>
+        /// Validates pitch range is at least one octave long (12 semi-tones).
+        /// </summary>
+        /// <param name="minPitch"> The requested lowest bound for a pitch. </param>
+        /// <param name="maxPitch"> The requested upper bound for a pitch. </param>
+        /// <param name="errorMessage"> Detailed error message incase the the validation fails,
+        /// i.e., when the returned result is false. If the validation succeeds and the 
+        /// the returned result is true, this out parameter would be set to null. </param>
+        /// <returns> True if range is valid (at least one octave long), and false otherwise. </returns>
+        public static bool isPitchRangeValid(int minPitch, int maxPitch, out string errorMessage)
+        {
+            // if valid 
+            if (Math.Abs(maxPitch - minPitch) >= MusicTheoryServices.SemitonesInOctave)
+            {
+                errorMessage = null;
+                return true;
+            }
+            else // if invalid 
+            {
+                errorMessage = $"Error: Pitch range must be at least one octave long!\n"
+                             + $"current range: minPitch={minPitch}, maxPitch={maxPitch}";
+                return false;
+            }
+        }
     }
 }

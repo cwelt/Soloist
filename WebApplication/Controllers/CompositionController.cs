@@ -23,6 +23,7 @@ namespace CW.Soloist.WebApplication.Controllers
         private SoloistContext db = new SoloistContext();
 
         // GET: Composition
+        [HttpGet]
         public ActionResult Index()
         {
             // build pitch selection list without hold and rest notes 
@@ -44,7 +45,9 @@ namespace CW.Soloist.WebApplication.Controllers
             @ViewBag.Title = "Compose";
             return View(viewModel);
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public FileResult Compose(CompositionParamsViewModel model)
         {
             Song song = db.Songs.Where(s => s.Id == model.SongId)?.First();

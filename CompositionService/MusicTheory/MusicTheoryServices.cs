@@ -15,7 +15,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     internal partial class MusicTheoryServices : IMusicTheoryService
     {
 
-        internal static readonly byte SemitonesInOctave = 12;
+        internal const byte SemitonesInOctave = 12;
 
         internal enum AritmeticOperation { Add, Subtract };
 
