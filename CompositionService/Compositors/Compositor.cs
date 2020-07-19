@@ -632,17 +632,21 @@ namespace CW.Soloist.CompositionService.Compositors
             if (existingNote.Pitch == NotePitch.HoldNote || existingNote.Pitch == NotePitch.RestNote)
                 secondPitch = firstPitch = existingNote.Pitch;
 
-            // otherwise, set second pitch to one of the scale nearst pitches 
-            else
+            // otherwise,  
+            else // try to set second pitch to one of the scale nearst pitches
             {
                 firstPitch = existingNote.Pitch;
                 IChord chord = bar.GetOverlappingChordsForNote(bar.Notes.IndexOf(existingNote)).First();
-                NotePitch minPitch = (NotePitch)((byte)firstPitch - PitchInterval.MajorSecond);
-                NotePitch maxPitch = (NotePitch)((byte)firstPitch + PitchInterval.MajorSecond);
+                NotePitch minPitch = (NotePitch)((byte)firstPitch - PitchInterval.MajorThird);
+                NotePitch maxPitch = (NotePitch)((byte)firstPitch + PitchInterval.MajorThird);
 
-                secondPitch = MusicTheoryServices
+                // get nearest pitches from scale 
+                IEnumerable<NotePitch> nearsetPitches = MusicTheoryServices
                     .GetNotes(chord, ChordNoteMappingSource.Scale, minPitch, maxPitch)
-                    .Except(new[] { firstPitch }).Shuffle().First();
+                    .Except(new[] { firstPitch }).Shuffle();
+
+                // if nearest pitches are out of range, just retain the original first pitch 
+                secondPitch = nearsetPitches.Any() ? nearsetPitches.First() : firstPitch;
             }
 
             // create two new notes with preseted durations & pitches
