@@ -25,20 +25,23 @@ namespace CW.Soloist.WebApplication.Controllers
         // GET: Composition
         public ActionResult Index()
         {
+            // build pitch selection list without hold and rest notes 
+            var filteredPitchList = Enum.GetValues(typeof(NotePitch)).Cast<NotePitch>()
+                .Except(new[] { NotePitch.HoldNote, NotePitch.RestNote })
+                .Select(notePitch => new { Pitch = notePitch, Description = notePitch.GetDisplayName() });
+
             CompositionParamsViewModel viewModel = new CompositionParamsViewModel
             {
-                Songs = db.Songs.ToList(),
                 SongSelectList = new SelectList(db.Songs.OrderBy(s => s.Title), "Id", "Title"),
-                CompositionStrategy = CompositionStrategy.GeneticAlgorithmStrategy,
                 MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
                 OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
+                PitchSelectList = new SelectList(filteredPitchList, "Pitch", "Description"),
                 MinPitch = NotePitch.G4,
                 MaxPitch = NotePitch.C6,
-                useExistingMelodyAsSeed = true
-                
+                useExistingMelodyAsSeed = false
             };
 
-            @ViewBag.Title = "Compose!!!";
+            @ViewBag.Title = "Compose";
             return View(viewModel);
         }
         [HttpPost]
@@ -56,8 +59,9 @@ namespace CW.Soloist.WebApplication.Controllers
                 midiFilePath: midiFilePath,
                 melodyTrackIndex: 1);
 
+            // Compose some melodies and fetch the first one 
             IMidiFile midiFile = composition.Compose(
-                strategy: model.CompositionStrategy,
+                strategy: CompositionStrategy.GeneticAlgorithmStrategy,
                 overallNoteDurationFeel: model.OverallNoteDurationFeel,
                 musicalInstrument: model.MusicalInstrument,
                 minPitch: model.MinPitch,

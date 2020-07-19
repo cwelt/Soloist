@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace CW.Soloist.CompositionService.UtilEnums
 {
@@ -17,19 +18,19 @@ namespace CW.Soloist.CompositionService.UtilEnums
     public enum OverallNoteDurationFeel
     {
         /// <summary> Slow moderate quarter-note based feeling. </summary>
-        [Description("Slow Moderate Feeling")]
+        [Display(Name = "Slow Moderate Feeling")]
         Slow = 4,
 
         /// <summary> Medium flowing eighth-note based feeling. </summary>
-        [Description("Medium Flowing Feeling")]
+        [Display(Name = "Medium Flowing Feeling")]
         Medium = 8,
 
         /// <summary> Fast intense sixteenth-note based. </summary>
-        [Description("Fast-Phased Intense Feeling")]
+        [Display(Name = "Fast-Phased Intense Feeling")]
         Intense = 16,
 
         /// <summary> Extreme super-fast thirty-second-note based feeling. </summary>
-        [Description("Extreme Speed of Light Feeling")]
+        [Display(Name = "Extreme Speed-of-Light Feeling")]
         Extreme = 32
     }
 }

@@ -12,28 +12,15 @@
         @using (Html.BeginForm("Compose", "Composition"))
         {
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.SongId)
-                <div>
-                    @Html.DropDownListFor(m => m.SongId, Model.SongSelectList, new { @class = "form-control" })
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.CompositionStrategy)
-                <div>
-                    @Html.EnumDropDownListFor(m => m.CompositionStrategy, "Select Composition Algorithm", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.CompositionStrategy)
-                </div>
-            </div>
-
-
+        <div class="form-group">
+            @Html.LabelFor(m => m.SongId)
+            @Html.DropDownListFor(m => m.SongId, Model.SongSelectList, new { @class = "form-control" })
+        </div>
 
             <div class="form-group">
                 @Html.LabelFor(m => m.MusicalInstrument)
                 <div>
-                    @Html.EnumDropDownListFor(m => m.MusicalInstrument, "Select Musical Instrument", new { @class = "form-control" })
+                    @Html.EnumDropDownListFor(m => m.MusicalInstrument, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.MusicalInstrument)
                 </div>
             </div>
@@ -41,27 +28,27 @@
             <div class="form-group">
                 @Html.LabelFor(m => m.OverallNoteDurationFeel)
                 <div>
-                    @Html.EnumDropDownListFor(m => m.OverallNoteDurationFeel, "Select Overall Feel", new { @class = "form-control" })
+                    @Html.EnumDropDownListFor(m => m.OverallNoteDurationFeel, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.OverallNoteDurationFeel)
                 </div>
             </div>
 
             <div class="form-group">
                 @Html.LabelFor(m => m.MinPitch)
-                @Html.EnumDropDownListFor(m => m.MinPitch, "Select Minimum Pitch", new { @class = "form-control" })
+                @Html.DropDownListFor(m => m.MinPitch, Model.PitchSelectList, new { @class = "form-control" })
+
                 @Html.ValidationMessageFor(m => m.MinPitch)
 
+
                 @Html.LabelFor(m => m.MaxPitch)
-                @Html.EnumDropDownListFor(m => m.MaxPitch, "Select Maximum Pitch", new { @class = "form-control" })
+                @Html.EnumDropDownListFor(m => m.MaxPitch, new { @class = "form-control" })
                 @Html.ValidationMessageFor(m => m.MaxPitch)
             </div>
 
             <div class="form-group">
-                <div>
-                    <label >
-                        @Html.CheckBoxFor(m => m.useExistingMelodyAsSeed) Use Existing Melody As Seed?
-                    </label>
-                </div>
+                <label>
+                    @Html.CheckBoxFor(m => m.useExistingMelodyAsSeed) Use Existing Melody As Seed?
+                </label>
             </div>
 
             <div class="text-center">

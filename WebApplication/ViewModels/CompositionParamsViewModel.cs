@@ -31,6 +31,11 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Pitch Upper Bound")]
         public NotePitch MaxPitch { get; set; }
 
+        public List<NotePitch> Pitches { get; set; }
+
+        public SelectList PitchSelectList { get; set; }
+
+
         [DisplayName("Composition Algorithm Strategy")]
         public CompositionStrategy CompositionStrategy { get; set; }
 
