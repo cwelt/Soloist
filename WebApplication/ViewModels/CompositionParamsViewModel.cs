@@ -31,8 +31,6 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Pitch Upper Bound")]
         public NotePitch MaxPitch { get; set; }
 
-        public List<NotePitch> Pitches { get; set; }
-
         public SelectList PitchSelectList { get; set; }
 
 
@@ -44,8 +42,6 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         [DisplayName("Song")]
         public int SongId { get; set; }
-
-        public List<Song> Songs { get; set; } 
 
         public SelectList SongSelectList { get; set; }
     }
