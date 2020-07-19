@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApplication.Models
+namespace CW.Soloist.WebApplication.Models
 {
     public class ExternalLoginConfirmationViewModel
     {

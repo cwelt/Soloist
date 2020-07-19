@@ -6,9 +6,9 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using WebApplication.Models;
+using CW.Soloist.WebApplication.Models;
 
-namespace WebApplication.Controllers
+namespace CW.Soloist.WebApplication.Controllers
 {
     [Authorize]
     public class ManageController : Controller

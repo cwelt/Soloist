@@ -5,9 +5,9 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
-using WebApplication.Models;
+using CW.Soloist.WebApplication.Models;
 
-namespace WebApplication
+namespace CW.Soloist.WebApplication
 {
     public partial class Startup
     {

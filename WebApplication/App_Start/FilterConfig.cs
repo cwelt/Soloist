@@ -3,7 +3,7 @@ using CW.Soloist.WebApplication.Filters.ExceptionFilters;
 using System.Web;
 using System.Web.Mvc;
 
-namespace WebApplication
+namespace CW.Soloist.WebApplication
 {
     public class FilterConfig
     {

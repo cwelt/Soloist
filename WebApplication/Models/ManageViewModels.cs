@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
-namespace WebApplication.Models
+namespace CW.Soloist.WebApplication.Models
 {
     public class IndexViewModel
     {
