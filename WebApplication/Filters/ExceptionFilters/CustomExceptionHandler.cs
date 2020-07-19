@@ -13,7 +13,7 @@ namespace CW.Soloist.WebApplication.Filters.ExceptionFilters
     {
         public void OnException(ExceptionContext filterContext)
         {
-            var path = filterContext.HttpContext.Server.MapPath("/Views/Shared/Error404.html");
+            var path = filterContext.HttpContext.Server.MapPath("/Views/Shared/Error500.html");
             
             var bytes = File.ReadAllBytes(path);
 
