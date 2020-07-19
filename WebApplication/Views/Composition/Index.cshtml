@@ -46,23 +46,19 @@
                 </div>
             </div>
 
-            <div class="form-row form-group">
-                <div class="col-md-2 left">
-                    @Html.LabelFor(m => m.MinPitch)
-                    @Html.EnumDropDownListFor(m => m.MinPitch, "Select Minimum Pitch", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.MinPitch)
-                </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.MinPitch)
+                @Html.EnumDropDownListFor(m => m.MinPitch, "Select Minimum Pitch", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.MinPitch)
 
-                <div class="col-md-2">
-                    @Html.LabelFor(m => m.MaxPitch)
-                    @Html.EnumDropDownListFor(m => m.MaxPitch, "Select Maximum Pitch", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.MaxPitch)
-                </div>
+                @Html.LabelFor(m => m.MaxPitch)
+                @Html.EnumDropDownListFor(m => m.MaxPitch, "Select Maximum Pitch", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.MaxPitch)
             </div>
 
-            <div class="checkbox row">
+            <div class="form-group">
                 <div>
-                    <label class="row">
+                    <label >
                         @Html.CheckBoxFor(m => m.useExistingMelodyAsSeed) Use Existing Melody As Seed?
                     </label>
                 </div>

@@ -9,8 +9,20 @@ using System.Threading.Tasks;
 
 namespace CW.Soloist.CompositionService
 {
+    /// <summary>
+    /// Enumeration static class for providing general extensions for enum types,
+    /// such as friendly descriptions for the individual enum values, 
+    /// which could be displayed in user interfaces and string representations.
+    /// </summary>
     public static class EnumExtensions
     {
+        /// <summary>
+        /// Returns a friendly string representation for the given enum value,
+        /// which is defined for it in a custom <see cref="DescriptionAttribute"/>
+        /// annotation.
+        /// </summary>
+        /// <param name="value"> The enumeration underlying value. </param>
+        /// <returns> The friendly string description for the given value. </returns>
         public static string GetDescription(this Enum value)
         {
             Type type = value.GetType();
@@ -30,6 +42,14 @@ namespace CW.Soloist.CompositionService
             return null;
         }
 
+        /// <summary>
+        /// Returns a friendly string representation for the given enum value,
+        /// which is defined for it in a custom <see cref="DisplayAttribute"/>
+        /// annotation. This extension is primaly used for supporting the display 
+        /// of the friendly descriptions in ASP.NET MVC applications. 
+        /// </summary>
+        /// <param name="enumValue"> The enumeration underlying value. </param>
+        /// <returns> The friendly string description for the given value. </returns>
         public static string GetDisplayName(this Enum enumValue)
         {
             return enumValue.GetType()
