@@ -18,6 +18,9 @@ namespace CW.Soloist.WebApplication
             // restrict application access globaly 
             filters.Add(new AuthorizeAttribute());
 
+            // force an unsecured HTTP request to be re-sent over HTTPS
+            filters.Add(new RequireHttpsAttribute());
+
         }
     }
 }

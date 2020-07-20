@@ -342,3 +342,6 @@ healthchecksdb
 # Application data files 
 *RequestLog.txt
 App_Data/
+
+# external configuration files 
+WebAppSettingsSecrets.config
