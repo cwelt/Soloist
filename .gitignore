@@ -343,5 +343,6 @@ healthchecksdb
 *RequestLog.txt
 App_Data/
 
-# external configuration files 
-WebAppSettingsSecrets.config
+# external configuration files and connection strings 
+AppSensitiveSettings.config
+ConnectionStrings.config
