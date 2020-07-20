@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
@@ -21,24 +22,32 @@ namespace CW.Soloist.WebApplication.Controllers
     {
         private IMidiFile _midiFile;
         private SoloistContext db = new SoloistContext();
+        private IEnumerable<PitchRecord> _pitchSelectList;
+
+        public CompositionController()
+        {
+            // build pitch selection list without hold and rest notes 
+            _pitchSelectList = Enum.GetValues(typeof(NotePitch)).Cast<NotePitch>()
+               .Except(new[] { NotePitch.HoldNote, NotePitch.RestNote })
+               .Select(notePitch => new PitchRecord
+               { 
+                   Pitch = notePitch, 
+                   Description = notePitch.GetDisplayName() 
+               });
+        }
 
         // GET: Composition
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Compose()
         {
-            // build pitch selection list without hold and rest notes 
-            var filteredPitchList = Enum.GetValues(typeof(NotePitch)).Cast<NotePitch>()
-                .Except(new[] { NotePitch.HoldNote, NotePitch.RestNote })
-                .Select(notePitch => new { Pitch = notePitch, Description = notePitch.GetDisplayName() });
-
             CompositionParamsViewModel viewModel = new CompositionParamsViewModel
             {
                 SongSelectList = new SelectList(db.Songs.OrderBy(s => s.Title), "Id", "Title"),
                 MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
                 OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
-                PitchSelectList = new SelectList(filteredPitchList, "Pitch", "Description"),
-                MinPitch = NotePitch.G4,
-                MaxPitch = NotePitch.C6,
+                PitchSelectList = new SelectList(_pitchSelectList, "Pitch", "Description"),
+                MinPitch = NotePitch.C4,
+                MaxPitch = NotePitch.G6,
                 useExistingMelodyAsSeed = false
             };
 
@@ -48,8 +57,18 @@ namespace CW.Soloist.WebApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public FileResult Compose(CompositionParamsViewModel model)
+        public ActionResult Compose(CompositionParamsViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                CompositionParamsViewModel viewModel = new CompositionParamsViewModel
+                {
+                    SongSelectList = new SelectList(db.Songs.OrderBy(s => s.Title), "Id", "Title"),
+                    PitchSelectList = new SelectList(_pitchSelectList, "Pitch", "Description"),
+                };
+                return View("Compose", viewModel);
+            }
+
             Song song = db.Songs.Where(s => s.Id == model.SongId)?.First();
 
             var path = HomeController.GetFileServerPath();
@@ -68,7 +87,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 overallNoteDurationFeel: model.OverallNoteDurationFeel,
                 musicalInstrument: model.MusicalInstrument,
                 minPitch: model.MinPitch,
-                maxPitch: model.MaxPitch, 
+                maxPitch: model.MaxPitch,
                 useExistingMelodyAsSeed: model.useExistingMelodyAsSeed)[0];
 
             _midiFile = midiFile;
@@ -87,6 +106,12 @@ namespace CW.Soloist.WebApplication.Controllers
             string fileName = Path.GetFileName(filePath);
 
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
+
+        private class PitchRecord
+        {
+            public NotePitch Pitch { get; set; }
+            public string Description { get; set; }
         }
     }
 }

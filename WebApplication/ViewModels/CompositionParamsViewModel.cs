@@ -12,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using CW.Soloist.WebApplication.Validations;
 
 namespace CW.Soloist.WebApplication.ViewModels
 {
@@ -28,10 +29,11 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Pitch Lowest Bound")]
         public NotePitch MinPitch { get; set; }
 
+        [PitchRange]
         [DisplayName("Pitch Upper Bound")]
         public NotePitch MaxPitch { get; set; }
 
-        public SelectList PitchSelectList { get; set; }
+        public IEnumerable<SelectListItem> PitchSelectList { get; set; }
 
 
         [DisplayName("Composition Algorithm Strategy")]

@@ -423,7 +423,7 @@ namespace CW.Soloist.CompositionService
         public static bool isPitchRangeValid(int minPitch, int maxPitch, out string errorMessage)
         {
             // if valid 
-            if (Math.Abs(maxPitch - minPitch) >= MusicTheoryServices.SemitonesInOctave)
+            if (maxPitch - minPitch >= MusicTheoryServices.SemitonesInOctave)
             {
                 errorMessage = null;
                 return true;
@@ -431,7 +431,7 @@ namespace CW.Soloist.CompositionService
             else // if invalid 
             {
                 errorMessage = $"Error: Pitch range must be at least one octave long!\n"
-                             + $"current range: minPitch={minPitch}, maxPitch={maxPitch}";
+                             + $"current range: minPitch={minPitch}, maxPitch={maxPitch}\n";
                 return false;
             }
         }
