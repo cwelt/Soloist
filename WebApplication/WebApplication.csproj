@@ -195,6 +195,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202007201646493_InitializeUserIdentityTables.cs" />
+    <Compile Include="Migrations\202007201646493_InitializeUserIdentityTables.designer.cs">
+      <DependentUpon>202007201646493_InitializeUserIdentityTables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -311,6 +315,11 @@
       <Project>{f710bc52-19a8-4dee-97b0-3f356650b333}</Project>
       <Name>DataAccess</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202007201646493_InitializeUserIdentityTables.resx">
+      <DependentUpon>202007201646493_InitializeUserIdentityTables.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
