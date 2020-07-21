@@ -7,7 +7,7 @@ Application for composing a solo-melody over a given playback
 
 ## [Try It Yourself!](http://soloist.gear.host) 
 A basic prototype is now __*on p-r-o-d-u-c-t-i-o-n!*__  
-[Click Here](http://soloist.gear.host/Composition) to try it out your self:  
+[Click Here](http://soloist.gear.host/Composition/Compose) to try it out your self:  
 just select your preferences, hit the submit button, and walla -  
 your generated melody would be downloaded as MIDI file. 
 
