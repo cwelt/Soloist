@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
+using Owin.Security.Providers.LinkedIn;
 using Owin;
 using CW.Soloist.WebApplication.Models;
 using System.Configuration;
@@ -46,6 +47,18 @@ namespace CW.Soloist.WebApplication
             // This is similar to the RememberMe option when you log in.
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
+            // Google 
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = ConfigurationManager.AppSettings["GoogleClientID"],
+                ClientSecret = ConfigurationManager.AppSettings["GoogleClientSecret"]
+            });
+
+            // Linkedin
+            app.UseLinkedInAuthentication(
+                clientId: ConfigurationManager.AppSettings["LinkedinClientID"],
+                clientSecret: ConfigurationManager.AppSettings["LinkedinClientSecret"]);
+
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
             //    clientId: "",
@@ -59,11 +72,6 @@ namespace CW.Soloist.WebApplication
             //   appId: "",
             //   appSecret: "");
 
-            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            {
-                ClientId = ConfigurationManager.AppSettings["GoogleClientID"],
-                ClientSecret = ConfigurationManager.AppSettings["GoogleClientSecret"]
-            });
         }
     }
 }
