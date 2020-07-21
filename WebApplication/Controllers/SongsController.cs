@@ -13,6 +13,7 @@ using CW.Soloist.WebApplication.ViewModels;
 using System.IO;
 using System;
 using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.WebApplication.Models;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
@@ -43,6 +44,7 @@ namespace CW.Soloist.WebApplication.Controllers
         }
 
         // GET: Songs/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
@@ -51,6 +53,7 @@ namespace CW.Soloist.WebApplication.Controllers
         // POST: Songs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Create(SongViewModel songViewModel)
         {
             if (ModelState.IsValid)
@@ -101,6 +104,7 @@ namespace CW.Soloist.WebApplication.Controllers
         }
 
         // GET: Songs/Edit/5
+        [Authorize]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -120,6 +124,7 @@ namespace CW.Soloist.WebApplication.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Artist,MidiFileName,ChordsFileName")] Song song)
         {
@@ -133,6 +138,7 @@ namespace CW.Soloist.WebApplication.Controllers
         }
 
         // GET: Songs/Delete/5
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -150,6 +156,7 @@ namespace CW.Soloist.WebApplication.Controllers
         // POST: Songs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Song song = await db.Songs.FindAsync(id);
