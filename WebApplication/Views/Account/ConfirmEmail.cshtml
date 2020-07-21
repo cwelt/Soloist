@@ -1,10 +1,37 @@
 ﻿@{
-    ViewBag.Title = "Confirm Email";
+    ViewBag.Title = "Email Confirmation";
 }
 
 <h2>@ViewBag.Title.</h2>
-<div>
-    <p>
-        Thank you for confirming your email. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
-    </p>
-</div>
+
+@if (ViewBag.User != null && !((ViewBag.User as ApplicationUser).EmailConfirmed))
+{
+    <div>
+        <h3> A confirmation email has been send to you at: <a href="mailto:(@ViewBag.UserEmail)">@ViewBag.UserEmail</a> .</h3>
+    </div>
+    <div>
+        <p>
+            For security reasons, in order to login you must first complete the
+            registration process by confirming your email address.
+        </p>
+        <p>
+            If you didn't recieve any confirmation email yet,
+            please make sure to check special directories on your inbox
+            such as social network directories and the spam directory.
+        </p>
+    </div>
+    <div>
+        <p>
+            If the problem isn't solved please feel free to contact me at
+            <a href="mailto:(@ViewBag.AdminEmail)"> @ViewBag.AdminEmail</a>.<br />
+        </p>
+    </div>
+}
+else
+{
+    <div>
+        <p>
+            Thank you for confirming your email. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+        </p>
+    </div>
+}

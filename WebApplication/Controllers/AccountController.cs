@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using CW.Soloist.WebApplication.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Configuration;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
@@ -80,7 +81,20 @@ namespace CW.Soloist.WebApplication.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    ApplicationUser user = await UserManager.FindByNameAsync(model.Email);
+
+                    // Require the user to have a confirmed email before they can log on 
+                    if (!await UserManager.IsEmailConfirmedAsync(user?.Id) && !UserManager.GetLogins(user.Id).Any())  
+                    { 
+                        {
+                            ViewBag.UserEmail = user.Email;
+                            ViewBag.AdminEmail = ConfigurationManager.AppSettings["AdminEmailAddress"];
+                            ViewBag.User = user;
+                            return View("ConfirmEmail");
+                        }
+                    }
+                    else return RedirectToLocal(returnUrl);
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -160,19 +174,23 @@ namespace CW.Soloist.WebApplication.Controllers
                     RoleStore<IdentityRole> roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
                     RoleManager<IdentityRole> roleManager = new RoleManager<IdentityRole>(roleStore);
                     await UserManager.AddToRoleAsync(user.Id, RoleName.ApplicationUser);
-                    
+
                     /* uncomment following line for automatically logging in after 
-                     * user registration without email confirmation */ 
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    /* email confirmation before logging in the new user */ 
+                     * user registration without email confirmation */
+                    //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+
+                    /* email confirmation before logging in the new user */
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
-                   /*  string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-*/
-                    return RedirectToAction("Index", "Home");
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    string callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    ViewBag.UserEmail = user.Email;
+                    ViewBag.AdminEmail = ConfigurationManager.AppSettings["AdminEmailAddress"];
+                    ViewBag.User = user;
+
+                    return View("ConfirmEmail");
                 }
                 AddErrors(result);
             }

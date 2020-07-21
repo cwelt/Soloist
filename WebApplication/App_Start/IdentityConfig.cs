@@ -11,15 +11,95 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using CW.Soloist.WebApplication.Models;
+using System.Configuration;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Net.Mail;
+using System.Net;
+using System.Text;
+using System.Net.Mime;
 
 namespace CW.Soloist.WebApplication
 {
     public class EmailService : IIdentityMessageService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            string emailRecipient = message.Destination;
+            string emailSubject = "Soloist - " + message.Subject;
+            string emailBody = "Hello," + Environment.NewLine + 
+                "Welcome to Soloist web application." + Environment.NewLine
+                + Environment.NewLine + message.Body;
+            await SendEmailAsyncWithSendGridService(emailRecipient, emailSubject, emailBody);
+        }
+
+        private async Task SendEmailAsyncWithSMTP(string recipient, string subject, string body)
+        {
+            using (SmtpClient smtpClient = new SmtpClient())
+            {
+                // enable ssl to encrypt the connection 
+                smtpClient.EnableSsl = true;
+
+                // set smtp server host domain name 
+                smtpClient.Host = ConfigurationManager.AppSettings["SMTPHost"];
+
+                // set the smtp server port 
+                bool isPortValid = Int32.TryParse(ConfigurationManager.AppSettings["SMTPPort"], out int port);
+                smtpClient.Port = isPortValid ? port : 587;
+
+                // set credentials 
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential(
+                    ConfigurationManager.AppSettings["SMTPUser"],
+                    ConfigurationManager.AppSettings["SMTPPassword"]);
+
+                // set sender email address
+                string sender = ConfigurationManager.AppSettings["AdminEmailAddress"];
+
+                // build the email message 
+                MailMessage mailMessage = new MailMessage(sender, recipient, subject, body);
+
+                // encode message as html 
+                mailMessage.BodyEncoding = Encoding.UTF8;
+                string html = HttpUtility.HtmlEncode(body);
+                mailMessage.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(body, null, MediaTypeNames.Text.Plain));
+                mailMessage.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(html, null, MediaTypeNames.Text.Html));
+
+                // try sending the email via standard smtp 
+                try
+                {
+                    await smtpClient.SendMailAsync(mailMessage);
+                }
+                catch // in case failure send via third party SendGrid service  
+                {
+                    await SendEmailAsyncWithSendGridService(recipient, subject, body);
+                }
+            }
+        }
+
+        private async Task SendEmailAsyncWithSendGridService(string recipient, string subject, string body)
+        {
+            // set sender and recipent email addresses 
+            string adminEmail = ConfigurationManager.AppSettings["AdminEmailAddress"];
+            EmailAddress senderAddress = new EmailAddress(adminEmail, "Admin");
+            EmailAddress recipientAddress = new EmailAddress(recipient, "New User");
+
+            // create the email message 
+            SendGridMessage email = MailHelper.CreateSingleEmail(
+                from: senderAddress,
+                to: recipientAddress,
+                subject: subject,
+                plainTextContent: body,
+                htmlContent: body);
+
+            // get api key for email sending service 
+            string apiKey = ConfigurationManager.AppSettings["SendGridKey"];
+
+            // set an http client wrapper usign the registered api key 
+            SendGridClient httpClient = new SendGridClient(apiKey);
+
+            // use the http client for sending the email
+            await httpClient.SendEmailAsync(email);
         }
     }
 
@@ -32,6 +112,8 @@ namespace CW.Soloist.WebApplication
         }
     }
 
+
+
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
@@ -40,7 +122,7 @@ namespace CW.Soloist.WebApplication
         {
         }
 
-        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context) 
+        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
             // Configure validation logic for usernames
@@ -81,7 +163,7 @@ namespace CW.Soloist.WebApplication
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
-                manager.UserTokenProvider = 
+                manager.UserTokenProvider =
                     new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
             return manager;

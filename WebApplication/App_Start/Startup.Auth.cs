@@ -8,6 +8,7 @@ using Owin.Security.Providers.LinkedIn;
 using Owin;
 using CW.Soloist.WebApplication.Models;
 using System.Configuration;
+using Owin.Security.Providers.GitHub;
 
 namespace CW.Soloist.WebApplication
 {
@@ -54,10 +55,22 @@ namespace CW.Soloist.WebApplication
                 ClientSecret = ConfigurationManager.AppSettings["GoogleClientSecret"]
             });
 
+            // GitHub 
+/*            app.UseGitHubAuthentication(new GitHubAuthenticationOptions()
+            {
+                ClientId = ConfigurationManager.AppSettings["GithubClientID"],
+                ClientSecret = ConfigurationManager.AppSettings["GithubClientSecret"]
+            });*/
+
+            // Facebook
+/*            app.UseFacebookAuthentication(
+               appId: ConfigurationManager.AppSettings["FacebookAppID"],
+               appSecret: ConfigurationManager.AppSettings["FacebookAppSecret"]);*/
+
             // Linkedin
-            app.UseLinkedInAuthentication(
+/*            app.UseLinkedInAuthentication(
                 clientId: ConfigurationManager.AppSettings["LinkedinClientID"],
-                clientSecret: ConfigurationManager.AppSettings["LinkedinClientSecret"]);
+                clientSecret: ConfigurationManager.AppSettings["LinkedinClientSecret"]);*/
 
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
@@ -68,9 +81,7 @@ namespace CW.Soloist.WebApplication
             //   consumerKey: "",
             //   consumerSecret: "");
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+
 
         }
     }

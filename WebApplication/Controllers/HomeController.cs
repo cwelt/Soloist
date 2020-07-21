@@ -67,5 +67,10 @@ namespace SoloistWebClient.Controllers
                 return server.MapPath(@"~\App_Data\");
             else return AppDomain.CurrentDomain.BaseDirectory + @"App_Data\";
         }
+
+        public ActionResult PrivacyPolicy()
+        {
+            return View();
+        }
     }
 }
