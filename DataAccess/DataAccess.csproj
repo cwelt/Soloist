@@ -81,6 +81,14 @@
     <Compile Include="Migrations\202007220627224_AddUserColumnAndTimeStampsToSongTable.designer.cs">
       <DependentUpon>202007220627224_AddUserColumnAndTimeStampsToSongTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202007220708335_AddIsPublicColumnToSongsTables.cs" />
+    <Compile Include="Migrations\202007220708335_AddIsPublicColumnToSongsTables.designer.cs">
+      <DependentUpon>202007220708335_AddIsPublicColumnToSongsTables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007220711525_SeedExistingSongsAsPublic.cs" />
+    <Compile Include="Migrations\202007220711525_SeedExistingSongsAsPublic.designer.cs">
+      <DependentUpon>202007220711525_SeedExistingSongsAsPublic.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\ISongRepostiory.cs" />
@@ -120,6 +128,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007220627224_AddUserColumnAndTimeStampsToSongTable.resx">
       <DependentUpon>202007220627224_AddUserColumnAndTimeStampsToSongTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007220708335_AddIsPublicColumnToSongsTables.resx">
+      <DependentUpon>202007220708335_AddIsPublicColumnToSongsTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007220711525_SeedExistingSongsAsPublic.resx">
+      <DependentUpon>202007220711525_SeedExistingSongsAsPublic.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

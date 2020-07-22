@@ -20,6 +20,7 @@ namespace CW.Soloist.DataAccess.DomainModels
         public string ChordsFileName { get; set; }
         public DateTime Created { get; set; }
         public DateTime Modified { get; set; }
+        public bool IsPublic { get; set; }
         public ApplicationUser User { get; set; }
         public string UserId { get; set; }
 
