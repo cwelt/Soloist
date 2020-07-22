@@ -1,9 +1,11 @@
 using Autofac;
 using Autofac.Integration.Mvc;
 using CW.Soloist.DataAccess;
+using CW.Soloist.DataAccess.EntityFramework;
 using CW.Soloist.DataAccess.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -20,6 +22,8 @@ namespace CW.Soloist.WebApplication
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            Database.SetInitializer<ApplicationDbContext>(null);
 
             #region Autofac DI Configurations 
             // create an autofac container builder

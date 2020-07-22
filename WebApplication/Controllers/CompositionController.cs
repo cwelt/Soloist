@@ -21,7 +21,7 @@ namespace CW.Soloist.WebApplication.Controllers
     public class CompositionController : Controller
     {
         private IMidiFile _midiFile;
-        private SoloistContext db = new SoloistContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
         private IEnumerable<PitchRecord> _pitchSelectList;
 
         public CompositionController()

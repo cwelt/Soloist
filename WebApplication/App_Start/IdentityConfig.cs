@@ -18,6 +18,8 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System.Net.Mime;
+using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.DataAccess.EntityFramework;
 
 namespace CW.Soloist.WebApplication
 {

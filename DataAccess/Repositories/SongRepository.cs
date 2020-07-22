@@ -11,7 +11,7 @@ namespace CW.Soloist.DataAccess.Repositories
 {
     public class SongRepository : Repository<Song, int>, ISongRepostiory
     {
-        public SongRepository(SoloistContext context) 
+        public SongRepository(ApplicationDbContext context) 
             : base(context) { }
 
 

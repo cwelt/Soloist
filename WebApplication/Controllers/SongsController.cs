@@ -19,7 +19,7 @@ namespace CW.Soloist.WebApplication.Controllers
 {
     public class SongsController : Controller
     {
-        private SoloistContext db = new SoloistContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
         private string fileServerPath = HomeController.GetFileServerPath();
 
         // GET: Songs

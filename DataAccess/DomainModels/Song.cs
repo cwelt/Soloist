@@ -18,5 +18,7 @@ namespace CW.Soloist.DataAccess.DomainModels
         public IEnumerable<IChord> Chords { get; set; }
         public string MidiFileName { get; set; }
         public string ChordsFileName { get; set; }
+
+
     }
 }

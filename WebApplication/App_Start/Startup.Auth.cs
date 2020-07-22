@@ -9,6 +9,8 @@ using Owin;
 using CW.Soloist.WebApplication.Models;
 using System.Configuration;
 using Owin.Security.Providers.GitHub;
+using CW.Soloist.DataAccess.EntityFramework;
+using CW.Soloist.DataAccess.DomainModels;
 
 namespace CW.Soloist.WebApplication
 {

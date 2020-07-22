@@ -11,6 +11,8 @@ using Microsoft.Owin.Security;
 using CW.Soloist.WebApplication.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Configuration;
+using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.DataAccess.EntityFramework;
 
 namespace CW.Soloist.WebApplication.Controllers
 {

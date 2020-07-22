@@ -1,18 +1,19 @@
 ﻿namespace CW.Soloist.DataAccess.Migrations
 {
+    using CW.Soloist.DataAccess.EntityFramework;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<CW.Soloist.DataAccess.EntityFramework.SoloistContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(CW.Soloist.DataAccess.EntityFramework.SoloistContext context)
+        protected override void Seed(ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

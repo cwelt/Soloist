@@ -10,9 +10,9 @@ namespace CW.Soloist.DataAccess
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly SoloistContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public UnitOfWork(SoloistContext context)
+        public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Songs = new SongRepository(_context);

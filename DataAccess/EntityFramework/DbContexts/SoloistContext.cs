@@ -1,4 +1,4 @@
-﻿using CW.Soloist.DataAccess.DomainModels;
+﻿/*using CW.Soloist.DataAccess.DomainModels;
 using CW.Soloist.DataAccess.EntityFramework.MappingConfigurations;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.DataAccess.EntityFramework
+namespace CW.Soloist.DataAccess.EntityFramework.DbContexts
 {
     public class SoloistContext : DbContext
     {
@@ -20,7 +20,9 @@ namespace CW.Soloist.DataAccess.EntityFramework
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Configurations.Add(new SongConfiguration());
         }
     }
 }
+*/
