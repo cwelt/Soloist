@@ -1,4 +1,5 @@
 ﻿using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.DataAccess.DomainModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,10 +21,12 @@ namespace CW.Soloist.WebApplication.ViewModels
         [Required]
         [StringLength(70)]
         public string Artist { get; set; }
+
+        [DisplayName("Description")]
         public string Description { get; set; }
 
         [Required]
-        [DisplayName("MIDI File")]
+        [DisplayName("Original MIDI File")]
         public HttpPostedFileBase MidiFile { get; set; }
 
         [DisplayName("Melody Track Number In MIDI File")]
@@ -33,9 +36,26 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Chords File")]
         public HttpPostedFileBase ChordsFile { get; set; }
 
+        [DisplayName("Chord Progression")]
         public String ChordProgression { get; set; }
+
+
+        public DateTime Created { get; set; }
+        public DateTime Modified { get; set; }
 
         public bool IsUserAuthorizedToEdit { get; set; }
         public bool IsUserAuthorizedToDelete { get; set; }
+
+        public SongViewModel() { }
+
+        public SongViewModel(Song song)
+        {
+            Id = song.Id;
+            Artist = song.Artist;
+            Title = song.Title;
+            MelodyTrackIndex = song.MelodyTrackIndex;
+            Created = song.Created;
+            Modified = song.Modified;
+        }
     }
 }

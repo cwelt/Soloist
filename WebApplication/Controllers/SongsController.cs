@@ -24,6 +24,7 @@ namespace CW.Soloist.WebApplication.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         private string fileServerPath = HomeController.GetFileServerPath();
 
+        #region Index
         // GET: Songs
         public async Task<ActionResult> Index()
         {
@@ -39,11 +40,8 @@ namespace CW.Soloist.WebApplication.Controllers
             List<SongViewModel> songsViewModel = new List<SongViewModel>(songs.Count);
             foreach (Song song in songs)
             {
-                songsViewModel.Add(new SongViewModel
+                songsViewModel.Add(new SongViewModel(song)
                 {
-                    Id = song.Id,
-                    Title = song.Title,
-                    Artist = song.Artist,
                     IsUserAuthorizedToEdit = IsUserAuthorized(song, AuthorizationActivity.Update),
                     IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete),
                 });
@@ -52,7 +50,9 @@ namespace CW.Soloist.WebApplication.Controllers
             // pass the song list for the view for rendering 
             return View(songsViewModel);
         }
+        #endregion
 
+        #region Details
         // GET: Songs/Details/5
         public async Task<ActionResult> Details(int? id)
         {
@@ -72,11 +72,23 @@ namespace CW.Soloist.WebApplication.Controllers
             if (!IsUserAuthorized(song, AuthorizationActivity.Display))
             {
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
-                //return new HttpUnauthorizedResult("You are not authorized for this song");
             }
 
-            return View(song);
+            SongViewModel songViewModel = new SongViewModel(song);
+            string directoryPath = fileServerPath + $@"Songs\{song.Id}\";
+            string chordsFilePath = directoryPath + song.ChordsFileName;
+            try
+            {
+                songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
+            return View(songViewModel);
         }
+        #endregion
 
         // GET: Songs/Create
         [Authorize]

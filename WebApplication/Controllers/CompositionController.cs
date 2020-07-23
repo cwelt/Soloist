@@ -79,7 +79,7 @@ namespace CW.Soloist.WebApplication.Controllers
             Composition composition = new Composition(
                 chordProgressionFilePath: chordFilePath,
                 midiFilePath: midiFilePath,
-                melodyTrackIndex: 1);
+                melodyTrackIndex: (byte?)song.MelodyTrackIndex);
 
             // Compose some melodies and fetch the first one 
             IMidiFile midiFile = composition.Compose(

@@ -1,8 +1,7 @@
-﻿@model CW.Soloist.DataAccess.DomainModels.Song
+﻿@model CW.Soloist.WebApplication.ViewModels.SongViewModel
 
 @{
     ViewBag.Title = "Details";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Details</h2>
@@ -11,40 +10,56 @@
     <h4>Song</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
+
+        <!-- Artist -->
+        <dt style="text-align: left; color:#b6ff00;">
+            @Html.DisplayNameFor(m => m.Artist)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Title)
+            @Html.DisplayFor(m => m.Artist)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Artist)
+        <!-- Song Title -->
+        <dt style="text-align: left; color:#b6ff00;">
+            @Html.DisplayNameFor(m => m.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(m => m.Title)
+        </dd>
+
+        <!-- Original MIDI File -->
+        <dt style="text-align: left; color:#b6ff00;">
+            @Html.DisplayNameFor(m => m.MidiFile)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Artist)
+            @Html.DisplayFor(m => m.MidiFile)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.MidiFileName)
+        <!-- Melody Track Index -->
+        <dt style="text-align: left; color:#b6ff00;">
+            @Html.DisplayNameFor(m => m.MelodyTrackIndex)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.MidiFileName)
+            @Html.DisplayFor(m => m.MelodyTrackIndex)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ChordsFileName)
+        <!-- Chord Progression File -->
+        <dt style="text-align: left; color:#b6ff00;">
+            @Html.DisplayNameFor(m => m.ChordsFile)
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.ChordsFileName)
+            @Html.DisplayFor(m => m.ChordsFile)
         </dd>
-
     </dl>
 </div>
+
+<!-- Chord Progression Content -->
+<div>@Html.LabelFor(m => m.ChordProgression)</div>
+@Html.TextAreaFor(m => m.ChordProgression, 16, 180, new { Style="max-width: 40%", Spellcheck = "false", Readonly = true }); 
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
