@@ -85,7 +85,7 @@ namespace CW.Soloist.WebApplication.Controllers
             {
                 throw;
             }
-            
+
             return View(songViewModel);
         }
         #endregion
@@ -118,7 +118,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 {
                     Title = songViewModel.Title,
                     Artist = songViewModel.Artist,
-                    MelodyTrackIndex = songViewModel.MelodyTrackIndex,  
+                    MelodyTrackIndex = songViewModel.MelodyTrackIndex,
                     MidiFileName = songViewModel.MidiFile.FileName,
                     ChordsFileName = songViewModel.ChordsFile.FileName,
                 };
@@ -142,7 +142,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 // TODO: if saving on file server failed, rollback DB changes 
 
                 // TODO: Show message on index view...
-                ViewBag.Message = "Saved Successfully"; 
+                ViewBag.Message = "Saved Successfully";
 
                 return RedirectToAction("Index");
             }
@@ -242,6 +242,52 @@ namespace CW.Soloist.WebApplication.Controllers
         }
 
         /// <summary>
+        /// Downloads the requested song file from the server to the client. 
+        /// </summary>
+        /// <param name="id"> The song identification number. </param>
+        /// <param name="songFileType"> File type - chords file, original midi file or playback file. </param>
+        /// <returns> The requested file for the given song. </returns>
+        public async Task<ActionResult> DownloadFile(int? id, SongFileType songFileType)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Song song = await db.Songs.FindAsync(id);
+
+            if (song == null)
+            {
+                return HttpNotFound();
+            }
+
+            // check authorization 
+            if (!IsUserAuthorized(song, AuthorizationActivity.Display))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
+            string filePath = HomeController.GetFileServerPath();
+            filePath += $@"Songs\{song.Id}\";
+
+            switch (songFileType)
+            {
+                case SongFileType.ChordProgressionFile:
+                    filePath += song.ChordsFileName; break;
+                case SongFileType.MidiOriginalFile:
+                    filePath += song.MidiFileName; break;
+                case SongFileType.MidiPlaybackFile:
+                    filePath += "playback.mid"; break;
+            }
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            string fileName = Path.GetFileName(filePath);
+
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
+
+        #region Authorization Checks
+        /// <summary>
         /// <para> Checks if a user is authorized for the given song and activity. </para>
         /// This security check is intended to be used only to extend the default built-in 
         /// checks of the .NET framework. For exmaple, if the activity of creating a new song
@@ -271,9 +317,9 @@ namespace CW.Soloist.WebApplication.Controllers
                 case AuthorizationActivity.Create:
                     return user?.Identity?.IsAuthenticated ?? false;
 
-                // Display - either song is public or user is song owner
+                // Display - either song is public or user is song owner or admin
                 case AuthorizationActivity.Display:
-                    return song.IsPublic || song.UserId.Equals(userId);
+                    return song.IsPublic || song.UserId.Equals(userId) || user.IsInRole(RoleName.Admin);
 
                 // Update & Delete - only admins and song owners
                 case AuthorizationActivity.Update:
@@ -282,7 +328,7 @@ namespace CW.Soloist.WebApplication.Controllers
                     return user.IsInRole(RoleName.Admin) || song.UserId.Equals(userId);
             }
 
-            // if we got here we missed some test, default the security check to deny access 
+            // if we got here we missed some test, default the security check to deny the access 
             return false;
         }
 
@@ -293,7 +339,9 @@ namespace CW.Soloist.WebApplication.Controllers
             // delegate authorization check to the static method with current user 
             return IsUserAuthorized(song, authActivity, User);
         }
+        #endregion
 
+        #region Dispose Resources 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -302,5 +350,6 @@ namespace CW.Soloist.WebApplication.Controllers
             }
             base.Dispose(disposing);
         }
+        #endregion
     }
 }

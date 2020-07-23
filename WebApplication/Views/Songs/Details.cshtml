@@ -1,4 +1,6 @@
-﻿@model CW.Soloist.WebApplication.ViewModels.SongViewModel
+﻿@using CW.Soloist.WebApplication.Controllers;
+@model CW.Soloist.WebApplication.ViewModels.SongViewModel
+
 
 @{
     ViewBag.Title = "Details";
@@ -25,25 +27,22 @@
             @Html.DisplayNameFor(m => m.Title)
         </dt>
         <dd>
-            @Html.DisplayFor(m => m.Title)
+            @Html.ActionLink("Download", "DownloadMidiFile", new { id = Model.Id, songFileType = SongFileType.MidiOriginalFile })
         </dd>
 
-        <!-- Original MIDI File -->
-        <dt style="text-align: left; color:#b6ff00;">
-            @Html.DisplayNameFor(m => m.MidiFile)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(m => m.MidiFile)
-        </dd>
 
         <!-- Melody Track Index -->
         <dt style="text-align: left; color:#b6ff00;">
             @Html.DisplayNameFor(m => m.MelodyTrackIndex)
         </dt>
+        <dd>  @Model.MelodyTrackIndexDescription </dd>
 
+        <!-- Original MIDI File -->
+        <dt style="text-align: left; color:#b6ff00;">
+            @Html.DisplayNameFor(m => m.MidiFile)
+        </dt>
         <dd>
-            @Html.DisplayFor(m => m.MelodyTrackIndex)
+            @Html.ActionLink(Model.MidiFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiOriginalFile })
         </dd>
 
         <!-- Chord Progression File -->
@@ -51,16 +50,24 @@
             @Html.DisplayNameFor(m => m.ChordsFile)
         </dt>
         <dd>
-            @Html.DisplayFor(m => m.ChordsFile)
+            @Html.ActionLink(Model.ChordsFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.ChordProgressionFile })
         </dd>
     </dl>
 </div>
 
 <!-- Chord Progression Content -->
 <div>@Html.LabelFor(m => m.ChordProgression)</div>
-@Html.TextAreaFor(m => m.ChordProgression, 16, 180, new { Style="max-width: 40%", Spellcheck = "false", Readonly = true }); 
+@Html.TextAreaFor(m => m.ChordProgression, 16, 80, new { Style = "max-width: 40%; overflow=auto;", Spellcheck = "false", Readonly = true });
 
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+<br /> 
+<div>
+    <br />
+    <p>
+        @if (Model.IsUserAuthorizedToEdit)
+        {
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <text>|</text>
+        }
+
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</div>

@@ -1,4 +1,5 @@
-﻿using CW.Soloist.CompositionService.Midi;
+﻿using CW.Soloist.CompositionService;
+using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.DataAccess.DomainModels;
 using System;
 using System.Collections.Generic;
@@ -26,18 +27,34 @@ namespace CW.Soloist.WebApplication.ViewModels
         public string Description { get; set; }
 
         [Required]
-        [DisplayName("Original MIDI File")]
+        [DisplayName("MIDI Original File")]
         public HttpPostedFileBase MidiFile { get; set; }
 
-        [DisplayName("Melody Track Number In MIDI File")]
+        [DisplayName("MIDI File Name")]
+        public string MidiFileName { get; set; }
+
+        [DisplayName("MIDI Playback File Name")]
+        public string MidiPlaybackFileName { get; set; }
+
+        [DisplayName("Melody Track Number")]
         public MelodyTrackIndex? MelodyTrackIndex { get; set; }
+        public string MelodyTrackIndexDescription 
+        {
+            get => MelodyTrackIndex?.GetDisplayName() ?? 
+                CW.Soloist.CompositionService.Midi.MelodyTrackIndex.NoMelodyTrackInFile
+                .GetDisplayName();
+        }
 
         [Required]
         [DisplayName("Chords File")]
         public HttpPostedFileBase ChordsFile { get; set; }
 
+        [DisplayName("Chords File Name")]
+        public string ChordsFileName { get; set; }
+
         [DisplayName("Chord Progression")]
         public String ChordProgression { get; set; }
+
 
 
         public DateTime Created { get; set; }
@@ -53,9 +70,11 @@ namespace CW.Soloist.WebApplication.ViewModels
             Id = song.Id;
             Artist = song.Artist;
             Title = song.Title;
-            MelodyTrackIndex = song.MelodyTrackIndex;
+            MidiFileName = song.MidiFileName;
+            ChordsFileName = song.ChordsFileName;
             Created = song.Created;
             Modified = song.Modified;
+            MelodyTrackIndex = song.MelodyTrackIndex;
         }
     }
 }

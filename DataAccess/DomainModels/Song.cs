@@ -24,4 +24,19 @@ namespace CW.Soloist.DataAccess.DomainModels
         public ApplicationUser User { get; set; }
         public string UserId { get; set; }
     }
+
+    /// <summary>
+    /// Enumeration that classifies the persisted files for a given song resource:
+    /// <list type="number">
+    /// <item><strong>Chord File</strong> - The chord progression file. </item>
+    /// <item><strong>MIDI File</strong> - The original MIDI file. </item>
+    /// <item><strong>MIDI Playback</strong> - The MIDI file without the melody track. </item>
+    /// </list>
+    /// </summary>
+    public enum SongFileType
+    {
+        ChordProgressionFile,
+        MidiOriginalFile,
+        MidiPlaybackFile
+    }
 }

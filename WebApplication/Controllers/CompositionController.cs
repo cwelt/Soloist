@@ -30,9 +30,9 @@ namespace CW.Soloist.WebApplication.Controllers
             _pitchSelectList = Enum.GetValues(typeof(NotePitch)).Cast<NotePitch>()
                .Except(new[] { NotePitch.HoldNote, NotePitch.RestNote })
                .Select(notePitch => new PitchRecord
-               { 
-                   Pitch = notePitch, 
-                   Description = notePitch.GetDisplayName() 
+               {
+                   Pitch = notePitch,
+                   Description = notePitch.GetDisplayName()
                });
         }
 
@@ -42,7 +42,14 @@ namespace CW.Soloist.WebApplication.Controllers
         {
             CompositionParamsViewModel viewModel = new CompositionParamsViewModel
             {
-                SongSelectList = new SelectList(db.Songs.OrderBy(s => s.Title), "Id", "Title"),
+                SongSelectList = new SelectList(
+                    db.Songs.Where(s => s.IsPublic)
+                    .OrderBy(s => s.Artist)
+                    .Select(s => new
+                    {
+                        Id = s.Id,
+                        Title = s.Artist + " - " + s.Title
+                    }), "Id", "Title"),
                 MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
                 OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
                 PitchSelectList = new SelectList(_pitchSelectList, "Pitch", "Description"),
