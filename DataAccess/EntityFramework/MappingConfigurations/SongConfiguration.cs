@@ -26,13 +26,27 @@ namespace CW.Soloist.DataAccess.EntityFramework.MappingConfigurations
 
             Property(s => s.ChordsFileName)
                 .IsRequired()
-                .HasMaxLength(2000);
+                .HasMaxLength(100);
 
             Property(s => s.MidiFileName)
                 .IsRequired()
-                .HasMaxLength(2000);
+                .HasMaxLength(100);
+
+            Property(s => s.MidiPlaybackFileName)
+                .IsRequired()
+                .HasMaxLength(100);
+            
+
+            Property(s => s.Created)
+                .HasColumnName(nameof(Song.Created));
+
+            Property(s => s.Modified)
+                .HasColumnName(nameof(Song.Modified));
 
             Property(s => s.MelodyTrackIndex);
+
+            Property(s => s.IsPublic)
+                .HasColumnName(nameof(Song.IsPublic));
 
             Ignore(s => s.Chords);
 

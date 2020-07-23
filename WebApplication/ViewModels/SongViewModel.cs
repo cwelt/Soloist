@@ -33,7 +33,7 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("MIDI File Name")]
         public string MidiFileName { get; set; }
 
-        [DisplayName("MIDI Playback File Name")]
+        [DisplayName("MIDI Playback File")]
         public string MidiPlaybackFileName { get; set; }
 
         [DisplayName("Melody Track Number")]
@@ -71,6 +71,7 @@ namespace CW.Soloist.WebApplication.ViewModels
             Artist = song.Artist;
             Title = song.Title;
             MidiFileName = song.MidiFileName;
+            MidiPlaybackFileName = song.MidiPlaybackFileName;
             ChordsFileName = song.ChordsFileName;
             Created = song.Created;
             Modified = song.Modified;

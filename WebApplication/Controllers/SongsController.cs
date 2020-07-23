@@ -241,6 +241,7 @@ namespace CW.Soloist.WebApplication.Controllers
             return RedirectToAction("Index");
         }
 
+        #region DownloadFile
         /// <summary>
         /// Downloads the requested song file from the server to the client. 
         /// </summary>
@@ -249,42 +250,62 @@ namespace CW.Soloist.WebApplication.Controllers
         /// <returns> The requested file for the given song. </returns>
         public async Task<ActionResult> DownloadFile(int? id, SongFileType songFileType)
         {
+            // assure valid input params 
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            // fetch song from database 
             Song song = await db.Songs.FindAsync(id);
-
             if (song == null)
             {
                 return HttpNotFound();
             }
 
-            // check authorization 
+            // check authorization for the retrieved song 
             if (!IsUserAuthorized(song, AuthorizationActivity.Display))
             {
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
-            string filePath = HomeController.GetFileServerPath();
-            filePath += $@"Songs\{song.Id}\";
+            // build path for the requested file resource on the file server 
+            string fileName, filePath;
+            filePath = GetSongDirectoryPath(song.Id);
 
             switch (songFileType)
             {
                 case SongFileType.ChordProgressionFile:
-                    filePath += song.ChordsFileName; break;
+                    fileName = song.ChordsFileName; break;
                 case SongFileType.MidiOriginalFile:
-                    filePath += song.MidiFileName; break;
+                    fileName = song.MidiFileName; break;
                 case SongFileType.MidiPlaybackFile:
-                    filePath += "playback.mid"; break;
+                    fileName = song.MidiPlaybackFileName; break;
+                default:
+                    throw new NotSupportedException($"No support for {nameof(songFileType)}"); 
             }
+            
+            filePath += fileName;
 
+            // read file contents 
             byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
-            string fileName = Path.GetFileName(filePath);
 
+            // return file content to the client 
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
+        #endregion
+
+        #region GetSongDirectoryPath
+        /// <summary>
+        /// Gets the path of the given song's directory on the file server. 
+        /// </summary>
+        /// <param name="songId"> The id of the requested song. </param>
+        /// <returns> Full physcial path on the file server of the given song directory. </returns>
+        private string GetSongDirectoryPath(int songId)
+        {
+            return HomeController.GetFileServerPath() + $@"Songs\{songId}\";
+        }
+        #endregion
 
         #region Authorization Checks
         /// <summary>

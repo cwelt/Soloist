@@ -403,6 +403,14 @@
     <Compile Include="Migrations\202007212125210_UniteContexts.designer.cs">
       <DependentUpon>202007212125210_UniteContexts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202007231747243_AddMidiFilePlaybackColumnToSongsTable.cs" />
+    <Compile Include="Migrations\202007231747243_AddMidiFilePlaybackColumnToSongsTable.designer.cs">
+      <DependentUpon>202007231747243_AddMidiFilePlaybackColumnToSongsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007231803190_MakeFilePlaybackColumnNotNullable.cs" />
+    <Compile Include="Migrations\202007231803190_MakeFilePlaybackColumnNotNullable.designer.cs">
+      <DependentUpon>202007231803190_MakeFilePlaybackColumnNotNullable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -528,6 +536,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007212125210_UniteContexts.resx">
       <DependentUpon>202007212125210_UniteContexts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007231747243_AddMidiFilePlaybackColumnToSongsTable.resx">
+      <DependentUpon>202007231747243_AddMidiFilePlaybackColumnToSongsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007231803190_MakeFilePlaybackColumnNotNullable.resx">
+      <DependentUpon>202007231803190_MakeFilePlaybackColumnNotNullable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
