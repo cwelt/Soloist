@@ -14,6 +14,7 @@ using System.IO;
 using System;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.WebApplication.Models;
+using Microsoft.AspNet.Identity;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
@@ -25,7 +26,12 @@ namespace CW.Soloist.WebApplication.Controllers
         // GET: Songs
         public async Task<ActionResult> Index()
         {
-            return View(await db.Songs.ToListAsync());
+            string userId = User.Identity.GetUserId();
+            var songs = await db.Songs
+                .Where(s => s.IsPublic || s.UserId.Equals(userId))
+                .ToListAsync();
+            
+            return View(songs);
         }
 
         // GET: Songs/Details/5
@@ -35,11 +41,21 @@ namespace CW.Soloist.WebApplication.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Song song = await db.Songs.FindAsync(id);
+
             if (song == null)
             {
                 return HttpNotFound();
             }
+
+            // check authorization 
+            if (!IsUserAuthorized(song, AuthorizationActivity.Display))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+                //return new HttpUnauthorizedResult("You are not authorized for this song");
+            }
+
             return View(song);
         }
 
@@ -117,6 +133,13 @@ namespace CW.Soloist.WebApplication.Controllers
             {
                 return HttpNotFound();
             }
+
+            // check authorization 
+            if (!IsUserAuthorized(song, AuthorizationActivity.Update))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
             return View(song);
         }
 
@@ -128,6 +151,12 @@ namespace CW.Soloist.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Artist,MidiFileName,ChordsFileName")] Song song)
         {
+            // check authorization 
+            if (!IsUserAuthorized(song, AuthorizationActivity.Update))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
             if (ModelState.IsValid)
             {
                 db.Entry(song).State = EntityState.Modified;
@@ -138,31 +167,92 @@ namespace CW.Soloist.WebApplication.Controllers
         }
 
         // GET: Songs/Delete/5
-        [Authorize(Roles = RoleName.Admin)]
+        [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Song song = await db.Songs.FindAsync(id);
+
             if (song == null)
             {
                 return HttpNotFound();
             }
+
+            // check authorization 
+            if (!IsUserAuthorized(song, AuthorizationActivity.Delete))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
             return View(song);
         }
 
         // POST: Songs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = RoleName.Admin)]
+        [Authorize]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Song song = await db.Songs.FindAsync(id);
+
+            // check authorization 
+            if (!IsUserAuthorized(song, AuthorizationActivity.Delete))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
             db.Songs.Remove(song);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// <para> Checks if a user is authorized for the given song and activity. </para>
+        /// This security check is intended to be used only to extend the default built-in 
+        /// checks of the .NET framework. For exmaple, if the activity of creating a new song
+        /// is permitted to all logged-in users, then the built-in authorization check via 
+        /// the <see cref="AuthorizeAttribute"/> gets the job done without the need to use 
+        /// any additional checks. This method is relevant for cutomizing and fine-tunning 
+        /// the standard default checks, such as comparing the user id of the requested 
+        /// resource records and the current logged-in user id.
+        /// 
+        /// </summary>
+        /// <param name="song"> The requested song the user is trying to access. </param>
+        /// <param name="authActivity"> The requested activity on the song (update/delete, etc.).</param>
+        /// <returns> True if user is authorized, false otherwise. </returns>
+        protected bool IsUserAuthorized(Song song, AuthorizationActivity authActivity)
+        {
+            // assure there is a concrete song to check 
+            if (song == null)
+                return false;
+
+            // if current user is logged-in fetch it's id
+            string userId = User?.Identity?.GetUserId();
+
+            // check authorization for the requested activity 
+            switch (authActivity)
+            {
+                // Create - any logged in user can upload new songs for himself 
+                case AuthorizationActivity.Create:
+                    return User?.Identity?.IsAuthenticated ?? false;
+
+                // Display - either song is public or user is song owner
+                case AuthorizationActivity.Display:
+                    return song.IsPublic || song.UserId.Equals(userId);
+
+                // Update & Delete - only admins and song owners
+                case AuthorizationActivity.Update:
+                case AuthorizationActivity.Cancel:
+                case AuthorizationActivity.Delete:
+                    return User.IsInRole(RoleName.Admin) || song.UserId.Equals(userId);
+            }
+
+            // if we got here we missed some test, default the security check to deny access 
+            return false;
         }
 
         protected override void Dispose(bool disposing)

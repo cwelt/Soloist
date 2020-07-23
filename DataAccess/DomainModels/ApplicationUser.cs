@@ -21,5 +21,17 @@ namespace CW.Soloist.DataAccess.DomainModels
         public IList<Song> Songs { get; set; }
     }
 
-    
+    /// <summary>
+    /// Enumeration that represents the various possible user activities 
+    /// on the application resources that might require an authorization check, for 
+    /// example activity of displaying a resource or updating a resource.
+    /// </summary>
+    public enum AuthorizationActivity
+    {
+        Create = 1,
+        Update = 2,
+        Display = 3,
+        Cancel = 4,
+        Delete = 5
+    }
 }
