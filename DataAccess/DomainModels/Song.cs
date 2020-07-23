@@ -23,8 +23,5 @@ namespace CW.Soloist.DataAccess.DomainModels
         public bool IsPublic { get; set; }
         public ApplicationUser User { get; set; }
         public string UserId { get; set; }
-
-
-
     }
 }

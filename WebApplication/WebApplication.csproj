@@ -412,6 +412,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Validations\PitchRange.cs" />
     <Compile Include="ViewModels\CompositionParamsViewModel.cs" />
+    <Compile Include="ViewModels\SongsViewModel.cs" />
     <Compile Include="ViewModels\SongViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

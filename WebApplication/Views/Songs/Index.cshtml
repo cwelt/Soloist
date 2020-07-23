@@ -1,8 +1,9 @@
-﻿@model IEnumerable<CW.Soloist.DataAccess.DomainModels.Song>
+﻿@model IEnumerable<SongViewModel>
 
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    IPrincipal user = User;
 }
 
 <h1> @ViewBag.Message</h1>
@@ -13,42 +14,54 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 <table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Title)
-        </th>
+    <tr style="color:#b6ff00">
         <th>
             @Html.DisplayNameFor(model => model.Artist)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.MidiFileName)
+            @Html.DisplayNameFor(model => model.Title)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ChordsFileName)
+            @Html.DisplayText("MIDI File") @* (model => model.MidiFileName) *@
+        </th>
+        <th>
+            @Html.DisplayText("Chords File") @* Html.DisplayNameFor(model => model.ChordsFileName) *@
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Artist)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MidiFileName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ChordsFileName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var song in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => song.Artist)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => song.Title)
+            </td>
+            <td>
+                @* @Html.DisplayFor(modelItem => item.MidiFileName) *@
+            </td>
+            <td>
+                @* @Html.DisplayFor(modelItem => item.ChordsFileName) *@
+            </td>
+            <td>
+                @{
+                    @Html.ActionLink("Details", "Details", new { id = song.Id }) <text> | </text>
 
+                    if (song.IsUserAuthorizedToEdit)
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = song.Id }) <text> | </text>
+                    }
+                    else { <text> Edit |</text> }
+
+                    if (song.IsUserAuthorizedToEdit)
+                    {
+                        @Html.ActionLink("Delete", "Delete", new { id = song.Id })
+                    }
+                    else { <text> Delete </text> }
+                }
+            </td>
+        </tr>
+    }
 </table>

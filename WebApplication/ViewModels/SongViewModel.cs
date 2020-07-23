@@ -31,8 +31,11 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         [Required]
         [DisplayName("Chords File")]
-        public HttpPostedFileBase ChordProgressionFile { get; set; }
+        public HttpPostedFileBase ChordsFile { get; set; }
 
         public String ChordProgression { get; set; }
+
+        public bool IsUserAuthorizedToEdit { get; set; }
+        public bool IsUserAuthorizedToDelete { get; set; }
     }
 }

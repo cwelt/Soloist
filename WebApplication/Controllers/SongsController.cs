@@ -15,6 +15,7 @@ using System;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.WebApplication.Models;
 using Microsoft.AspNet.Identity;
+using System.Security.Principal;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
@@ -26,12 +27,30 @@ namespace CW.Soloist.WebApplication.Controllers
         // GET: Songs
         public async Task<ActionResult> Index()
         {
-            string userId = User.Identity.GetUserId();
-            var songs = await db.Songs
-                .Where(s => s.IsPublic || s.UserId.Equals(userId))
-                .ToListAsync();
-            
-            return View(songs);
+            // fetch id of current logged-in user (if user is indeed logged-in...)
+            string userId = User?.Identity?.GetUserId();
+
+            // fetch songs from db according to user's privilages  
+            var songs = User?.IsInRole(RoleName.Admin) ?? false
+                ? await db.Songs.ToListAsync()
+                : await db.Songs.Where(s => s.IsPublic || s.UserId.Equals(userId)).ToListAsync();
+
+            // transfer db song list from to deticated DTO song list 
+            List<SongViewModel> songsViewModel = new List<SongViewModel>(songs.Count);
+            foreach (Song song in songs)
+            {
+                songsViewModel.Add(new SongViewModel
+                {
+                    Id = song.Id,
+                    Title = song.Title,
+                    Artist = song.Artist,
+                    IsUserAuthorizedToEdit = IsUserAuthorized(song, AuthorizationActivity.Update),
+                    IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete),
+                });
+            }
+
+            // pass the song list for the view for rendering 
+            return View(songsViewModel);
         }
 
         // GET: Songs/Details/5
@@ -89,7 +108,7 @@ namespace CW.Soloist.WebApplication.Controllers
                     Artist = songViewModel.Artist,
                     MelodyTrackIndex = songViewModel.MelodyTrackIndex,  
                     MidiFileName = songViewModel.MidiFile.FileName,
-                    ChordsFileName = songViewModel.ChordProgressionFile.FileName,
+                    ChordsFileName = songViewModel.ChordsFile.FileName,
                 };
 
                 // save the new song in the database 
@@ -106,7 +125,7 @@ namespace CW.Soloist.WebApplication.Controllers
 
                 // save the chord progression file in the new directory 
                 string chordsFilefullPath = directoryPath + song.ChordsFileName;
-                songViewModel.ChordProgressionFile.SaveAs(chordsFilefullPath);
+                songViewModel.ChordsFile.SaveAs(chordsFilefullPath);
 
                 // TODO: if saving on file server failed, rollback DB changes 
 
@@ -219,26 +238,26 @@ namespace CW.Soloist.WebApplication.Controllers
         /// any additional checks. This method is relevant for cutomizing and fine-tunning 
         /// the standard default checks, such as comparing the user id of the requested 
         /// resource records and the current logged-in user id.
-        /// 
         /// </summary>
         /// <param name="song"> The requested song the user is trying to access. </param>
         /// <param name="authActivity"> The requested activity on the song (update/delete, etc.).</param>
+        /// <param name="user"> The user to check against. </param>
         /// <returns> True if user is authorized, false otherwise. </returns>
-        protected bool IsUserAuthorized(Song song, AuthorizationActivity authActivity)
+        public static bool IsUserAuthorized(Song song, AuthorizationActivity authActivity, IPrincipal user)
         {
             // assure there is a concrete song to check 
             if (song == null)
                 return false;
 
             // if current user is logged-in fetch it's id
-            string userId = User?.Identity?.GetUserId();
+            string userId = user?.Identity?.GetUserId();
 
             // check authorization for the requested activity 
             switch (authActivity)
             {
                 // Create - any logged in user can upload new songs for himself 
                 case AuthorizationActivity.Create:
-                    return User?.Identity?.IsAuthenticated ?? false;
+                    return user?.Identity?.IsAuthenticated ?? false;
 
                 // Display - either song is public or user is song owner
                 case AuthorizationActivity.Display:
@@ -248,11 +267,19 @@ namespace CW.Soloist.WebApplication.Controllers
                 case AuthorizationActivity.Update:
                 case AuthorizationActivity.Cancel:
                 case AuthorizationActivity.Delete:
-                    return User.IsInRole(RoleName.Admin) || song.UserId.Equals(userId);
+                    return user.IsInRole(RoleName.Admin) || song.UserId.Equals(userId);
             }
 
             // if we got here we missed some test, default the security check to deny access 
             return false;
+        }
+
+
+        /// <inheritdoc cref="IsUserAuthorized(Song, AuthorizationActivity, IPrincipal)"/>
+        public bool IsUserAuthorized(Song song, AuthorizationActivity authActivity)
+        {
+            // delegate authorization check to the static method with current user 
+            return IsUserAuthorized(song, authActivity, User);
         }
 
         protected override void Dispose(bool disposing)
