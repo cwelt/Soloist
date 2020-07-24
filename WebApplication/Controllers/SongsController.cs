@@ -56,13 +56,14 @@ namespace CW.Soloist.WebApplication.Controllers
         // GET: Songs/Details/5
         public async Task<ActionResult> Details(int? id)
         {
+            // assure id parameter is valid 
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            // fetch song from the database
             Song song = await db.Songs.FindAsync(id);
-
             if (song == null)
             {
                 return HttpNotFound();
@@ -74,9 +75,11 @@ namespace CW.Soloist.WebApplication.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
+            // build a DTO view model of the song for the view to render 
             SongViewModel songViewModel = new SongViewModel(song);
-            string directoryPath = fileServerPath + $@"Songs\{song.Id}\";
-            string chordsFilePath = directoryPath + song.ChordsFileName;
+
+            // try reading the chord progression and adding it's content to the view model 
+            string chordsFilePath = await GetSongPath(song.Id, SongFileType.ChordProgressionFile);
             try
             {
                 songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
@@ -86,6 +89,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 throw;
             }
 
+            // pass the view model to the view to render 
             return View(songViewModel);
         }
         #endregion
@@ -270,40 +274,64 @@ namespace CW.Soloist.WebApplication.Controllers
             }
 
             // build path for the requested file resource on the file server 
-            string fileName, filePath;
-            filePath = GetSongDirectoryPath(song.Id);
-
-            switch (songFileType)
-            {
-                case SongFileType.ChordProgressionFile:
-                    fileName = song.ChordsFileName; break;
-                case SongFileType.MidiOriginalFile:
-                    fileName = song.MidiFileName; break;
-                case SongFileType.MidiPlaybackFile:
-                    fileName = song.MidiPlaybackFileName; break;
-                default:
-                    throw new NotSupportedException($"No support for {nameof(songFileType)}"); 
-            }
-            
-            filePath += fileName;
+            string filePath = await GetSongPath(song.Id, songFileType);
 
             // read file contents 
             byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
 
             // return file content to the client 
+            string fileName = Path.GetFileName(filePath);
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
         #endregion
 
-        #region GetSongDirectoryPath
+        #region GetSongPath
         /// <summary>
-        /// Gets the path of the given song's directory on the file server. 
+        /// Gets the path of the given song's resources on the file server. 
         /// </summary>
         /// <param name="songId"> The id of the requested song. </param>
-        /// <returns> Full physcial path on the file server of the given song directory. </returns>
-        private string GetSongDirectoryPath(int songId)
+        /// <param name="songFileType"> Optional parameter for specifing a specific 
+        /// file resource of the song such as midi or chords file. If no specific file 
+        /// is requested, set this parameter to null and the path to the song's directory 
+        /// would be returned. </param>
+        /// <returns> Full physcial path on the file server of the given song resources. </returns>
+        private async Task<string> GetSongPath(int songId, SongFileType? songFileType = null)
         {
-            return HomeController.GetFileServerPath() + $@"Songs\{songId}\";
+            // init 
+            Song song;
+            string path, fileName;
+
+            // fetch song from database 
+            song = await db.Songs.FindAsync(songId);
+
+            // check authorization for the retrieved song 
+            if (song == null || !IsUserAuthorized(song, AuthorizationActivity.Display))
+                return null;
+                
+            // get the song's directory path on the file server 
+            path = HomeController.GetFileServerPath() + $@"Songs\{songId}\";
+
+            // if a specific file is requested, get it's inner path  
+            if (songFileType.HasValue)
+            {
+                switch (songFileType)
+                {
+                    case SongFileType.ChordProgressionFile:
+                        fileName = song.ChordsFileName; break;
+                    case SongFileType.MidiOriginalFile:
+                        fileName = song.MidiFileName; break;
+                    case SongFileType.MidiPlaybackFile:
+                        fileName = song.MidiPlaybackFileName; break;
+                    default:
+                        fileName = string.Empty; break;
+                }
+
+                // add the inner path of the requested resource to the directory path 
+                path += fileName;
+            }
+
+            // return the requested path 
+            return path;
         }
         #endregion
 
