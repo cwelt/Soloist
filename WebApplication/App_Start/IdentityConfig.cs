@@ -29,9 +29,7 @@ namespace CW.Soloist.WebApplication
         {
             string emailRecipient = message.Destination;
             string emailSubject = "Soloist - " + message.Subject;
-            string emailBody = "Hello," + Environment.NewLine + 
-                "Welcome to Soloist web application." + Environment.NewLine
-                + Environment.NewLine + message.Body;
+            string emailBody = "Hello," + Environment.NewLine + message.Body;
             await SendEmailAsyncWithSendGridService(emailRecipient, emailSubject, emailBody);
         }
 
