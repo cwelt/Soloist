@@ -57,6 +57,18 @@
         </div>
     </div>
 
+    <!-- Is Song Public -->
+    string hidden = Model.IsAdminUser ? "" : "hidden";
+    <div class="checkbox" @Html.AttributeEncode(hidden)>
+        <label @Html.AttributeEncode(hidden)>
+            @Html.CheckBoxFor(m => m.IsPublic) Make song public to all users??
+            <span class="alert-danger">
+                @Html.ValidationMessageFor(m => m.IsPublic)
+            </span>
+        </label>
+    </div>
+
+
     <!-- Save Button -->
     <div class="form-group">
         <input type="submit" value="Save" class="btn btn-primary btn-lg btn-block center-block" />

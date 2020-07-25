@@ -63,8 +63,12 @@ namespace CW.Soloist.WebApplication.ViewModels
         public DateTime Created { get; set; }
         public DateTime Modified { get; set; }
 
+        [DisplayName("Is Song Public To All Users")]
+        public bool IsPublic { get; set; }
+
         public bool IsUserAuthorizedToEdit { get; set; }
         public bool IsUserAuthorizedToDelete { get; set; }
+        public bool IsAdminUser { get; set; }
 
         public SongViewModel() { }
 
@@ -76,6 +80,7 @@ namespace CW.Soloist.WebApplication.ViewModels
             MidiFileName = song.MidiFileName;
             MidiPlaybackFileName = song.MidiPlaybackFileName;
             ChordsFileName = song.ChordsFileName;
+            IsPublic = song.IsPublic;
             Created = song.Created;
             Modified = song.Modified;
             MelodyTrackIndex = song.MelodyTrackIndex;

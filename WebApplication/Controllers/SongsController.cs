@@ -99,7 +99,12 @@ namespace CW.Soloist.WebApplication.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            return View();
+            SongViewModel songViewModel = new SongViewModel
+            {
+                IsAdminUser = User?.IsInRole(RoleName.Admin) ?? false
+            };
+
+            return View(songViewModel);
         }
 
         // POST: Songs/Create
@@ -122,8 +127,8 @@ namespace CW.Soloist.WebApplication.Controllers
                     MidiFileName = songViewModel.MidiFile.FileName,
                     ChordsFileName = songViewModel.ChordsFile.FileName,
                     MelodyTrackIndex = songViewModel.MelodyTrackIndex,
+                    IsPublic = songViewModel.IsPublic && User.IsInRole(RoleName.Admin),
                     UserId = this.User.Identity.GetUserId(),
-                    
                 };
 
                 // set name for a playback file 
