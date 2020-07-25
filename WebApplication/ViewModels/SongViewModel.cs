@@ -60,8 +60,6 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Chord Progression")]
         public String ChordProgression { get; set; }
 
-
-
         public DateTime Created { get; set; }
         public DateTime Modified { get; set; }
 
@@ -71,6 +69,8 @@ namespace CW.Soloist.WebApplication.ViewModels
         public bool IsUserAuthorizedToEdit { get; set; }
         public bool IsUserAuthorizedToDelete { get; set; }
         public bool IsAdminUser { get; set; }
+
+        public string StatusMessage { get; set; }
 
         public SongViewModel() { }
 

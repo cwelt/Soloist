@@ -55,7 +55,7 @@ namespace CW.Soloist.WebApplication.Controllers
 
         #region Details
         // GET: Songs/Details/5
-        public async Task<ActionResult> Details(int? id)
+        public async Task<ActionResult> Details(int? id, string message = null)
         {
             // assure id parameter is valid 
             if (id == null)
@@ -96,12 +96,16 @@ namespace CW.Soloist.WebApplication.Controllers
                 throw;
             }
 
+            // if a message is absent add it to view 
+            songViewModel.StatusMessage = message;
+
             // pass the view model to the view to render 
             return View(songViewModel);
         }
         #endregion
 
         // GET: Songs/Create
+        [HttpGet]
         [Authorize]
         public ActionResult Create()
         {
@@ -163,12 +167,10 @@ namespace CW.Soloist.WebApplication.Controllers
 
                 // TODO: if saving on file server failed, rollback DB changes 
 
-                // TODO: Show message on index view...
-                ViewBag.Message = "Saved Successfully";
-
-                return RedirectToAction("Index");
+                // If creation was successful, redirect to new song details page
+                string successMessage = $"The Song '{song.Title}' was saved successfully!";
+                return RedirectToAction(nameof(Details), new { Id = song.Id, message = successMessage });
             }
-
             return View(songViewModel);
         }
 
