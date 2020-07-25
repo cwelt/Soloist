@@ -1,7 +1,7 @@
 ﻿@model SongViewModel
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Upload New Song";
 }
 
 <h2>Upload a new song</h2>
@@ -12,42 +12,49 @@
     method: FormMethod.Post,
     htmlAttributes: new { enctype = "multipart/form-data" }))
 {
-
-    @Html.ValidationSummary(true, "Please fix the following errors.", new { @class = "text-danger" })
+    <!-- Song Artist -->
+    <div class="form-group">
+        @Html.LabelFor(m => m.Artist, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.Artist, new { @class = "form-control" })
+        <div class="alert-danger">
+            @Html.ValidationMessageFor(m => m.Artist)
+        </div>
+    </div>
 
     <!-- Song Title -->
     <div class="form-group">
         @Html.LabelFor(m => m.Title, new { @class = "control-label" })
         @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
-    </div>
-
-    <!-- Song Artist -->
-    <div class="form-group">
-        @Html.LabelFor(m => m.Artist, new { @class = "control-label" })
-        @Html.TextBoxFor(m => m.Artist, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Artist, "", new { @class = "text-danger" })
+        <div class="alert-danger">
+            @Html.ValidationMessageFor(m => m.Title)
+        </div>
     </div>
 
     <!-- Melody Track Index -->
     <div class="form-group">
         @Html.LabelFor(m => m.MelodyTrackIndex)
         @Html.EnumDropDownListFor(m => m.MelodyTrackIndex, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.MelodyTrackIndex)
+        <div class="alert-danger">
+            @Html.ValidationMessageFor(m => m.MelodyTrackIndex)
+        </div>
     </div>
 
     <!-- MIDI File Upload -->
     <div class="form-group">
-        @Html.LabelFor(expression: m => m.MidiFile, htmlAttributes: new { @for = "midiFile", @class = "control-label" })
+        @Html.LabelFor(expression: m => m.MidiFile, htmlAttributes: new { @class = "control-label" })
         @Html.TextBoxFor(m => m.MidiFile, new { type = "file", @class = "form-control-file", accept = ".mid" })
-        @Html.ValidationMessageFor(m => m.MidiFile, "", new { @class = "text-danger" })
+        <div class="alert-danger">
+            @Html.ValidationMessageFor(m => m.MidiFile)
+        </div>
     </div>
 
     <!-- Chord Progression File Upload -->
     <div class="form-group">
-        @Html.LabelFor(m => m.ChordProgressionFile, new { @for = "chordsFile", @class = "control-label" })
-        @Html.TextBoxFor(m => m.ChordProgressionFile, new { type = "file", @class = "form-control-file", accept = ".txt" })
-        @Html.ValidationMessageFor(m => m.ChordProgressionFile, "", new { @class = "text-danger" })
+        @Html.LabelFor(m => m.ChordsFile, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.ChordsFile, new { type = "file", @class = "form-control-file", accept = ".txt" })
+        <div class="alert-danger">
+            @Html.ValidationMessageFor(m => m.ChordsFile)
+        </div>
     </div>
 
     <!-- Save Button -->

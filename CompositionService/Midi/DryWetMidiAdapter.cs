@@ -57,14 +57,23 @@ namespace CW.Soloist.CompositionService.Midi
 
         #endregion
 
-
         #region Consturctors 
+
         /// <summary> Constructor </summary>
         /// <param name="midiFilePath"></param>
         internal DryWetMidiAdapter(string midiFilePath)
+            : this(File.OpenRead(midiFilePath)) 
         {
             FilePath = midiFilePath;
-            _midiContent = MidiFile.Read(midiFilePath);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileStream"></param>
+        internal DryWetMidiAdapter(Stream stream, string midiFileName = null)
+        {
+            _midiContent = MidiFile.Read(stream);
             _tempoMap = _midiContent.GetTempoMap();
             _trackChunks = _midiContent.GetTrackChunks().ToList();
             _metadataTrack = _trackChunks.First();
@@ -102,7 +111,6 @@ namespace CW.Soloist.CompositionService.Midi
             {
                 Tracks.Add(new DryWetMidiTrackAdapter(track));
             }
-
         }
 
 

@@ -29,7 +29,7 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Pitch Lowest Bound")]
         public NotePitch MinPitch { get; set; }
 
-        [PitchRange]
+        [PitchRangeValidation]
         [DisplayName("Pitch Upper Bound")]
         public NotePitch MaxPitch { get; set; }
 

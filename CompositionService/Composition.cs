@@ -31,7 +31,7 @@ namespace CW.Soloist.CompositionService
 
         /// <summary> Handle for the midi file which contains the composed melody. </summary>
         public IMidiFile MidiOutputFile { get; private set; }
-        
+
         /// <summary> The chord progression harmony of the composition. </summary>
         public IList<IBar> ChordProgression { get; }
 
@@ -45,6 +45,60 @@ namespace CW.Soloist.CompositionService
 
         /// <summary> The composition strategy for carrying out the actual melody compoition. </summary>
         public CompositionStrategy CompositionStrategy { get; set; }
+
+        public static bool IsMelodyTrackIndexValid(int? melodyTrackIndex, IMidiFile midiFile, out string errorMessage)
+        {
+            if (melodyTrackIndex.HasValue && melodyTrackIndex >= midiFile?.Tracks.Count)
+            {
+                errorMessage = $"Error: Invalid index for {nameof(melodyTrackIndex)}." +
+                               $"The given MIDI file has only {midiFile.Tracks.Count - 1} tracks.";
+                return false;
+            }
+            errorMessage = null;
+            return true;
+        }
+
+        public static bool AreBarsCompatible(IList<IBar> chordProgression, IMidiFile midiFile, out string errorMessage)
+        {
+            // validate that total num of bars in MIDI matches num of bars in chord progression
+            if (chordProgression?.Count != midiFile?.NumberOfBars)
+            {
+                errorMessage = $"Error: Number of bars mismatch: \n" +
+                    $"chord file has {chordProgression.Count} bars," +
+                    $" while midi file has {midiFile.NumberOfBars}!" +
+                    $"\nBars must match inorder to build a composition.";
+                return false;
+            }
+
+            // validate that each bar duration from CHORD progression matches the duration in MIDI
+            IDuration midiDuration = null;
+            byte barNumerator = 0;
+            byte barDenominator = 0;
+
+            for (int barIndex = 0; barIndex < chordProgression.Count; barIndex++)
+            {
+                // get bar's duration from chord progression 
+                barNumerator = chordProgression[barIndex].TimeSignature.Numerator;
+                barDenominator = chordProgression[barIndex].TimeSignature.Denominator;
+
+                // get bar's duration from midi file 
+                midiDuration = midiFile.GetBarDuration(barIndex);
+
+                // validate equality
+                if (barNumerator != midiDuration.Numerator || barDenominator != midiDuration.Denominator)
+                {
+                    errorMessage = $"Error: Time signature '{barNumerator}/{barDenominator}' " +
+                        $"of bar number {barIndex + 1} in the chord progression " +
+                        $"does not match the corresponding time signature " +
+                        $"'{midiDuration.Numerator}/{midiDuration.Denominator}' " +
+                        $"in the midi file.";
+                }
+            }
+
+            errorMessage = null;
+            return true;
+        }
+
 
 
         #region Constructors 
@@ -76,49 +130,16 @@ namespace CW.Soloist.CompositionService
             _midiInputFileName = Path.GetFileNameWithoutExtension(MidiInputFile.FilePath);
             _melodyTrackIndex = melodyTrackIndex;
 
+            // place holder for an error message if validtions fail
+            string errorMessage;
+
             // validate melody track index is not out of bounds 
-            if (melodyTrackIndex.HasValue && melodyTrackIndex >= MidiInputFile.Tracks.Count)
-            {
-                throw new IndexOutOfRangeException(
-                    $"Error: Invalid index for {nameof(melodyTrackIndex)}." +
-                    $"The given MIDI file has only {MidiInputFile.Tracks.Count} tracks.");
-            }
-                
-            // validate that total nubmer of bars in CHORD progression match MIDI file total
-            if (MidiInputFile.NumberOfBars != chordProgression.Count)
-            {
-                throw new InvalidDataException(
-                    $"Error: Number of bars mismatch: \n" +
-                    $"chord file has {chordProgression.Count} bars," +
-                    $" while midi file has {MidiInputFile.NumberOfBars}!" +
-                    $"\nBars must match inorder to build a composition.");
-            }
+            if (!Composition.IsMelodyTrackIndexValid(melodyTrackIndex, MidiInputFile, out errorMessage))
+                throw new IndexOutOfRangeException(errorMessage);
 
-            // validate that each bar duration from CHORD progression matches the duration from MIDI file  
-            IDuration midiDuration = null;
-            byte barNumerator = 0;
-            byte barDenominator = 0;
-
-            for (int barIndex = 0; barIndex < ChordProgression.Count; barIndex++)
-            {
-                // get bar's duration from chord progression 
-                barNumerator = ChordProgression[barIndex].TimeSignature.Numerator;
-                barDenominator = ChordProgression[barIndex].TimeSignature.Denominator;
-
-                // get bar's duration from midi file 
-                midiDuration = MidiInputFile.GetBarDuration(barIndex);
-
-                // validate equality
-                if (barNumerator != midiDuration.Numerator || barDenominator != midiDuration.Denominator)
-                {
-                    throw new InvalidDataException(
-                        $"Error: Time signature '{barNumerator}/{barDenominator}' " +
-                        $"of bar number {barIndex + 1} in the chord progression " +
-                        $"does not match the corresponding time signature " +
-                        $"'{midiDuration.Numerator}/{midiDuration.Denominator}' " +
-                        $"in the midi file.");
-                }
-            }
+            // validate that bars in CHORD progression are compatible with MIDI file 
+            if (!AreBarsCompatible(chordProgression, MidiInputFile, out errorMessage))
+                throw new InvalidDataException(errorMessage);
         }
 
         /// <summary>
@@ -142,8 +163,9 @@ namespace CW.Soloist.CompositionService
         /// /// <exception cref="IndexOutOfRangeException"> Throw when <paramref name="melodyTrackIndex"/> 
         /// has a value which equal or greater than the number of track in the given midi file. </exception>
         public Composition(string chordProgressionFilePath, string midiFilePath, byte? melodyTrackIndex = null)
-            : this( chordProgression: ReadChordsFromFile(chordProgressionFilePath), 
-                    midiFile: new DryWetMidiAdapter(midiFilePath), melodyTrackIndex) {}
+            : this(chordProgression: ReadChordsFromFile(chordProgressionFilePath),
+                    midiFile: new DryWetMidiAdapter(midiFilePath), melodyTrackIndex)
+        { }
         #endregion
 
         #region Compose(ICompositionParamsDTO compositionParams)
@@ -160,7 +182,7 @@ namespace CW.Soloist.CompositionService
             return Compose(
                 strategy: compositionParams.CompositionStrategy,
                 overallNoteDurationFeel: compositionParams.OverallFeel,
-                musicalInstrument: compositionParams.MusicalInstrument, 
+                musicalInstrument: compositionParams.MusicalInstrument,
                 pitchRangeSource: compositionParams.PitchRangeSource,
                 minPitch: compositionParams.MinPitch,
                 maxPitch: compositionParams.MaxPitch,
@@ -217,7 +239,7 @@ namespace CW.Soloist.CompositionService
             // initialize pitch range from midi file if requested 
             if (pitchRangeSource == PitchRangeSource.MidiFile && _melodyTrackIndex.HasValue)
             {
-                NotePitch? lowestPitch, highestPitch; 
+                NotePitch? lowestPitch, highestPitch;
                 MidiInputFile.GetPitchRangeForTrack((int)_melodyTrackIndex, out lowestPitch, out highestPitch);
                 if (lowestPitch.HasValue && highestPitch.HasValue)
                 {
@@ -261,8 +283,8 @@ namespace CW.Soloist.CompositionService
 
         #region ReadChordsFromFile()
         /// <summary>
-        /// <para>Reads and parses a chord progression from an input chord file.</para>
-        /// Input file format:
+        /// <para>Reads and parses a chord progression from an input stream or chord file.</para>
+        /// Input file/stream format:
         /// <list type="bullet">
         /// <item> Each line should contain data for a single bar.</item>
         /// <item> The bar data should contain a time signature token (further explained ahead), 
@@ -285,7 +307,15 @@ namespace CW.Soloist.CompositionService
         /// </exception>
         public static IList<IBar> ReadChordsFromFile(string chordProgressionFilePath)
         {
-            using (StreamReader streamReader = File.OpenText(chordProgressionFilePath))
+            // delegate the reading to overloaded version which accepts a stream 
+            return ReadChordsFromFile(File.OpenText(chordProgressionFilePath));
+        }
+
+        /// <inheritdoc cref="ReadChordsFromFile(string)"/>
+        /// <param name="streamReader"> Input stream which contains the chords data. </param>
+        public static IList<IBar> ReadChordsFromFile(StreamReader streamReader)
+        {
+            using (streamReader)
             {
                 // initialization 
                 uint lineNumber = 1;
@@ -296,13 +326,13 @@ namespace CW.Soloist.CompositionService
                 ChordType chordType;
                 byte barNumerator = 0;
                 byte barDenominator = 0;
-                byte numberOfBeats = 0; 
+                byte numberOfBeats = 0;
                 byte totalBeatsInBar = 0;
                 string[] lineTokens = null;
                 string[] barTimeSignature = null;
                 string[] chordProperties = null;
                 string customErrorMessage = string.Empty;
-                string genericErrorMessage = $"Error parsing chord progression file '{chordProgressionFilePath}'.\n";
+                string genericErrorMessage = $"Error parsing chord progression file.\n";
 
                 // parse file line after line 
                 while ((currentLine = streamReader.ReadLine()) != null)
@@ -312,8 +342,8 @@ namespace CW.Soloist.CompositionService
                         continue;
 
                     // validate minimum tokens in line (at least a time signature and 1 chord)
-                    lineTokens = currentLine.Split('\b','\t');
-                    if(lineTokens?.Length < 2)
+                    lineTokens = currentLine.Split('\b', '\t');
+                    if (lineTokens?.Length < 2)
                     {
                         customErrorMessage = $"Line {lineNumber} must include a time signature and at least one chord.";
                         throw new FormatException(genericErrorMessage + customErrorMessage);
@@ -336,7 +366,7 @@ namespace CW.Soloist.CompositionService
                         // skip white spaces between the tokens
                         if (string.IsNullOrWhiteSpace(lineTokens[i]))
                             continue;
-                        
+
                         // parse chord properties: root, type & duration
                         chordProperties = lineTokens[i].Split('-');
                         if ((!Enum.TryParse(chordProperties?[0], out chordRoot)) ||
@@ -349,7 +379,7 @@ namespace CW.Soloist.CompositionService
                         totalBeatsInBar += numberOfBeats;
                         bar.Chords.Add(new Chord(chordRoot, chordType, new Duration(numberOfBeats, bar.TimeSignature.Denominator)));
                     }
-                    
+
                     // validate bar's chords total duration == bar's duration 
                     if (bar.TimeSignature.Numerator != totalBeatsInBar)
                     {
@@ -382,6 +412,11 @@ namespace CW.Soloist.CompositionService
         public static IMidiFile ReadMidiFile(string filePath)
         {
             return new DryWetMidiAdapter(filePath);
+        }
+
+        public static IMidiFile ReadMidiFile(Stream stream)
+        {
+            return new DryWetMidiAdapter(stream);
         }
         #endregion
 

@@ -1,6 +1,7 @@
 ﻿using CW.Soloist.CompositionService;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.WebApplication.Validations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +28,8 @@ namespace CW.Soloist.WebApplication.ViewModels
         public string Description { get; set; }
 
         [Required]
-        [DisplayName("MIDI Original File")]
+        [FileUploadValidation]
+        [DisplayName("MIDI File")]
         public HttpPostedFileBase MidiFile { get; set; }
 
         [DisplayName("MIDI File Name")]
@@ -46,6 +48,7 @@ namespace CW.Soloist.WebApplication.ViewModels
         }
 
         [Required]
+        [FileUploadValidation]
         [DisplayName("Chords File")]
         public HttpPostedFileBase ChordsFile { get; set; }
 

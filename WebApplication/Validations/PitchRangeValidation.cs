@@ -8,7 +8,7 @@ using System.Web;
 
 namespace CW.Soloist.WebApplication.Validations
 {
-    public class PitchRange : ValidationAttribute
+    public class PitchRangeValidation : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {

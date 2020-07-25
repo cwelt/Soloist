@@ -418,7 +418,8 @@
     <Compile Include="Models\RoleName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Validations\PitchRange.cs" />
+    <Compile Include="Validations\FileUploadValidation.cs" />
+    <Compile Include="Validations\PitchRangeValidation.cs" />
     <Compile Include="ViewModels\CompositionParamsViewModel.cs" />
     <Compile Include="ViewModels\SongViewModel.cs" />
   </ItemGroup>
