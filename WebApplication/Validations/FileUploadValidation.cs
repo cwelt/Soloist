@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace CW.Soloist.WebApplication.Validations
@@ -21,10 +22,6 @@ namespace CW.Soloist.WebApplication.Validations
     internal class FileUploadValidation : ValidationAttribute
     {
         // initialization 
-        private IMidiFile midi;
-        private IList<IBar> bars;
-        private string errorMessage;
-        private StreamReader chordsStream = null;
         private const int FileMaxLength = 1048576; // 1 MB 
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -64,13 +61,19 @@ namespace CW.Soloist.WebApplication.Validations
                     $"Expected Format Type are one of the following: {validTypesToken}");
             }
 
+
+/*
             // fetch chords data from chords file stream 
             if (formData.ChordsFile != null)
             {
                 try
                 {
-                    chordsStream = new StreamReader(formData.ChordsFile.InputStream);
-                    bars = Composition.ReadChordsFromFile(chordsStream);
+                    long pos = formData.ChordsFile.InputStream.Position;
+                    //Stream stream = new MemoryStream();
+                    //formData.ChordsFile.InputStream.CopyTo(stream);
+                    bars = Composition.ReadChordsFromFile(new StreamReader(formData.ChordsFile.InputStream));
+                    long pos2 = pos;
+                    formData.ChordsFile.InputStream.Position = pos;
                 }
                 catch (Exception ex)
                 {
@@ -80,12 +83,12 @@ namespace CW.Soloist.WebApplication.Validations
                 }
                 finally
                 {
-                    chordsStream?.Close();
+                    //chordsStream?.Close();
                 }
             }
-        
+
             // validations for MIDI progression file
-            if (file == formData.MidiFile)
+            if (file == formData.MidiFile && false)
             {
                 try
                 {   // fetch midi content from stream 
@@ -103,10 +106,21 @@ namespace CW.Soloist.WebApplication.Validations
                 // validate that bars in CHORD progression are compatible with MIDI file 
                 if (!Composition.AreBarsCompatible(bars, midi, out errorMessage))
                     return new ValidationResult(errorMessage);
-            }
+            }*/
+
+
+
+
+
+
+
+
+
 
             // if we got this far then hopefully everything is okay 
             return ValidationResult.Success;
         }
     }
 }
+
+

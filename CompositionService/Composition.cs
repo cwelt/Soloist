@@ -64,9 +64,8 @@ namespace CW.Soloist.CompositionService
             if (chordProgression?.Count != midiFile?.NumberOfBars)
             {
                 errorMessage = $"Error: Number of bars mismatch: \n" +
-                    $"chord file has {chordProgression.Count} bars," +
-                    $" while midi file has {midiFile.NumberOfBars}!" +
-                    $"\nBars must match inorder to build a composition.";
+                    $"chord file has {chordProgression?.Count} bars," +
+                    $" while midi file has {midiFile?.NumberOfBars}!";
                 return false;
             }
 
@@ -341,7 +340,7 @@ namespace CW.Soloist.CompositionService
                         continue;
 
                     // validate minimum tokens in line (at least a time signature and 1 chord)
-                    lineTokens = currentLine.Split('\b', '\t');
+                    lineTokens = currentLine.Split('\b', '\t', ' ');
                     if (lineTokens?.Length < 2)
                     {
                         customErrorMessage = $"Line {lineNumber} must include a time signature and at least one chord.";
@@ -372,7 +371,7 @@ namespace CW.Soloist.CompositionService
                             (!Enum.TryParse(chordProperties?[1], out chordType)) ||
                             (!Byte.TryParse(chordProperties?[2], out numberOfBeats)))
                         {
-                            customErrorMessage = $"Invalid chord format in line {lineNumber}: '{chordProperties}'. The required format is '{typeof(NoteName)}-{typeof(ChordType)}-DurationInBeats', for example F-Major7-2.";
+                            customErrorMessage = $"Invalid chord format in line {lineNumber}: '{lineTokens[i]}'. The required format is '{typeof(NoteName)}-{typeof(ChordType)}-DurationInBeats', for example F-Major7-2.";
                             throw new FormatException(genericErrorMessage + customErrorMessage);
                         }
                         totalBeatsInBar += numberOfBeats;

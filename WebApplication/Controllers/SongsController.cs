@@ -144,7 +144,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 // save the midi playback file in the new directory 
                 string midiPlaybackFullPath = directoryPath + song.MidiPlaybackFileName;
                 IMidiFile playbackFile = Composition.CreateMidiPlayback(songViewModel.MidiFile.InputStream, song.MelodyTrackIndex);
-                playbackFile.SaveFile(midiPlaybackFullPath);
+                playbackFile.SaveFile(outputPath: midiPlaybackFullPath, pathIncludesFileName: true);
 
                 // save the chord progression file in the new directory 
                 string chordsFilefullPath = directoryPath + song.ChordsFileName;

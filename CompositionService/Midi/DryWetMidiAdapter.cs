@@ -230,6 +230,7 @@ namespace CW.Soloist.CompositionService.Midi
 
             // remove the track from the midi file 
             _midiContent.Chunks.RemoveAt(trackNumber);
+            this._trackChunks.RemoveAt(trackNumber);
 
             /* if requested, decode the melody from the removed track as a list of bars 
              * with music notes and embed this sequence the melody bars reference parameter. */
@@ -355,20 +356,28 @@ namespace CW.Soloist.CompositionService.Midi
 
         #region SaveFile()
         /// <inheritdoc/>
-        public string SaveFile(string path = null, string fileNamePrefix = "")
+        public string SaveFile(string path = null, string fileNamePrefix = "", bool pathIncludesFileName = false)
         {
             // get time stamp 
             string timeStamp = DateTime.Now.ToString("ddMMyyyy_HHmmss");
 
             // set file name 
-            string fileName = String.IsNullOrWhiteSpace(fileNamePrefix) ?
-                fileNamePrefix + $"output_{timeStamp}.mid" :
-                fileNamePrefix + $"_output_{timeStamp}.mid";
-
+            string fileName = string.Empty;
+            if (!pathIncludesFileName)
+            {
+                fileName = String.IsNullOrWhiteSpace(fileNamePrefix)
+                    ? fileNamePrefix + $"output_{timeStamp}.mid"
+                    : fileNamePrefix + $"_output_{timeStamp}.mid";
+            }
 
             // set full path: if no path is specified then set desktop as the default path
             path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\midioutput";
-            string fullPath = path + Path.DirectorySeparatorChar + fileName;
+
+            string fullPath;
+
+            if (!pathIncludesFileName)
+                fullPath = path + Path.DirectorySeparatorChar + fileName;
+            else fullPath = path;
 
             // save file 
             try
