@@ -93,7 +93,7 @@ namespace CW.Soloist.CompositionService.Midi
 
             // set number of bars property
             BarBeatFractionTimeSpan duration = _midiContent.GetDuration<BarBeatFractionTimeSpan>();
-            NumberOfBars = (int)duration.Bars + (int)Math.Floor(duration.Beats / timeSignatureEvent.Numerator);
+            NumberOfBars = (int)duration.Bars + (int)Math.Ceiling(duration.Beats / timeSignatureEvent.Numerator);
 
             // set BPM property 
             BeatsPerMinute = (byte)(_midiContent.GetTempoMap().Tempo.AtTime(0).BeatsPerMinute);

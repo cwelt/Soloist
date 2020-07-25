@@ -5,13 +5,17 @@ using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
 using CW.Soloist.DataAccess.DomainModels;
 using CW.Soloist.DataAccess.EntityFramework;
+using CW.Soloist.WebApplication.Models;
 using CW.Soloist.WebApplication.ViewModels;
+using Microsoft.AspNet.Identity;
 using SoloistWebClient.Controllers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
@@ -38,18 +42,23 @@ namespace CW.Soloist.WebApplication.Controllers
 
         // GET: Composition
         [HttpGet]
-        public ActionResult Compose()
+        public async Task<ActionResult> Compose()
         {
+            // fetch id of current logged-in user (if user is indeed logged-in...)
+            string userId = User?.Identity?.GetUserId();
+
+            // fetch songs from db according to user's privilages  
+            var songs = User?.IsInRole(RoleName.Admin) ?? false
+                ? await db.Songs.ToListAsync()
+                : await db.Songs.Where(s => s.IsPublic || s.UserId.Equals(userId)).ToListAsync();
+
             CompositionParamsViewModel viewModel = new CompositionParamsViewModel
             {
-                SongSelectList = new SelectList(
-                    db.Songs.Where(s => s.IsPublic)
-                    .OrderBy(s => s.Artist)
-                    .Select(s => new
-                    {
-                        Id = s.Id,
-                        Title = s.Artist + " - " + s.Title
-                    }), "Id", "Title"),
+                SongSelectList = new SelectList(songs.OrderBy(s => s.Artist).Select(s => new
+                {
+                    Id = s.Id,
+                    Title = s.Artist + " - " + s.Title
+                }), "Id", "Title"),
                 MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
                 OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
                 PitchSelectList = new SelectList(_pitchSelectList, "Pitch", "Description"),
