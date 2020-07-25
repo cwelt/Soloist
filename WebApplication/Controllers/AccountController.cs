@@ -404,6 +404,11 @@ namespace CW.Soloist.WebApplication.Controllers
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
+                        // Register new users to the application user role 
+                        RoleStore<IdentityRole> roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
+                        RoleManager<IdentityRole> roleManager = new RoleManager<IdentityRole>(roleStore);
+                        await UserManager.AddToRoleAsync(user.Id, RoleName.ApplicationUser);
+
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToLocal(returnUrl);
                     }
