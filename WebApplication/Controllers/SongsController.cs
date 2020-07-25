@@ -125,6 +125,7 @@ namespace CW.Soloist.WebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                // get current timestamp
                 DateTime timestamp = DateTime.Now;
 
                 // Create a new song instance 
@@ -164,6 +165,11 @@ namespace CW.Soloist.WebApplication.Controllers
                 // save the chord progression file in the new directory 
                 string chordsFilefullPath = directoryPath + song.ChordsFileName;
                 songViewModel.ChordsFileHandler.SaveAs(chordsFilefullPath);
+
+                // dispose open resources 
+                songViewModel.ChordsFileHandler?.InputStream?.Dispose();
+                songViewModel.MidiFileHandler?.InputStream?.Dispose();
+
 
                 // TODO: if saving on file server failed, rollback DB changes 
 
@@ -327,7 +333,7 @@ namespace CW.Soloist.WebApplication.Controllers
             // check authorization for the retrieved song 
             if (song == null || !IsUserAuthorized(song, AuthorizationActivity.Display))
                 return null;
-                
+
             // get the song's directory path on the file server 
             path = HomeController.GetFileServerPath() + $@"Songs\{songId}\";
 

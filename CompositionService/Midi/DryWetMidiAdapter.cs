@@ -71,8 +71,9 @@ namespace CW.Soloist.CompositionService.Midi
         /// 
         /// </summary>
         /// <param name="fileStream"></param>
-        internal DryWetMidiAdapter(Stream stream, string midiFileName = null)
+        internal DryWetMidiAdapter(Stream stream, string midiFileName = null, bool disposeStream = false)
         {
+            stream.Position = 0; 
             _midiContent = MidiFile.Read(stream);
             _tempoMap = _midiContent.GetTempoMap();
             _trackChunks = _midiContent.GetTrackChunks().ToList();
@@ -110,6 +111,12 @@ namespace CW.Soloist.CompositionService.Midi
             foreach (var track in _trackChunks)
             {
                 Tracks.Add(new DryWetMidiTrackAdapter(track));
+            }
+
+            // dispose stream if requested 
+            if (disposeStream)
+            {
+                stream.Dispose();
             }
         }
 

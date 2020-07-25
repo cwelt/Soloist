@@ -313,90 +313,90 @@ namespace CW.Soloist.CompositionService
         /// <param name="streamReader"> Input stream which contains the chords data. </param>
         public static IList<IBar> ReadChordsFromFile(StreamReader streamReader)
         {
-            using (streamReader)
-            {
-                // initialization 
-                uint lineNumber = 1;
-                string currentLine = null;
-                List<IBar> chordProgression = new List<IBar>();
-                IBar bar = null;
-                NoteName chordRoot;
-                ChordType chordType;
-                byte barNumerator = 0;
-                byte barDenominator = 0;
-                byte numberOfBeats = 0;
-                byte totalBeatsInBar = 0;
-                string[] lineTokens = null;
-                string[] barTimeSignature = null;
-                string[] chordProperties = null;
-                string customErrorMessage = string.Empty;
-                string genericErrorMessage = $"Error parsing chord progression file.\n";
+            streamReader.BaseStream.Position = 0;
 
-                // parse file line after line 
-                while ((currentLine = streamReader.ReadLine()) != null)
+            // initialization 
+            uint lineNumber = 1;
+            string currentLine = null;
+            List<IBar> chordProgression = new List<IBar>();
+            IBar bar = null;
+            NoteName chordRoot;
+            ChordType chordType;
+            byte barNumerator = 0;
+            byte barDenominator = 0;
+            byte numberOfBeats = 0;
+            byte totalBeatsInBar = 0;
+            string[] lineTokens = null;
+            string[] barTimeSignature = null;
+            string[] chordProperties = null;
+            string customErrorMessage = string.Empty;
+            string genericErrorMessage = $"Error parsing chord progression file.\n";
+
+            // parse file line after line 
+            while ((currentLine = streamReader.ReadLine()) != null)
+            {
+                // skip empty lines
+                if (string.IsNullOrWhiteSpace(currentLine))
+                    continue;
+
+                // validate minimum tokens in line (at least a time signature and 1 chord)
+                lineTokens = currentLine.Split('\b', '\t', ' ');
+                if (lineTokens?.Length < 2)
                 {
-                    // skip empty lines
-                    if (string.IsNullOrWhiteSpace(currentLine))
+                    customErrorMessage = $"Line {lineNumber} must include a time signature and at least one chord.";
+                    throw new FormatException(genericErrorMessage + customErrorMessage);
+                }
+
+                // set bar's time signature (first token of each line)
+                barTimeSignature = lineTokens[0].Split('/');
+                if ((barTimeSignature?.Length != 2) ||
+                    (!Byte.TryParse(barTimeSignature?[0], out barNumerator)) ||
+                    (!Byte.TryParse(barTimeSignature?[1], out barDenominator)))
+                {
+                    customErrorMessage = $"Invalid time signature format in line {lineNumber}: '{lineTokens[0]}'. The required format is 'numerator/denominator', for example 4/4.";
+                    throw new FormatException(genericErrorMessage + customErrorMessage);
+                }
+                bar = new Bar(new Duration(barNumerator, barDenominator, false));
+
+                // set bar's chords (rest of tokens in line)
+                for (int i = 1; i < lineTokens.Length; i++)
+                {
+                    // skip white spaces between the tokens
+                    if (string.IsNullOrWhiteSpace(lineTokens[i]))
                         continue;
 
-                    // validate minimum tokens in line (at least a time signature and 1 chord)
-                    lineTokens = currentLine.Split('\b', '\t', ' ');
-                    if (lineTokens?.Length < 2)
+                    // parse chord properties: root, type & duration
+                    chordProperties = lineTokens[i].Split('-');
+                    if ((!Enum.TryParse(chordProperties?[0], out chordRoot)) ||
+                        (!Enum.TryParse(chordProperties?[1], out chordType)) ||
+                        (!Byte.TryParse(chordProperties?[2], out numberOfBeats)))
                     {
-                        customErrorMessage = $"Line {lineNumber} must include a time signature and at least one chord.";
+                        customErrorMessage = $"Invalid chord format in line {lineNumber}: '{lineTokens[i]}'. The required format is '{typeof(NoteName)}-{typeof(ChordType)}-DurationInBeats', for example F-Major7-2.";
                         throw new FormatException(genericErrorMessage + customErrorMessage);
                     }
-
-                    // set bar's time signature (first token of each line)
-                    barTimeSignature = lineTokens[0].Split('/');
-                    if ((barTimeSignature?.Length != 2) ||
-                        (!Byte.TryParse(barTimeSignature?[0], out barNumerator)) ||
-                        (!Byte.TryParse(barTimeSignature?[1], out barDenominator)))
-                    {
-                        customErrorMessage = $"Invalid time signature format in line {lineNumber}: '{lineTokens[0]}'. The required format is 'numerator/denominator', for example 4/4.";
-                        throw new FormatException(genericErrorMessage + customErrorMessage);
-                    }
-                    bar = new Bar(new Duration(barNumerator, barDenominator, false));
-
-                    // set bar's chords (rest of tokens in line)
-                    for (int i = 1; i < lineTokens.Length; i++)
-                    {
-                        // skip white spaces between the tokens
-                        if (string.IsNullOrWhiteSpace(lineTokens[i]))
-                            continue;
-
-                        // parse chord properties: root, type & duration
-                        chordProperties = lineTokens[i].Split('-');
-                        if ((!Enum.TryParse(chordProperties?[0], out chordRoot)) ||
-                            (!Enum.TryParse(chordProperties?[1], out chordType)) ||
-                            (!Byte.TryParse(chordProperties?[2], out numberOfBeats)))
-                        {
-                            customErrorMessage = $"Invalid chord format in line {lineNumber}: '{lineTokens[i]}'. The required format is '{typeof(NoteName)}-{typeof(ChordType)}-DurationInBeats', for example F-Major7-2.";
-                            throw new FormatException(genericErrorMessage + customErrorMessage);
-                        }
-                        totalBeatsInBar += numberOfBeats;
-                        bar.Chords.Add(new Chord(chordRoot, chordType, new Duration(numberOfBeats, bar.TimeSignature.Denominator)));
-                    }
-
-                    // validate bar's chords total duration == bar's duration 
-                    if (bar.TimeSignature.Numerator != totalBeatsInBar)
-                    {
-                        customErrorMessage = $"Line {lineNumber}: Total number of beats of chords in bar {chordProgression.Count + 1} which is {totalBeatsInBar} must be equal to the bar's key signature numerator, which is {bar.TimeSignature.Numerator}.";
-                        throw new FormatException(genericErrorMessage + customErrorMessage);
-                    }
-
-                    // add curent line's bar 
-                    chordProgression.Add(bar);
-                    lineNumber++;
-
-                    // clean variables old values for next iteration
-                    bar = null;
-                    currentLine = customErrorMessage = string.Empty;
-                    lineTokens = chordProperties = barTimeSignature = null;
-                    barNumerator = barDenominator = numberOfBeats = totalBeatsInBar = 0;
+                    totalBeatsInBar += numberOfBeats;
+                    bar.Chords.Add(new Chord(chordRoot, chordType, new Duration(numberOfBeats, bar.TimeSignature.Denominator)));
                 }
-                return chordProgression;
+
+                // validate bar's chords total duration == bar's duration 
+                if (bar.TimeSignature.Numerator != totalBeatsInBar)
+                {
+                    customErrorMessage = $"Line {lineNumber}: Total number of beats of chords in bar {chordProgression.Count + 1} which is {totalBeatsInBar} must be equal to the bar's key signature numerator, which is {bar.TimeSignature.Numerator}.";
+                    throw new FormatException(genericErrorMessage + customErrorMessage);
+                }
+
+                // add curent line's bar 
+                chordProgression.Add(bar);
+                lineNumber++;
+
+                // clean variables old values for next iteration
+                bar = null;
+                currentLine = customErrorMessage = string.Empty;
+                lineTokens = chordProperties = barTimeSignature = null;
+                barNumerator = barDenominator = numberOfBeats = totalBeatsInBar = 0;
             }
+            return chordProgression;
+
         }
         #endregion
 
