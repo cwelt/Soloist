@@ -41,19 +41,19 @@
 
     <!-- MIDI File Upload -->
     <div class="form-group">
-        @Html.LabelFor(expression: m => m.MidiFile, htmlAttributes: new { @class = "control-label" })
-        @Html.TextBoxFor(m => m.MidiFile, new { type = "file", @class = "form-control-file", accept = ".mid" })
+        @Html.LabelFor(expression: m => m.MidiFileHandler, htmlAttributes: new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.MidiFileHandler, new { type = "file", @class = "form-control-file", accept = ".mid" })
         <div class="alert-danger">
-            @Html.ValidationMessageFor(m => m.MidiFile)
+            @Html.ValidationMessageFor(m => m.MidiFileHandler)
         </div>
     </div>
 
     <!-- Chord Progression File Upload -->
     <div class="form-group">
-        @Html.LabelFor(m => m.ChordsFile, new { @class = "control-label" })
-        @Html.TextBoxFor(m => m.ChordsFile, new { type = "file", @class = "form-control-file", accept = ".txt" })
+        @Html.LabelFor(m => m.ChordsFileHandler, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.ChordsFileHandler, new { type = "file", @class = "form-control-file", accept = ".txt" })
         <div class="alert-danger">
-            @Html.ValidationMessageFor(m => m.ChordsFile)
+            @Html.ValidationMessageFor(m => m.ChordsFileHandler)
         </div>
     </div>
 

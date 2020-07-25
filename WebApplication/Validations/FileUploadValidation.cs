@@ -46,7 +46,7 @@ namespace CW.Soloist.WebApplication.Validations
 
             // validate that the file is from the correct MIME type 
             string[] validMimeTypes;
-            if (file == formData.ChordsFile) // Chords file 
+            if (file == formData.ChordsFileHandler) // Chords file 
                 validMimeTypes = new[] { "text/plain" };
             else // MIDI file 
                 validMimeTypes = new[] { "audio/midi", "audio/x-midi", "audio/mid", "audio/x-mid" }; 

@@ -3,10 +3,10 @@
 
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Song Details";
 }
 
-<h2 style="color:gold">Song Details</h2>
+<h1 style="color:gold">@ViewBag.Title</h1>
 
 <div>
     <hr />
@@ -28,20 +28,17 @@
             @Html.DisplayFor(m => m.Title)
         </dd>
 
-
-
         <!-- Chord Progression File -->
         <dt style="text-align: left; color:#b6ff00;">
-            @Html.DisplayNameFor(m => m.ChordsFile)
+            @Html.DisplayNameFor(m => m.ChordsFileHandler)
         </dt>
         <dd>
             @Html.ActionLink(Model.ChordsFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.ChordProgressionFile })
         </dd>
 
-
         <!-- Original MIDI File -->
         <dt style="text-align: left; color:#b6ff00;">
-            @Html.DisplayNameFor(m => m.MidiFile)
+            @Html.DisplayNameFor(m => m.MidiFileHandler)
         </dt>
         <dd>
             @Html.ActionLink(Model.MidiFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiOriginalFile })
@@ -55,6 +52,26 @@
             @Html.ActionLink(Model.MidiPlaybackFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiPlaybackFile })
         </dd>
 
+        <!-- Key Signature -->
+        <dt style="text-align: left; color:#b6ff00;"> Key Signature </dt>
+        <dd> @Model.MidiData.KeySignature.ToString() </dd>
+
+        <!-- Number Of Bars -->
+        <dt style="text-align: left; color:#b6ff00;"> Number Of Bars </dt>
+        <dd>  @Model.MidiData.NumberOfBars </dd>
+
+        <!-- BPM -->
+        <dt style="text-align: left; color:#b6ff00;"> Beats Per Minute </dt>
+        <dd>  @Model.MidiData.BeatsPerMinute </dd>
+
+        <!-- Lowest Pitch -->
+        <dt style="text-align: left; color:#b6ff00;"> Lowest Pitch </dt>
+        <dd>  @Model.MidiData.LowestPitch.GetDisplayName() </dd>
+
+        <!-- Highest Pitch -->
+        <dt style="text-align: left; color:#b6ff00;"> Highest Pitch </dt>
+        <dd>  @Model.MidiData.HighestPitch.GetDisplayName() </dd>
+
         <!-- Melody Track Index -->
         <dt style="text-align: left; color:#b6ff00;">
             @Html.DisplayNameFor(m => m.MelodyTrackIndex)
@@ -63,11 +80,12 @@
     </dl>
 </div>
 
+
 <!-- Chord Progression Content -->
 <div>@Html.LabelFor(m => m.ChordProgression, new { style = "color:#b6ff00;" })</div>
 @Html.TextAreaFor(m => m.ChordProgression, 16, 80, new { Style = "max-width: 40%; overflow=auto;", Spellcheck = "false", Readonly = true });
 
-<br /> 
+<br />
 <div>
     <br />
     <p>

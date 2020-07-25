@@ -79,11 +79,17 @@ namespace CW.Soloist.WebApplication.Controllers
             // build a DTO view model of the song for the view to render 
             SongViewModel songViewModel = new SongViewModel(song);
 
-            // try reading the chord progression and adding it's content to the view model 
+            // add edit authorization data 
+            songViewModel.IsUserAuthorizedToEdit =
+                IsUserAuthorized(song, AuthorizationActivity.Update);
+
+            // try reading the chords & midi files and adding their content to the view model 
             string chordsFilePath = await GetSongPath(song.Id, SongFileType.ChordProgressionFile);
+            string midiFilePath = await GetSongPath(song.Id, SongFileType.MidiOriginalFile);
             try
             {
                 songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
+                songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
             }
             catch (Exception)
             {
@@ -124,8 +130,8 @@ namespace CW.Soloist.WebApplication.Controllers
                     Modified = timestamp,
                     Title = songViewModel.Title,
                     Artist = songViewModel.Artist,
-                    MidiFileName = songViewModel.MidiFile.FileName,
-                    ChordsFileName = songViewModel.ChordsFile.FileName,
+                    MidiFileName = songViewModel.MidiFileHandler.FileName,
+                    ChordsFileName = songViewModel.ChordsFileHandler.FileName,
                     MelodyTrackIndex = songViewModel.MelodyTrackIndex,
                     IsPublic = songViewModel.IsPublic && User.IsInRole(RoleName.Admin),
                     UserId = this.User.Identity.GetUserId(),
@@ -144,16 +150,16 @@ namespace CW.Soloist.WebApplication.Controllers
 
                 // save the midi file in the new directory 
                 string midiFileFullPath = directoryPath + song.MidiFileName;
-                songViewModel.MidiFile.SaveAs(midiFileFullPath);
+                songViewModel.MidiFileHandler.SaveAs(midiFileFullPath);
 
                 // save the midi playback file in the new directory 
                 string midiPlaybackFullPath = directoryPath + song.MidiPlaybackFileName;
-                IMidiFile playbackFile = Composition.CreateMidiPlayback(songViewModel.MidiFile.InputStream, song.MelodyTrackIndex);
+                IMidiFile playbackFile = Composition.CreateMidiPlayback(songViewModel.MidiFileHandler.InputStream, song.MelodyTrackIndex);
                 playbackFile.SaveFile(outputPath: midiPlaybackFullPath, pathIncludesFileName: true);
 
                 // save the chord progression file in the new directory 
                 string chordsFilefullPath = directoryPath + song.ChordsFileName;
-                songViewModel.ChordsFile.SaveAs(chordsFilefullPath);
+                songViewModel.ChordsFileHandler.SaveAs(chordsFilefullPath);
 
                 // TODO: if saving on file server failed, rollback DB changes 
 

@@ -30,13 +30,15 @@ namespace CW.Soloist.WebApplication.ViewModels
         [Required]
         [FileUploadValidation]
         [DisplayName("MIDI File")]
-        public HttpPostedFileBase MidiFile { get; set; }
+        public HttpPostedFileBase MidiFileHandler { get; set; }
 
         [DisplayName("MIDI File Name")]
         public string MidiFileName { get; set; }
 
         [DisplayName("MIDI Playback File")]
         public string MidiPlaybackFileName { get; set; }
+
+        public IMidiFile MidiData { get; set; }
 
         [DisplayName("Melody Track Number")]
         public MelodyTrackIndex? MelodyTrackIndex { get; set; }
@@ -50,7 +52,7 @@ namespace CW.Soloist.WebApplication.ViewModels
         [Required]
         [FileUploadValidation]
         [DisplayName("Chords File")]
-        public HttpPostedFileBase ChordsFile { get; set; }
+        public HttpPostedFileBase ChordsFileHandler { get; set; }
 
         [DisplayName("Chords File Name")]
         public string ChordsFileName { get; set; }
