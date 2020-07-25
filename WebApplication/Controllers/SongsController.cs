@@ -16,6 +16,7 @@ using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.WebApplication.Models;
 using Microsoft.AspNet.Identity;
 using System.Security.Principal;
+using CW.Soloist.CompositionService;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
@@ -109,23 +110,24 @@ namespace CW.Soloist.WebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                /* TODO: 
-                 * validate the uploaded file's length and content:
-                 * check that chord file number of bars = midi num of bars 
-                 * check that file have the expected media\MIME type 
-                 * check that files are not empty of course. 
-                 * check that files are not too large. 
-                 * */
+                DateTime timestamp = DateTime.Now;
 
                 // Create a new song instance 
                 Song song = new Song
                 {
+                    Created = timestamp,
+                    Modified = timestamp,
                     Title = songViewModel.Title,
                     Artist = songViewModel.Artist,
-                    MelodyTrackIndex = songViewModel.MelodyTrackIndex,
                     MidiFileName = songViewModel.MidiFile.FileName,
                     ChordsFileName = songViewModel.ChordsFile.FileName,
+                    MelodyTrackIndex = songViewModel.MelodyTrackIndex,
+                    UserId = this.User.Identity.GetUserId(),
+                    
                 };
+
+                // set name for a playback file 
+                song.SetPlaybackName();
 
                 // save the new song in the database 
                 db.Songs.Add(song);
@@ -138,6 +140,11 @@ namespace CW.Soloist.WebApplication.Controllers
                 // save the midi file in the new directory 
                 string midiFileFullPath = directoryPath + song.MidiFileName;
                 songViewModel.MidiFile.SaveAs(midiFileFullPath);
+
+                // save the midi playback file in the new directory 
+                string midiPlaybackFullPath = directoryPath + song.MidiPlaybackFileName;
+                IMidiFile playbackFile = Composition.CreateMidiPlayback(songViewModel.MidiFile.InputStream, song.MelodyTrackIndex);
+                playbackFile.SaveFile(midiPlaybackFullPath);
 
                 // save the chord progression file in the new directory 
                 string chordsFilefullPath = directoryPath + song.ChordsFileName;

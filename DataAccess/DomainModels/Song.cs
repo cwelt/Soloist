@@ -2,6 +2,7 @@
 using CW.Soloist.CompositionService.MusicTheory;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,32 @@ namespace CW.Soloist.DataAccess.DomainModels
         public bool IsPublic { get; set; }
         public ApplicationUser User { get; set; }
         public string UserId { get; set; }
+
+        #region SetPlaybackName
+        /// <summary>
+        /// Sets the <see cref="MidiPlaybackFileName"/> property based on the given 
+        /// reference name, or on the original midi file name, if no reference name is 
+        /// supplied. The playback name is set by adding a playback identifier token between 
+        /// the original name from the reference and the file extension.  
+        /// </summary>
+        /// <param name="referenceName">Fully qualified file name (including file extension) 
+        /// for a reference, or null, if the reference should be taken from the original 
+        /// midi file (<see cref="MidiFileName"/>).</param>
+        public void SetPlaybackName(string referenceName = null)
+        {
+            // if no reference is requested, set it to original midi file name 
+            referenceName = referenceName ?? MidiFileName;
+
+            // get original file name components 
+            string extension = Path.GetExtension(referenceName);
+            string nameWithOutExtension = Path.GetFileNameWithoutExtension(referenceName);
+
+            // set name of the playback name property 
+            MidiPlaybackFileName = nameWithOutExtension + "_playback" + extension;
+        }
+        #endregion
     }
+
 
     /// <summary>
     /// Enumeration that classifies the persisted files for a given song resource:

@@ -102,7 +102,6 @@ namespace CW.Soloist.CompositionService
 
 
         #region Constructors 
-
         /// <summary>
         /// Construct a composition from a chord progression, midi file handler, 
         /// and an indicator determinning if this midi file is a pure playback or whether
@@ -417,6 +416,34 @@ namespace CW.Soloist.CompositionService
         public static IMidiFile ReadMidiFile(Stream stream)
         {
             return new DryWetMidiAdapter(stream);
+        }
+        #endregion
+
+        #region CreateMidiPlayback()
+        /// <summary>
+        /// Creates a midi playback file by copying an existing midi file or stream 
+        /// and removing it's melody track, is such exists (according to the specified 
+        /// track number in the <paramref name="MelodyTrackNumber"/> parameter. 
+        /// <para> If the given midi is already a pure playback with no melody tracks, 
+        /// then a new copy of this midi would be returned. 
+        /// </para>
+        /// </summary>
+        /// <param name="midiStream"> The midi input that the playback should be created from. </param>
+        /// <param name="MelodyTrackNumber">Number of the melody track in the given midi, if such a track exists.</param>
+        /// <returns></returns>
+        public static IMidiFile CreateMidiPlayback(Stream midiStream, MelodyTrackIndex? melodyTrackNumber)
+        {
+            // create a new midi file instance 
+            IMidiFile midifile = new DryWetMidiAdapter(midiStream);
+
+            // remove melody track is such exists on this midi file 
+            if (melodyTrackNumber.HasValue && melodyTrackNumber != MelodyTrackIndex.NoMelodyTrackInFile)
+            {
+                midifile.ExtractMelodyTrack((byte)melodyTrackNumber);
+            }
+
+            // return the resulted playback midi file 
+            return midifile;
         }
         #endregion
 

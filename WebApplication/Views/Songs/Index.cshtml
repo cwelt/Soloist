@@ -1,17 +1,13 @@
 ﻿@model IEnumerable<SongViewModel>
 
 @{
-    ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Song Index";
     IPrincipal user = User;
 }
 
-<h1> @ViewBag.Message</h1>
-<h2>Index</h2>
-
-
+<h1>Song Index</h1>
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Upload New", "Create", null, new {@class= "btn btn-warning btn-md" })
 </p>
 <table class="table">
     <tr style="color:#b6ff00">
