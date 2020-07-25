@@ -89,6 +89,7 @@ namespace CW.Soloist.WebApplication.Controllers
                     if (!await UserManager.IsEmailConfirmedAsync(user?.Id) && !UserManager.GetLogins(user.Id).Any())  
                     { 
                         {
+                            string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your email account - Resend");
                             ViewBag.UserEmail = user.Email;
                             ViewBag.AdminEmail = ConfigurationManager.AppSettings["AdminEmailAddress"];
                             ViewBag.User = user;
@@ -164,7 +165,7 @@ namespace CW.Soloist.WebApplication.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult>     Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -510,5 +511,16 @@ namespace CW.Soloist.WebApplication.Controllers
             }
         }
         #endregion
+
+        private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
+        {
+            string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+               new { userId = userID, code = code }, protocol: Request.Url.Scheme);
+            await UserManager.SendEmailAsync(userID, subject,
+               "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            return callbackUrl;
+        }
     }
 }
