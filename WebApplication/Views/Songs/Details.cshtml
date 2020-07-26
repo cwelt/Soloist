@@ -9,10 +9,10 @@
 <h2 style="color:lightgreen">@Model.StatusMessage</h2>
 <h1 style="color:gold">@ViewBag.Title</h1>
 
+<!-- Property Desciprtion List  -->
 <div>
     <hr />
     <dl class="dl-horizontal">
-
         <!-- Artist -->
         <dt style="text-align: left; color:#b6ff00;">
             @Html.DisplayNameFor(m => m.Artist)
@@ -81,41 +81,41 @@
     </dl>
 </div>
 
-<!-- MIDI Tracks -->
+<!-- MIDI Tracks Table -->
 <div>
-    <p style="text-align: left; color:#b6ff00;"><b> MIDI Tracks </b></p>
-    <table class="table table-bordered table-responsive table-hover">
-        <thead>
-            <tr style="color:gold">
-                <th> Track Number </th>
-                <th> Track Name </th>
-                <th> Instrument Description </th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 1; i < Model.MidiData.Tracks.Count; i++)
-            {
-                var track = Model.MidiData.Tracks[i];
-                <tr>
-                    <td> @i </td>
-                    <td> @track.TrackName </td>
-                    <td> @track.InstrumentName </td>
+    <button type="button" class="collapsible" style="color:#b6ff00; background-color:transparent; border-color:yellow;">Display/Toggle MIDI Tracks</button>
+    <div style="display:none">
+        <table class="table table-bordered table-responsive table-hover">
+            <thead>
+                <tr style="color:gold">
+                    <th> Track Number </th>
+                    <th> Track Name </th>
+                    <th> Instrument Description </th>
                 </tr>
-            }
-
-
-        </tbody>
-
-
-    </table>
-
+            </thead>
+            <tbody>
+                @for (int i = 1; i < Model.MidiData.Tracks.Count; i++)
+                {
+                    var track = Model.MidiData.Tracks[i];
+                    <tr>
+                        <td> @track.TrackNumber </td>
+                        <td> @track.TrackName </td>
+                        <td> @track.InstrumentName </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <br /> <br />
 </div>
 
-
-
-<!-- Chord Progression Content -->
-<div>@Html.LabelFor(m => m.ChordProgression, new { style = "color:#b6ff00;" })</div>
-@Html.TextAreaFor(m => m.ChordProgression, 16, 80, new { Style = "max-width: 40%; overflow=auto;", Spellcheck = "false", Readonly = true });
+<!-- Chord Progression Text Area -->
+<div>
+    <button type="button" class="collapsible" style="color:#b6ff00; border-color:yellow; background-color:transparent">Display/Toggle Chord Progression</button>
+    <div style="display:none">
+        @Html.TextAreaFor(m => m.ChordProgression, 16, 80, new { @class = "green-border-focus", Style = "max-width: 40%; overflow=auto;", Spellcheck = "false", Readonly = true });
+    </div>
+</div>
 
 <br />
 <div>
@@ -129,3 +129,22 @@
         @Html.ActionLink("Back to List", "Index")
     </p>
 </div>
+
+<!-- handle collapisble elements -->
+<script>
+    let collapsibleElement = document.getElementsByClassName("collapsible");
+    let i;
+
+    for (i = 0; i < collapsibleElement.length; i++) {
+        collapsibleElement[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            }
+            else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>

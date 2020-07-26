@@ -426,19 +426,9 @@ namespace CW.Soloist.CompositionService.Midi
         private const string DrumsInstrumentDescription = "Drums & Percussion";
         private const string UnkownInstrumentDescription = "Unknown";
 
-        /// <summary> Ordinal nubmer of this track in the midi file. </summary>
         public int TrackNumber { get; }
-
-        /// <summary> Midi sequence track name. </summary>
         public string TrackName { get; }
-
-        /// <summary> 
-        /// General midi <a href="https://bit.ly/30pmSzP"> 
-        /// program number</a> which identifies the musical instrument of this track.
-        /// </summary>
         public byte InstrumentMidiCode { get; }
-
-        /// <summary> This track's musical instrument description. </summary>
         public string InstrumentName { get; }
 
         /// <summary>
