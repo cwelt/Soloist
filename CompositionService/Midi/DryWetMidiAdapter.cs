@@ -54,7 +54,8 @@ namespace CW.Soloist.CompositionService.Midi
         public NotePitch? HighestPitch { get; }
         public IReadOnlyList<IMidiTrack> Tracks => _midiContent
             .GetTrackChunks()
-            .Select(trackChunk => new DryWetMidiTrackAdapter(trackChunk))
+            .Select((trackChunk, trackIndex) => 
+                new DryWetMidiTrackAdapter(trackChunk, trackIndex))
             .Cast<IMidiTrack>()
             .ToList()
             .AsReadOnly();
@@ -83,13 +84,6 @@ namespace CW.Soloist.CompositionService.Midi
             IList<TrackChunk> trackChunks = _midiContent.GetTrackChunks().ToList();
             _metadataTrack = trackChunks.First();
             _metaEvents = _metadataTrack.Events.ToList();
-
-
-            // delete me debug
-            foreach (var item in trackChunks)
-            {
-                var track = new DryWetMidiTrackAdapter(item);
-            }
 
             // set midi title property 
             Title = (((from e in _metaEvents
@@ -458,7 +452,7 @@ namespace CW.Soloist.CompositionService.Midi
         {
             // Set track nubmer 
             TrackNumber = trackNumber;
-            
+
             // Set track name 
             TrackName = (from e in track.Events
                          where e.EventType == MidiEventType.SequenceTrackName
@@ -466,8 +460,8 @@ namespace CW.Soloist.CompositionService.Midi
 
             // Extract the raw midi event which identifies the musical instrument 
             IEnumerable<ProgramChangeEvent> programChangeEvent = from e in track.Events
-                                     where e.EventType == MidiEventType.ProgramChange
-                                     select ((ProgramChangeEvent)e);
+                                                                 where e.EventType == MidiEventType.ProgramChange
+                                                                 select ((ProgramChangeEvent)e);
 
             // Set musical instrument code and description if an appropriate event is found 
             if (programChangeEvent?.Count() > 0)
