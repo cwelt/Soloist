@@ -13,6 +13,7 @@ using CW.Soloist.CompositionService.MusicTheory;
 using Note = CW.Soloist.CompositionService.MusicTheory.Note;
 using System.Threading.Tasks;
 using System.Threading;
+using Melanchall.DryWetMidi.Standards;
 
 namespace CW.Soloist.CompositionService.Midi
 {
@@ -26,8 +27,6 @@ namespace CW.Soloist.CompositionService.Midi
         private readonly MidiFile _midiContent;
 
         private readonly TempoMap _tempoMap;
-
-        private readonly IList<TrackChunk> _trackChunks;
 
         private readonly TrackChunk _metadataTrack;
 
@@ -46,14 +45,19 @@ namespace CW.Soloist.CompositionService.Midi
         public string FilePath { get; }
 
         public object Content => _midiContent;
-        public string Title { get; } 
+        public string Title { get; }
         public IDuration KeySignature { get; }
         public byte BeatsPerMinute { get; }
         public int NumberOfBars { get; }
 
         public NotePitch? LowestPitch { get; }
         public NotePitch? HighestPitch { get; }
-        public ICollection<IMidiTrack> Tracks { get; private set; }
+        public IReadOnlyList<IMidiTrack> Tracks => _midiContent
+            .GetTrackChunks()
+            .Select(trackChunk => new DryWetMidiTrackAdapter(trackChunk))
+            .Cast<IMidiTrack>()
+            .ToList()
+            .AsReadOnly();
 
         #endregion
 
@@ -62,7 +66,7 @@ namespace CW.Soloist.CompositionService.Midi
         /// <summary> Constructor </summary>
         /// <param name="midiFilePath"></param>
         internal DryWetMidiAdapter(string midiFilePath)
-            : this(File.OpenRead(midiFilePath)) 
+            : this(File.OpenRead(midiFilePath))
         {
             FilePath = midiFilePath;
         }
@@ -73,12 +77,19 @@ namespace CW.Soloist.CompositionService.Midi
         /// <param name="fileStream"></param>
         internal DryWetMidiAdapter(Stream stream, string midiFileName = null, bool disposeStream = false)
         {
-            stream.Position = 0; 
+            stream.Position = 0;
             _midiContent = MidiFile.Read(stream);
             _tempoMap = _midiContent.GetTempoMap();
-            _trackChunks = _midiContent.GetTrackChunks().ToList();
-            _metadataTrack = _trackChunks.First();
+            IList<TrackChunk> trackChunks = _midiContent.GetTrackChunks().ToList();
+            _metadataTrack = trackChunks.First();
             _metaEvents = _metadataTrack.Events.ToList();
+
+
+            // delete me debug
+            foreach (var item in trackChunks)
+            {
+                var track = new DryWetMidiTrackAdapter(item);
+            }
 
             // set midi title property 
             Title = (((from e in _metaEvents
@@ -87,8 +98,8 @@ namespace CW.Soloist.CompositionService.Midi
 
             // set key signature property 
             TimeSignatureEvent timeSignatureEvent = (from e in _metaEvents
-                                      where e.EventType == MidiEventType.TimeSignature
-                                      select e)?.First() as TimeSignatureEvent;
+                                                     where e.EventType == MidiEventType.TimeSignature
+                                                     select e)?.First() as TimeSignatureEvent;
             KeySignature = new Duration(timeSignatureEvent.Numerator, timeSignatureEvent.Denominator, false);
 
 
@@ -97,21 +108,12 @@ namespace CW.Soloist.CompositionService.Midi
             NumberOfBars = (int)duration.Bars + (int)Math.Ceiling(duration.Beats / timeSignatureEvent.Numerator);
 
             // set BPM property 
-            BeatsPerMinute = (byte)(_midiContent.GetTempoMap().Tempo.AtTime(0).BeatsPerMinute);
+            BeatsPerMinute = (byte)(_midiContent.GetTempoMap()?.Tempo.AtTime(0).BeatsPerMinute);
 
             // set MIDI pitch range
             var notes = _midiContent.GetNotes();
             LowestPitch = (NotePitch)(byte)(notes.Min(note => note.NoteNumber));
             HighestPitch = (NotePitch)(byte)(notes.Max(note => note.NoteNumber));
-
-
-            // TODO - refactor track representation and dry wet track adapter
-            // add midi tracks 
-            Tracks = new List<IMidiTrack>();
-            foreach (var track in _trackChunks)
-            {
-                Tracks.Add(new DryWetMidiTrackAdapter(track));
-            }
 
             // dispose stream if requested 
             if (disposeStream)
@@ -146,7 +148,7 @@ namespace CW.Soloist.CompositionService.Midi
 
         #region EmbedMelody
         /// <inheritdoc/>
-        public void EmbedMelody(IList<IBar> melody, MusicalInstrument instrument = MusicalInstrument.Sitar, byte? trackNumber = null)
+        public void EmbedMelody(IList<IBar> melody, MusicalInstrument instrument = MusicalInstrument.Flute, byte? trackNumber = null)
         {
             // use utility private helper method to convert the melody into a midi track 
             TrackChunk melodyTrack = ConvertMelodyToTrackChunk(melody, trackName: DefaulTrackName, instrument);
@@ -237,7 +239,6 @@ namespace CW.Soloist.CompositionService.Midi
 
             // remove the track from the midi file 
             _midiContent.Chunks.RemoveAt(trackNumber);
-            this._trackChunks.RemoveAt(trackNumber);
 
             /* if requested, decode the melody from the removed track as a list of bars 
              * with music notes and embed this sequence the melody bars reference parameter. */
@@ -316,7 +317,7 @@ namespace CW.Soloist.CompositionService.Midi
                     // fill remainder of bar with current note 
                     barEndTime = new MusicalTimeSpan(currentBarIndex + 1, 1);
                     barLengthRemainder = barEndTime.Subtract(startTimeF, TimeSpanMode.TimeTime) as MusicalTimeSpan;
-                    
+
                     note = new Note((NotePitch)pitch, (byte)barLengthRemainder.Numerator, (byte)barLengthRemainder.Denominator);
                     bars[currentBarIndex++].Notes.Add(note);
 
@@ -410,5 +411,83 @@ namespace CW.Soloist.CompositionService.Midi
         #endregion
 
     }
+
+    #region DryWetMidiTrackAdapter : IMidiTrack
+    /// <summary>
+    /// Adapter/facade class which wraps the <see cref="Melanchall.DryWetMidi.Core.MidiChunk"/>
+    /// class and provides an implementation of the high-level friendly interface
+    /// <see cref="IMidiFile"/> which represents an individual track in a MIDI file. 
+    /// </summary>
+    internal class DryWetMidiTrackAdapter : IMidiTrack
+    {
+        /* define range for the midi instrument code values in-order
+         * to identify them in the raw midi data event values */
+        private const int MinInstrumentCode = 0;
+        private const int MaxInstrumentCode = 127;
+
+        // mark the reserved channel for percussion
+        private const int DrumsMidiChannel = 10;
+
+        // constant descriptions for external/un-recoginzed instruments 
+        private const string DrumsInstrumentDescription = "Drums & Percussion";
+        private const string UnkownInstrumentDescription = "Unknown";
+
+        /// <summary> Ordinal nubmer of this track in the midi file. </summary>
+        public int TrackNumber { get; }
+
+        /// <summary> Midi sequence track name. </summary>
+        public string TrackName { get; }
+
+        /// <summary> 
+        /// General midi <a href="https://bit.ly/30pmSzP"> 
+        /// program number</a> which identifies the musical instrument of this track.
+        /// </summary>
+        public byte InstrumentMidiCode { get; }
+
+        /// <summary> This track's musical instrument description. </summary>
+        public string InstrumentName { get; }
+
+        /// <summary>
+        /// Constructs an instace of a single midi track based on a wrapped/adapted 
+        /// instance of the <see cref="TrackChunk"/> class and the track's ordinal nubmer
+        /// in the context of it's containing midi file.
+        /// </summary>
+        /// <param name="track"> Raw midi track chunk which holds the raw midi event data of this midi track.</param>
+        /// <param name="trackNumber"> Ordinal track nubmer of this track in it's containing midi file.</param>
+        internal DryWetMidiTrackAdapter(TrackChunk track, int trackNumber)
+        {
+            // Set track nubmer 
+            TrackNumber = trackNumber;
+            
+            // Set track name 
+            TrackName = (from e in track.Events
+                         where e.EventType == MidiEventType.SequenceTrackName
+                         select ((SequenceTrackNameEvent)e)).FirstOrDefault()?.Text;
+
+            // Extract the raw midi event which identifies the musical instrument 
+            IEnumerable<ProgramChangeEvent> programChangeEvent = from e in track.Events
+                                     where e.EventType == MidiEventType.ProgramChange
+                                     select ((ProgramChangeEvent)e);
+
+            // Set musical instrument code and description if an appropriate event is found 
+            if (programChangeEvent?.Count() > 0)
+            {
+                ProgramChangeEvent instrumentEvent = programChangeEvent.First();
+
+                // instrument code 
+                InstrumentMidiCode = (byte)(instrumentEvent.ProgramNumber);
+
+                // instrument name 
+                if (InstrumentMidiCode >= MinInstrumentCode && InstrumentMidiCode <= MaxInstrumentCode)
+                    InstrumentName = ((MusicalInstrument)InstrumentMidiCode).GetDisplayName();
+                else if (instrumentEvent.Channel == DrumsMidiChannel)
+                    InstrumentName = DrumsInstrumentDescription;
+                else InstrumentName = UnkownInstrumentDescription;
+            }
+            else
+                InstrumentName = $"{UnkownInstrumentDescription} / {DrumsInstrumentDescription}";
+        }
+    }
+    #endregion
 }
 

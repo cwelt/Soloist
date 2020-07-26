@@ -45,7 +45,7 @@ namespace CW.Soloist.CompositionService.Midi
         void GetPitchRangeForTrack(int trackIndex, out NotePitch? lowestPitch, out NotePitch? highestPitch);
 
         /// <summary> The tracks contained in the MIDI file. </summary>
-        ICollection<IMidiTrack> Tracks { get; }
+        IReadOnlyList<IMidiTrack> Tracks { get; }
 
         /// <summary> Starts playing the MIDI events containd in the file. </summary>
         void Play();
