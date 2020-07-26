@@ -80,8 +80,8 @@ namespace CW.Soloist.WebApplication.Controllers
             SongViewModel songViewModel = new SongViewModel(song);
 
             // add edit authorization data 
-            songViewModel.IsUserAuthorizedToEdit =
-                IsUserAuthorized(song, AuthorizationActivity.Update);
+            songViewModel.IsUserAuthorizedToEdit = IsUserAuthorized(song, AuthorizationActivity.Update);
+            songViewModel.IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete);
 
             // try reading the chords & midi files and adding their content to the view model 
             string chordsFilePath = await GetSongPath(song.Id, SongFileType.ChordProgressionFile);
@@ -96,7 +96,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 throw;
             }
 
-            // if a message is absent add it to view 
+            // if a message exists add it to view 
             songViewModel.StatusMessage = message;
 
             // pass the view model to the view to render 
@@ -184,11 +184,13 @@ namespace CW.Soloist.WebApplication.Controllers
         [Authorize]
         public async Task<ActionResult> Edit(int? id)
         {
+            // assure id parameter is valid 
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            // fetch song from the database
             Song song = await db.Songs.FindAsync(id);
             if (song == null)
             {
@@ -201,30 +203,71 @@ namespace CW.Soloist.WebApplication.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
-            return View(song);
+            // build a DTO view model of the song for the view to render 
+            SongEditViewModel editViewModel = new SongEditViewModel(song);
+
+            // add authorization data 
+            editViewModel.IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete);
+            editViewModel.IsAdminUser = User?.IsInRole(RoleName.Admin) ?? false;
+
+            // try reading the chords & midi files and adding their content to the view model 
+            string chordsFilePath = await GetSongPath(song.Id, SongFileType.ChordProgressionFile);
+            string midiFilePath = await GetSongPath(song.Id, SongFileType.MidiOriginalFile);
+            try
+            {
+                editViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
+                editViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            // pass the view model to the view to render 
+            return View(editViewModel);
         }
 
         // POST: Songs/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Artist,MidiFileName,ChordsFileName")] Song song)
+        public async Task<ActionResult> Edit(SongEditViewModel updatedSong)
         {
+            // validate song id 
+            if (updatedSong.Id == 0)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            // fetch song from the database
+            Song databaseSong = await db.Songs.FindAsync(updatedSong.Id);
+            if (databaseSong == null)
+            {
+                return HttpNotFound();
+            }
+
             // check authorization 
-            if (!IsUserAuthorized(song, AuthorizationActivity.Update))
+            if (!IsUserAuthorized(databaseSong, AuthorizationActivity.Update))
             {
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
             if (ModelState.IsValid)
             {
-                db.Entry(song).State = EntityState.Modified;
+                // map updated data 
+                databaseSong.Artist = updatedSong.Artist;
+                databaseSong.Title = updatedSong.Title;
+                databaseSong.MelodyTrackIndex = updatedSong.MelodyTrackIndex;
+
+                // update modified timestamp
+                databaseSong.Modified = DateTime.Now;
+
+                db.Entry(databaseSong).State = EntityState.Modified;
                 await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+
+                // If edit was successful, redirect to the updated song details page
+                string successMessage = $"The song '{databaseSong.Title}' is successfully updated!";
+                return RedirectToAction(nameof(Details), new { Id = databaseSong.Id, message = successMessage });
             }
-            return View(song);
+            return View(databaseSong);
         }
 
         // GET: Songs/Delete/5

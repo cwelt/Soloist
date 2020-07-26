@@ -7,7 +7,7 @@
 
 <h1>Song Index</h1>
 <p>
-    @Html.ActionLink("Upload New", "Create", null, new {@class= "btn btn-warning btn-md" })
+    @Html.ActionLink("Upload New", "Create", null, new { @class = "btn btn-warning btn-md" })
 </p>
 <table class="table">
     <tr style="color:#b6ff00">
@@ -21,47 +21,47 @@
 
     @foreach (var song in Model)
     {
-<tr>
-    <td>
-        @Html.DisplayFor(m => song.Artist)
-    </td>
-    <td>
-        @Html.DisplayFor(m => song.Title)
-    </td>
-    <td>
-        @* @Html.DisplayFor(modelItem => item.MidiFileName) *@
-    </td>
-    <td>
-        @* @Html.DisplayFor(modelItem => item.ChordsFileName) *@
-    </td>
+        <tr>
+            <td>
+                @Html.DisplayFor(m => song.Artist)
+            </td>
+            <td>
+                @Html.DisplayFor(m => song.Title)
+            </td>
+            <td>
+                @* @Html.DisplayFor(modelItem => item.MidiFileName) *@
+            </td>
+            <td>
+                @* @Html.DisplayFor(modelItem => item.ChordsFileName) *@
+            </td>
 
-    <td>
-        @Html.DisplayFor(m => song.Created)
-    </td>
+            <td>
+                @Html.DisplayFor(m => song.Created)
+            </td>
 
-    <td>
-        @Html.DisplayFor(m => song.Modified)
-    </td>
+            <td>
+                @Html.DisplayFor(m => song.Modified)
+            </td>
 
-    <td>
-        @{
-            @Html.ActionLink("Details", "Details", new { id = song.Id }) <text> | </text>
+            <td>
+                @{
+                    @Html.ActionLink("Details", "Details", new { id = song.Id }) <text> | </text>
 
-            if (song.IsUserAuthorizedToEdit)
-            {
-                @Html.ActionLink("Edit", "Edit", new { id = song.Id }) <text> | </text>
-            }
-            else
-            { <text> Edit |</text> }
+                    if (song.IsUserAuthorizedToEdit)
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = song.Id }) <text> | </text>
+                    }
+                    else
+                    { <text> Edit |</text> }
 
-        if (song.IsUserAuthorizedToEdit)
-        {
-            @Html.ActionLink("Delete", "Delete", new { id = song.Id })
-        }
-        else
-        { <text> Delete </text> }
-        }
-    </td>
-</tr>
+                if (song.IsUserAuthorizedToEdit)
+                {
+                    @Html.ActionLink("Delete", "Delete", new { id = song.Id })
+                }
+                else
+                { <text> Delete </text> }
+                }
+            </td>
+        </tr>
     }
 </table>

@@ -1,62 +1,213 @@
-﻿@model CW.Soloist.DataAccess.DomainModels.Song
+﻿@model SongEditViewModel
+@using CW.Soloist.WebApplication.Controllers;
 
 @{
-    ViewBag.Title = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Edit Song";
+    string labelColor = "color:#b6ff00";
 }
 
-<h2>Edit</h2>
+<h1 style="color:gold">@ViewBag.Title</h1>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm(
+    actionName: "Edit",
+    controllerName: "Songs",
+    method: FormMethod.Post,
+    htmlAttributes: new { enctype = "multipart/form-data" }))
 {
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Song</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
-
+    <!-- Update Section -->
+    <div>
+        <!-- Song Artist -->
         <div class="form-group">
-            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.Artist, new { @class = "control-label", style = labelColor })
+            @Html.TextBoxFor(m => m.Artist, new { @class = "form-control" })
+            <div class="alert-danger">
+                @Html.ValidationMessageFor(m => m.Artist)
             </div>
         </div>
 
+        <!-- Song Title -->
         <div class="form-group">
-            @Html.LabelFor(model => model.Artist, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Artist, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Artist, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.Title, new { @class = "control-label", style = labelColor })
+            @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+            <div class="alert-danger">
+                @Html.ValidationMessageFor(m => m.Title)
             </div>
         </div>
 
+        <!-- Melody Track Index -->
         <div class="form-group">
-            @Html.LabelFor(model => model.MidiFileName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MidiFileName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MidiFileName, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.MelodyTrackIndex, new { @class = "control-label", style = labelColor })
+            @Html.EnumDropDownListFor(m => m.MelodyTrackIndex, new { @class = "form-control" })
+            <div class="alert-danger">
+                @Html.ValidationMessageFor(m => m.MelodyTrackIndex)
             </div>
         </div>
 
+        <!-- MIDI File Upload -->
         <div class="form-group">
-            @Html.LabelFor(model => model.ChordsFileName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ChordsFileName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ChordsFileName, "", new { @class = "text-danger" })
+            @Html.LabelFor(expression: m => m.MidiFileHandler, htmlAttributes: new { @class = "control-label", style = labelColor })
+            @Html.TextBoxFor(m => m.MidiFileHandler, new { type = "file", @class = "form-control-file", accept = ".mid" })
+            <div class="alert-danger">
+                @Html.ValidationMessageFor(m => m.MidiFileHandler)
             </div>
         </div>
 
+        <!-- Chord Progression File Upload -->
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+            @Html.LabelFor(m => m.ChordsFileHandler, new { @class = "control-label", style = labelColor })
+            @Html.TextBoxFor(m => m.ChordsFileHandler, new { type = "file", @class = "form-control-file", accept = ".txt" })
+            <div class="alert-danger">
+                @Html.ValidationMessageFor(m => m.ChordsFileHandler)
             </div>
+        </div>
+
+        <!-- Is Song Public -->
+        @{
+            string hidden = Model.IsAdminUser ? "" : "hidden";
+        }
+        <div class="checkbox" @Html.AttributeEncode(hidden)>
+            <label @Html.AttributeEncode(hidden)>
+                @Html.CheckBoxFor(m => m.IsPublic) Make song public to all users??
+                <span class="alert-danger">
+                    @Html.ValidationMessageFor(m => m.IsPublic)
+                </span>
+            </label>
         </div>
     </div>
+
+    <!-- Display Only Property Desciprtion List  -->
+    <div>
+        <button type="button" class="collapsible" style="color:#b6ff00; background-color:transparent; border-color:yellow;">Display/Toggle Additional Properties</button>
+        <div style="display:none">
+            <dl class="dl-horizontal">
+                <!-- Chord Progression File -->
+                <dt style="text-align: left; color:#b6ff00;">
+                    @Html.DisplayNameFor(m => m.ChordsFileHandler)
+                </dt>
+                <dd>
+                    @Html.ActionLink(Model.ChordsFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.ChordProgressionFile })
+                </dd>
+
+                <!-- Original MIDI File -->
+                <dt style="text-align: left; color:#b6ff00;">
+                    @Html.DisplayNameFor(m => m.MidiFileHandler)
+                </dt>
+                <dd>
+                    @Html.ActionLink(Model.MidiFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiOriginalFile })
+                </dd>
+
+                <!-- Playback MIDI File -->
+                <dt style="text-align: left; color:#b6ff00;">
+                    @Html.DisplayNameFor(m => m.MidiPlaybackFileName)
+                </dt>
+                <dd>
+                    @Html.ActionLink(Model.MidiPlaybackFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiPlaybackFile })
+                </dd>
+
+                <!-- Key Signature -->
+                <dt style="text-align: left; color:#b6ff00;"> Key Signature </dt>
+                <dd> @Model.MidiData.KeySignature.ToString() </dd>
+
+                <!-- Number Of Bars -->
+                <dt style="text-align: left; color:#b6ff00;"> Number Of Bars </dt>
+                <dd>  @Model.MidiData.NumberOfBars </dd>
+
+                <!-- BPM -->
+                <dt style="text-align: left; color:#b6ff00;"> Beats Per Minute </dt>
+                <dd>  @Model.MidiData.BeatsPerMinute </dd>
+
+                <!-- Lowest Pitch -->
+                <dt style="text-align: left; color:#b6ff00;"> Lowest Pitch </dt>
+                <dd>  @Model.MidiData.LowestPitch.GetDisplayName() </dd>
+
+                <!-- Highest Pitch -->
+                <dt style="text-align: left; color:#b6ff00;"> Highest Pitch </dt>
+                <dd>  @Model.MidiData.HighestPitch.GetDisplayName() </dd>
+            </dl>
+        </div>
+        <br /> <br />
+    </div>
+
+    <!-- MIDI Tracks Table -->
+    <div>
+        <button type="button" class="collapsible" style="color:#b6ff00; background-color:transparent; border-color:yellow;">Display/Toggle MIDI Tracks</button>
+        <div style="display:none">
+            <table class="table table-bordered table-responsive table-hover">
+                <thead>
+                    <tr style="color:gold">
+                        <th> Track Number </th>
+                        <th> Track Name </th>
+                        <th> Instrument Description </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 1; i < Model.MidiData.Tracks.Count; i++)
+                    {
+                        var track = Model.MidiData.Tracks[i];
+                        <tr>
+                            <td> @track.TrackNumber </td>
+                            <td> @track.TrackName </td>
+                            <td> @track.InstrumentName </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <br /> <br />
+    </div>
+
+    <!-- Chord Progression Text Area -->
+    <div>
+        <button type="button" class="collapsible" style="color:#b6ff00; border-color:yellow; background-color:transparent">Display/Toggle Chord Progression</button>
+        <div style="display:none">
+            @Html.TextAreaFor(m => m.ChordProgression, 16, 80, new { @class = "green-border-focus", Style = "max-width: 40%; overflow=auto;", Spellcheck = "false" });
+        </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary btn-lg btn-block center-block" />
+    </div>
+
+    @* Generate hidden form with cookie for client to check against
+        when submitting the form in order to protect him from cross-
+        site request forgery (CSRF) attakcs. *@
+    @Html.AntiForgeryToken()
 }
 
+<!-- Footer Links -->
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    <footer>
+        @Html.ActionLink("Details", "Details", new { id = Model.Id }) <text>|</text>
+        @if (Model.IsUserAuthorizedToDelete)
+        {
+            @Html.ActionLink("Delete", "Delete", new { id = Model.Id }) <text>|</text>
+        }
+        @Html.ActionLink("Back to songs list", "Index")
+    </footer>
 </div>
+
+@* Enable Client Side Validations with JQuery of the Constraints Defined
+    in the Data Annotation Attribiutes in the Model Class.  *@
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        let collapsibleElement = document.getElementsByClassName("collapsible");
+        let i;
+
+        for (i = 0; i < collapsibleElement.length; i++) {
+            collapsibleElement[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                }
+                else {
+                    content.style.display = "block";
+                }
+            });
+        }
+    </script>
+}

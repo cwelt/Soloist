@@ -6,8 +6,11 @@
     ViewBag.Title = "Song Details";
 }
 
-<h2 style="color:lightgreen">@Model.StatusMessage</h2>
-<h1 style="color:gold">@ViewBag.Title</h1>
+<!-- Header Title -->
+<div>
+    <h2 style="color:lightgreen">@Model.StatusMessage</h2>
+    <h1 style="color:gold">@ViewBag.Title</h1>
+</div>
 
 <!-- Property Desciprtion List  -->
 <div>
@@ -117,17 +120,23 @@
     </div>
 </div>
 
-<br />
+<!-- Footer Links -->
 <div>
-    <br />
-    <p>
-        @if (Model.IsUserAuthorizedToEdit)
-        {
-            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <text>|</text>
-        }
+    <footer>
+        <br /><br />
+        <p>
+            @if (Model.IsUserAuthorizedToEdit)
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <text>|</text>
+            }
+            @if (Model.IsUserAuthorizedToDelete)
+            {
+                @Html.ActionLink("Delete", "Delete", new { id = Model.Id }) <text>|</text>
+            }
 
-        @Html.ActionLink("Back to List", "Index")
-    </p>
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </footer>
 </div>
 
 <!-- handle collapisble elements -->

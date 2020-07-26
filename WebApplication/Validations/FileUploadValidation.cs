@@ -52,7 +52,7 @@ namespace CW.Soloist.WebApplication.Validations
             if (file == formData.ChordsFileHandler) // Chords file 
                 validMimeTypes = new[] { "text/plain" };
             else // MIDI file 
-                validMimeTypes = new[] { "audio/midi", "audio/x-midi", "audio/mid", "audio/x-mid" }; 
+                validMimeTypes = new[] { "audio/midi", "audio/x-midi", "audio/mid", "audio/x-mid" };
 
             if (!validMimeTypes.Contains(file.ContentType))
             {
@@ -110,5 +110,4 @@ namespace CW.Soloist.WebApplication.Validations
         }
     }
 }
-
 

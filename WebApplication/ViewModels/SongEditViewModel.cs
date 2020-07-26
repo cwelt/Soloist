@@ -11,10 +11,11 @@ using System.Web;
 
 namespace CW.Soloist.WebApplication.ViewModels
 {
-    public class SongViewModel
+    public class SongEditViewModel
     {
+        [Required]
         public int Id { get; set; }
-
+        
         [Required]
         [StringLength(30)]
         [DisplayName("Song Name")]
@@ -27,7 +28,6 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Description")]
         public string Description { get; set; }
 
-        [Required]
         [FileUploadValidation]
         [DisplayName("MIDI File")]
         public HttpPostedFileBase MidiFileHandler { get; set; }
@@ -42,14 +42,13 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         [DisplayName("Melody Track Number")]
         public MelodyTrackIndex? MelodyTrackIndex { get; set; }
-        public string MelodyTrackIndexDescription
+        public string MelodyTrackIndexDescription 
         {
-            get => MelodyTrackIndex?.GetDisplayName() ??
+            get => MelodyTrackIndex?.GetDisplayName() ?? 
                 CW.Soloist.CompositionService.Midi.MelodyTrackIndex.NoMelodyTrackInFile
                 .GetDisplayName();
         }
 
-        [Required]
         [FileUploadValidation]
         [DisplayName("Chords File")]
         public HttpPostedFileBase ChordsFileHandler { get; set; }
@@ -66,15 +65,14 @@ namespace CW.Soloist.WebApplication.ViewModels
         [DisplayName("Is Song Public To All Users")]
         public bool IsPublic { get; set; }
 
-        public bool IsUserAuthorizedToEdit { get; set; }
         public bool IsUserAuthorizedToDelete { get; set; }
         public bool IsAdminUser { get; set; }
 
         public string StatusMessage { get; set; }
 
-        public SongViewModel() { }
+        public SongEditViewModel() { }
 
-        public SongViewModel(Song song)
+        public SongEditViewModel(Song song)
         {
             Id = song.Id;
             Artist = song.Artist;
