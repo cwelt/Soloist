@@ -1,57 +1,153 @@
-﻿@model CW.Soloist.DataAccess.DomainModels.Song
+﻿@using CW.Soloist.WebApplication.Controllers;
+@model CW.Soloist.WebApplication.ViewModels.SongViewModel
 
 @{
-    ViewBag.Title = "Delete";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Delete Song";
+    string termStyle = "text-align: left; color:#b6ff00;";
+    CultureInfo timeStampCulture = CultureInfo.CreateSpecificCulture("en-DE");
+    string collapseStyle = "color:#b6ff00; background-color:transparent; border-color:yellow;";
 }
 
-<h2>Delete</h2>
+<h1 style="color:gold">@ViewBag.Title</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Are you 100% <b><i> sure</i></b> you want to delete this song?</h3>
 <div>
-    <h4>Song</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
+    <!-- Property Desciprtion List  -->
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
+            <!-- Artist -->
+            <dt style="@termStyle">@Html.DisplayNameFor(m => m.Artist)</dt>
+            <dd> @Html.DisplayFor(m => m.Artist)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
+            <!-- Song Title -->
+            <dt style="@termStyle">@Html.DisplayNameFor(m => m.Title) </dt>
+            <dd> @Html.DisplayFor(m => m.Title)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Artist)
-        </dt>
+            <!-- Chord Progression File -->
+            <dt style="@termStyle"> @Html.DisplayNameFor(m => m.ChordsFileHandler) </dt>
+            <dd> @Html.ActionLink(Model.ChordsFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.ChordProgressionFile })</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Artist)
-        </dd>
+            <!-- Original MIDI File -->
+            <dt style="@termStyle"> @Html.DisplayNameFor(m => m.MidiFileHandler) </dt>
+            <dd> @Html.ActionLink(Model.MidiFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiOriginalFile }) </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.MidiFileName)
-        </dt>
+            <!-- Playback MIDI File -->
+            <dt style="@termStyle">@Html.DisplayNameFor(m => m.MidiPlaybackFileName) </dt>
+            <dd> @Html.ActionLink(Model.MidiPlaybackFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiPlaybackFile })</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.MidiFileName)
-        </dd>
+            <!-- Key Signature -->
+            <dt style="@termStyle"> Key Signature </dt>
+            <dd> @Model.MidiData.KeySignature.ToString() </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ChordsFileName)
-        </dt>
+            <!-- Number Of Bars -->
+            <dt style="@termStyle"> Number Of Bars </dt>
+            <dd>  @Model.MidiData.NumberOfBars </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.ChordsFileName)
-        </dd>
+            <!-- BPM -->
+            <dt style="@termStyle"> Beats Per Minute </dt>
+            <dd>  @Model.MidiData.BeatsPerMinute </dd>
 
-    </dl>
+            <!-- Lowest Pitch -->
+            <dt style="@termStyle"> Lowest Pitch </dt>
+            <dd>  @Model.MidiData.LowestPitch.GetDisplayName() </dd>
 
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
+            <!-- Highest Pitch -->
+            <dt style="@termStyle"> Highest Pitch </dt>
+            <dd>  @Model.MidiData.HighestPitch.GetDisplayName() </dd>
 
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+            <!-- Melody Track Index -->
+            <dt style="@termStyle">@Html.DisplayNameFor(m => m.MelodyTrackIndex)</dt>
+            <dd>  @Model.MelodyTrackIndexDescription </dd>
+
+            <!-- Created -->
+            <dt style="@termStyle"> @Html.DisplayNameFor(m => m.Created)</dt>
+            <dd>  @Model.Created.ToString("F", timeStampCulture) </dd>
+
+            <!-- Modified -->
+            <dt style="@termStyle"> @Html.DisplayNameFor(m => m.Modified)</dt>
+            <dd>  @Model.Modified.ToString("F", timeStampCulture) </dd>
+        </dl>
+    </div>
+
+    <!-- MIDI Tracks Table -->
+    <div>
+        <button type="button" class="collapsible" style="@collapseStyle">Display/Toggle MIDI Tracks</button>
+        <div style="display:none">
+            <table class="table table-bordered table-responsive table-hover">
+                <thead>
+                    <tr style="color:gold">
+                        <th> Track Number </th>
+                        <th> Track Name </th>
+                        <th> Instrument Description </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 1; i < Model.MidiData.Tracks.Count; i++)
+                    {
+                        var track = Model.MidiData.Tracks[i];
+                        <tr>
+                            <td> @track.TrackNumber </td>
+                            <td> @track.TrackName </td>
+                            <td> @track.InstrumentName </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    }
+        <br /> <br />
+    </div>
+
+    <!-- Chord Progression Text Area -->
+    <div>
+        <button type="button" class="collapsible" style="@collapseStyle">Display/Toggle Chord Progression</button>
+        <div style="display:none">
+            @Html.TextAreaFor(m => m.ChordProgression, 16, 80, new { @class = "green-border-focus", Style = "max-width: 40%; overflow=auto;", Spellcheck = "false", Readonly = true });
+        </div>
+        <br /><br />
+    </div>
+
+    <!-- Delete Form -->
+    <div>
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete  " class="btn btn-danger btn-lg" />
+            </div>
+        }
+    </div>
+
+    <!-- Footer Links -->
+    <div>
+        <footer>
+            <br />
+            @Html.ActionLink("Details", "Details", new { id = Model.Id }) <text>|</text>
+            @if (Model.IsUserAuthorizedToEdit)
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <text>|</text>
+            }
+            @Html.ActionLink("Back to Song List", "Index")
+        </footer>
+    </div>
 </div>
+
+<!-- js for handling collapisble elements -->
+<script>
+    let collapsibleElement = document.getElementsByClassName("collapsible");
+    let i;
+
+    for (i = 0; i < collapsibleElement.length; i++) {
+        collapsibleElement[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            }
+            else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>

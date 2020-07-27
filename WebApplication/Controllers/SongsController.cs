@@ -439,7 +439,28 @@ namespace CW.Soloist.WebApplication.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
-            return View(song);
+            // build a DTO view model of the song for the view to render 
+            SongViewModel songViewModel = new SongViewModel(song);
+
+            // add edit authorization data 
+            songViewModel.IsUserAuthorizedToEdit = IsUserAuthorized(song, AuthorizationActivity.Update);
+            songViewModel.IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete);
+
+            // try reading the chords & midi files and adding their content to the view model 
+            string chordsFilePath = await GetSongPath(song.Id, SongFileType.ChordProgressionFile);
+            string midiFilePath = await GetSongPath(song.Id, SongFileType.MidiOriginalFile);
+            try
+            {
+                songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
+                songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            // pass the view model to the view to render 
+            return View(songViewModel);
         }
 
         // POST: Songs/Delete/5
