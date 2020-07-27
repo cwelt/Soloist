@@ -1,24 +1,21 @@
-﻿using System.Data.Entity;
-using System.Threading.Tasks;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using CW.Soloist.DataAccess.DomainModels;
-using CW.Soloist.DataAccess.EntityFramework;
-using SoloistWebClient.Controllers;
-using System.Linq.Expressions;
-using System.Linq;
-using System.Collections.Generic;
-using CW.Soloist.WebApplication.ViewModels;
+﻿using System;
 using System.IO;
-using System;
-using CW.Soloist.CompositionService.Midi;
-using CW.Soloist.WebApplication.Models;
+using System.Linq;
+using System.Net;
+using System.Web.Mvc;
+using System.Data.Entity;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using System.Security.Principal;
+using System.Collections.Generic;
+using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.DataAccess.EntityFramework;
+using CW.Soloist.WebApplication.Controllers;
+using CW.Soloist.WebApplication.Models;
+using CW.Soloist.WebApplication.ViewModels;
+using CW.Soloist.CompositionService.Midi;
+
 using CW.Soloist.CompositionService;
-using CW.Soloist.WebApplication.Validations;
-using CW.Soloist.CompositionService.MusicTheory;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
@@ -95,11 +92,10 @@ namespace CW.Soloist.WebApplication.Controllers
             {
                 songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
                 songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
-                
             }
-            catch (Exception)
+            catch (Exception ex) 
             {
-                
+                HomeController.WriteErrorToLog(HttpContext, ex.Message);
             }
             finally
             {
@@ -114,20 +110,22 @@ namespace CW.Soloist.WebApplication.Controllers
         }
         #endregion
 
-        // GET: Songs/Create
+        #region // GET: Songs/Create
         [HttpGet]
         [Authorize]
         public ActionResult Create()
         {
             SongViewModel songViewModel = new SongViewModel
             {
+                /* check if user is admin or not for indicating the privliage 
+                 * of setting a song as public or private */
                 IsAdminUser = User?.IsInRole(RoleName.Admin) ?? false
             };
-
             return View(songViewModel);
         }
+        #endregion
 
-        // POST: Songs/Create
+        #region // POST: Songs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -138,7 +136,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 // get current timestamp
                 DateTime timestamp = DateTime.Now;
 
-                // Create a new song instance 
+                // Create a new song instance based on the form data from the view model
                 Song song = new Song
                 {
                     Created = timestamp,
@@ -159,30 +157,41 @@ namespace CW.Soloist.WebApplication.Controllers
                 db.Songs.Add(song);
                 await db.SaveChangesAsync();
 
-                // create on the file server a new directory for the new song 
-                string directoryPath = await GetSongPath(song.Id); 
-                Directory.CreateDirectory(directoryPath);
+                // save the files of the new song on the file server 
+                IMidiFile playbackFile = null;
+                try
+                {
+                    // create a new directory for the new song 
+                    string directoryPath = await GetSongPath(song.Id);
+                    Directory.CreateDirectory(directoryPath);
 
-                // save the midi file in the new directory 
-                string midiFileFullPath = directoryPath + song.MidiFileName;
-                songViewModel.MidiFileHandler.SaveAs(midiFileFullPath);
+                    // save the midi file in the new directory 
+                    string midiFileFullPath = directoryPath + song.MidiFileName;
+                    songViewModel.MidiFileHandler.SaveAs(midiFileFullPath);
 
-                // save the midi playback file in the new directory 
-                string midiPlaybackFullPath = directoryPath + song.MidiPlaybackFileName;
-                IMidiFile playbackFile = Composition.CreateMidiPlayback(songViewModel.MidiFileHandler.InputStream, song.MelodyTrackIndex);
-                playbackFile.SaveFile(outputPath: midiPlaybackFullPath, pathIncludesFileName: true);
+                    // save the midi playback file in the new directory 
+                    string midiPlaybackFullPath = directoryPath + song.MidiPlaybackFileName;
+                    playbackFile = Composition.CreateMidiPlayback(songViewModel.MidiFileHandler.InputStream, song.MelodyTrackIndex);
+                    playbackFile.SaveFile(outputPath: midiPlaybackFullPath, pathIncludesFileName: true);
 
-                // save the chord progression file in the new directory 
-                string chordsFilefullPath = directoryPath + song.ChordsFileName;
-                songViewModel.ChordsFileHandler.SaveAs(chordsFilefullPath);
-
-                // dispose open resources 
-                songViewModel.ChordsFileHandler?.InputStream?.Dispose();
-                songViewModel.MidiFileHandler?.InputStream?.Dispose();
-                playbackFile?.Stream?.Dispose();
-
-
-                // TODO: if saving on file server failed, rollback DB changes 
+                    // save the chord progression file in the new directory 
+                    string chordsFilefullPath = directoryPath + song.ChordsFileName;
+                    songViewModel.ChordsFileHandler.SaveAs(chordsFilefullPath);
+                }
+                catch (Exception ex)
+                {
+                    // in case of failure, rollback DB changes and log error message 
+                    db.Songs.Remove(song);
+                    await db.SaveChangesAsync();
+                    HomeController.WriteErrorToLog(HttpContext, ex.Message);
+                }
+                finally
+                {
+                    // release open unmanaged resources 
+                    songViewModel.ChordsFileHandler?.InputStream?.Dispose();
+                    songViewModel.MidiFileHandler?.InputStream?.Dispose();
+                    playbackFile?.Stream?.Dispose();
+                }
 
                 // If creation was successful, redirect to new song details page
                 string successMessage = $"The Song '{song.Title}' by '{song.Artist}' was successfully uploaded.";
@@ -190,6 +199,7 @@ namespace CW.Soloist.WebApplication.Controllers
             }
             return View(songViewModel);
         }
+        #endregion
 
         #region GET: Songs/Edit/5
         [Authorize]
@@ -218,6 +228,7 @@ namespace CW.Soloist.WebApplication.Controllers
             SongViewModel songViewModel = new SongViewModel(song);
 
             // add authorization data 
+            songViewModel.IsUserAuthorizedToEdit = true;
             songViewModel.IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete);
             songViewModel.IsAdminUser = User?.IsInRole(RoleName.Admin) ?? false;
 
@@ -229,13 +240,14 @@ namespace CW.Soloist.WebApplication.Controllers
                 songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
                 songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                
+                // failed to read chord/midi data. log the error
+                HomeController.WriteErrorToLog(HttpContext, ex.Message);
             }
-
             finally
-            {
+            {   
+                // release unmanaged open resources 
                 songViewModel.MidiData?.Stream?.Dispose();
             }
 
@@ -427,11 +439,13 @@ namespace CW.Soloist.WebApplication.Controllers
                 string successMessage = $"The song was successfully updated!";
                 return RedirectToAction(nameof(Details), new { Id = databaseSong.Id, message = successMessage });
             }
+
+            // model is not valid, render back the view
             return View(databaseSong);
         }
         #endregion
 
-        // GET: Songs/Delete/5
+        #region // GET: Songs/Delete/5
         [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
@@ -443,7 +457,6 @@ namespace CW.Soloist.WebApplication.Controllers
 
             // fetch song from the database
             Song song = await db.Songs.FindAsync(id);
-
             if (song == null)
             {
                 return HttpNotFound();
@@ -470,26 +483,29 @@ namespace CW.Soloist.WebApplication.Controllers
                 songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
                 songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                
+                // failed to read chord/midi data. log the error
+                HomeController.WriteErrorToLog(HttpContext, ex.Message);
             }
-
             finally
             {
+                // release unmanaged open resources 
                 songViewModel.MidiData?.Stream?.Dispose();
             }
 
             // pass the view model to the view to render 
             return View(songViewModel);
         }
+        #endregion
 
-        // POST: Songs/Delete/5
+        #region // POST: Songs/Delete/5
         [HttpPost, ActionName(nameof(Delete))]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
+            // fetch song from database 
             Song song = await db.Songs.FindAsync(id);
 
             // check authorization 
@@ -498,7 +514,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
-            // try removing the files from the file server 
+            // try removing the pfysical files from the file server 
             string songDirectoryPath = await GetSongPath(song.Id);
             try
             {
@@ -506,7 +522,11 @@ namespace CW.Soloist.WebApplication.Controllers
             }
             catch (Exception ex)
             {
+                // log error message on server 
                 string errorMessage = "An error occoured in attempt to remove song files: " + ex.Message;
+                HomeController.WriteErrorToLog(HttpContext, errorMessage);
+
+                // report error to user on original view 
                 ModelState.AddModelError(string.Empty, errorMessage);
                 return RedirectToAction(nameof(Delete), new { Id = id });
             }
@@ -519,6 +539,7 @@ namespace CW.Soloist.WebApplication.Controllers
             string successMessage = $"The song '{song.Title}' by '{song.Artist}' was successfully deleted.";
             return RedirectToAction(nameof(Index), new { Message = successMessage });
         }
+        #endregion
 
         #region DownloadFile
         /// <summary>

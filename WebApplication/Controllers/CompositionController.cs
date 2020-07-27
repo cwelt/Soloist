@@ -8,7 +8,6 @@ using CW.Soloist.DataAccess.EntityFramework;
 using CW.Soloist.WebApplication.Models;
 using CW.Soloist.WebApplication.ViewModels;
 using Microsoft.AspNet.Identity;
-using SoloistWebClient.Controllers;
 using System;
 using System.Collections;
 using System.Collections.Generic;

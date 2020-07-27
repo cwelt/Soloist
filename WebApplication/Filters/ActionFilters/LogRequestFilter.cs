@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using SoloistWebClient.Controllers;
+﻿using CW.Soloist.WebApplication.Controllers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
