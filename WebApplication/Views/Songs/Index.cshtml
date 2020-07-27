@@ -3,65 +3,51 @@
 @{
     ViewBag.Title = "Song Index";
     IPrincipal user = User;
+    CultureInfo timeStampCulture = CultureInfo.CreateSpecificCulture("es-ES");
 }
 
-<h1>Song Index</h1>
+<h1 style="color:greenyellow">@ViewBag.Title</h1>
 <p>
-    @Html.ActionLink("Upload New", "Create", null, new { @class = "btn btn-warning btn-md" })
+    @Html.ActionLink("Upload a New Song", "Create", null, new { @class = "btn btn-warning btn-md" })
 </p>
 <table class="table">
-    <tr style="color:#b6ff00">
-        <th>  @Html.DisplayNameFor(model => model.Artist)  </th>
-        <th>  @Html.DisplayNameFor(model => model.Title) </th>
-        <th>  @Html.DisplayText("MIDI File") @* (model => model.MidiFileName) *@ </th>
-        <th>  @Html.DisplayText("Chords File") @* Html.DisplayNameFor(model => model.ChordsFileName) *@ </th>
-        <th>  @Html.DisplayNameFor(m => m.Created) </th>
-        <th>  @Html.DisplayNameFor(m => m.Modified) </th>
-    </tr>
+    <thead>
+        <tr style="color:yellow">
+            <th>  @Html.DisplayNameFor(model => model.Artist)  </th>
+            <th>  @Html.DisplayNameFor(model => model.Title) </th>
+            <th>  @Html.DisplayNameFor(m => m.Created) </th>
+            <th>  @Html.DisplayNameFor(m => m.Modified) </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var song in Model)
+        {
+            <tr>
+                <td> @Html.DisplayFor(m => song.Artist)  </td>
+                <td> @Html.DisplayFor(m => song.Title) </td>
+                <td> @song.Created.Date.ToString("d", timeStampCulture)</td>
+                <td> @song.Modified.ToString("d", timeStampCulture) </td>
 
-    @foreach (var song in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(m => song.Artist)
-            </td>
-            <td>
-                @Html.DisplayFor(m => song.Title)
-            </td>
-            <td>
-                @* @Html.DisplayFor(modelItem => item.MidiFileName) *@
-            </td>
-            <td>
-                @* @Html.DisplayFor(modelItem => item.ChordsFileName) *@
-            </td>
+                <td>
+                    @{
+                        @Html.ActionLink("Details", "Details", new { id = song.Id }) <text> | </text>
 
-            <td>
-                @Html.DisplayFor(m => song.Created)
-            </td>
-
-            <td>
-                @Html.DisplayFor(m => song.Modified)
-            </td>
-
-            <td>
-                @{
-                    @Html.ActionLink("Details", "Details", new { id = song.Id }) <text> | </text>
+                        if (song.IsUserAuthorizedToEdit)
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = song.Id }) <text> | </text>
+                        }
+                        else
+                        { <text> Edit |</text> }
 
                     if (song.IsUserAuthorizedToEdit)
                     {
-                        @Html.ActionLink("Edit", "Edit", new { id = song.Id }) <text> | </text>
+                        @Html.ActionLink("Delete", "Delete", new { id = song.Id })
                     }
                     else
-                    { <text> Edit |</text> }
-
-                if (song.IsUserAuthorizedToEdit)
-                {
-                    @Html.ActionLink("Delete", "Delete", new { id = song.Id })
-                }
-                else
-                { <text> Delete </text> }
-                }
-            </td>
-        </tr>
-    }
+                    { <text> Delete </text> }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

@@ -4,6 +4,9 @@
 
 @{
     ViewBag.Title = "Song Details";
+    string termStyle = "text-align: left; color:#b6ff00;";
+    CultureInfo timeStampCulture = CultureInfo.CreateSpecificCulture("en-DE");
+    string collapseStyle = "color:#b6ff00; background-color:transparent; border-color:yellow;";
 }
 
 <!-- Header Title -->
@@ -17,76 +20,62 @@
     <hr />
     <dl class="dl-horizontal">
         <!-- Artist -->
-        <dt style="text-align: left; color:#b6ff00;">
-            @Html.DisplayNameFor(m => m.Artist)
-        </dt>
-        <dd>
-            @Html.DisplayFor(m => m.Artist)
-        </dd>
+        <dt style="@termStyle">@Html.DisplayNameFor(m => m.Artist)</dt>
+        <dd> @Html.DisplayFor(m => m.Artist)</dd>
 
         <!-- Song Title -->
-        <dt style="text-align: left; color:#b6ff00;">
-            @Html.DisplayNameFor(m => m.Title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(m => m.Title)
-        </dd>
+        <dt style="@termStyle">@Html.DisplayNameFor(m => m.Title) </dt>
+        <dd> @Html.DisplayFor(m => m.Title)</dd>
 
         <!-- Chord Progression File -->
-        <dt style="text-align: left; color:#b6ff00;">
-            @Html.DisplayNameFor(m => m.ChordsFileHandler)
-        </dt>
-        <dd>
-            @Html.ActionLink(Model.ChordsFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.ChordProgressionFile })
-        </dd>
+        <dt style="@termStyle"> @Html.DisplayNameFor(m => m.ChordsFileHandler) </dt>
+        <dd> @Html.ActionLink(Model.ChordsFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.ChordProgressionFile })</dd>
 
         <!-- Original MIDI File -->
-        <dt style="text-align: left; color:#b6ff00;">
-            @Html.DisplayNameFor(m => m.MidiFileHandler)
-        </dt>
-        <dd>
-            @Html.ActionLink(Model.MidiFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiOriginalFile })
-        </dd>
+        <dt style="@termStyle"> @Html.DisplayNameFor(m => m.MidiFileHandler) </dt>
+        <dd> @Html.ActionLink(Model.MidiFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiOriginalFile }) </dd>
 
         <!-- Playback MIDI File -->
-        <dt style="text-align: left; color:#b6ff00;">
-            @Html.DisplayNameFor(m => m.MidiPlaybackFileName)
-        </dt>
-        <dd>
-            @Html.ActionLink(Model.MidiPlaybackFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiPlaybackFile })
-        </dd>
+        <dt style="@termStyle">@Html.DisplayNameFor(m => m.MidiPlaybackFileName) </dt>
+        <dd> @Html.ActionLink(Model.MidiPlaybackFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiPlaybackFile })</dd>
 
         <!-- Key Signature -->
-        <dt style="text-align: left; color:#b6ff00;"> Key Signature </dt>
+        <dt style="@termStyle"> Key Signature </dt>
         <dd> @Model.MidiData.KeySignature.ToString() </dd>
 
         <!-- Number Of Bars -->
-        <dt style="text-align: left; color:#b6ff00;"> Number Of Bars </dt>
+        <dt style="@termStyle"> Number Of Bars </dt>
         <dd>  @Model.MidiData.NumberOfBars </dd>
 
         <!-- BPM -->
-        <dt style="text-align: left; color:#b6ff00;"> Beats Per Minute </dt>
+        <dt style="@termStyle"> Beats Per Minute </dt>
         <dd>  @Model.MidiData.BeatsPerMinute </dd>
 
         <!-- Lowest Pitch -->
-        <dt style="text-align: left; color:#b6ff00;"> Lowest Pitch </dt>
+        <dt style="@termStyle"> Lowest Pitch </dt>
         <dd>  @Model.MidiData.LowestPitch.GetDisplayName() </dd>
 
         <!-- Highest Pitch -->
-        <dt style="text-align: left; color:#b6ff00;"> Highest Pitch </dt>
+        <dt style="@termStyle"> Highest Pitch </dt>
         <dd>  @Model.MidiData.HighestPitch.GetDisplayName() </dd>
 
         <!-- Melody Track Index -->
-        <dt style="text-align: left; color:#b6ff00;">
-            @Html.DisplayNameFor(m => m.MelodyTrackIndex)
-        </dt>
+        <dt style="@termStyle">@Html.DisplayNameFor(m => m.MelodyTrackIndex)</dt>
         <dd>  @Model.MelodyTrackIndexDescription </dd>
+
+        <!-- Created -->
+        <dt style="@termStyle"> @Html.DisplayNameFor(m => m.Created)</dt>
+        <dd>  @Model.Created.ToString("F", timeStampCulture) </dd>
+
+        <!-- Modified -->
+        <dt style="@termStyle"> @Html.DisplayNameFor(m => m.Modified)</dt>
+        <dd>  @Model.Modified.ToString("F", timeStampCulture) </dd>
     </dl>
 </div>
 
 <!-- MIDI Tracks Table -->
 <div>
-    <button type="button" class="collapsible" style="color:#b6ff00; background-color:transparent; border-color:yellow;">Display/Toggle MIDI Tracks</button>
+    <button type="button" class="collapsible" style="@collapseStyle">Display/Toggle MIDI Tracks</button>
     <div style="display:none">
         <table class="table table-bordered table-responsive table-hover">
             <thead>
@@ -114,7 +103,7 @@
 
 <!-- Chord Progression Text Area -->
 <div>
-    <button type="button" class="collapsible" style="color:#b6ff00; border-color:yellow; background-color:transparent">Display/Toggle Chord Progression</button>
+    <button type="button" class="collapsible" style="@collapseStyle">Display/Toggle Chord Progression</button>
     <div style="display:none">
         @Html.TextAreaFor(m => m.ChordProgression, 16, 80, new { @class = "green-border-focus", Style = "max-width: 40%; overflow=auto;", Spellcheck = "false", Readonly = true });
     </div>
