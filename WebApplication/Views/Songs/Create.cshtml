@@ -34,7 +34,7 @@
     <!-- Melody Track Index -->
     <div class="form-group">
         @Html.LabelFor(m => m.MelodyTrackIndex, new { @class = "control-label", style = labelColor })
-        @Html.EnumDropDownListFor(m => m.MelodyTrackIndex, new { @class = "form-control", style = labelColor })
+        @Html.EnumDropDownListFor(m => m.MelodyTrackIndex, new { @class = "form-control"})
         <div class="alert-danger">
             @Html.ValidationMessageFor(m => m.MelodyTrackIndex)
         </div>
@@ -69,10 +69,9 @@
         </label>
     </div>
 
-
     <!-- Save Button -->
     <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary btn-lg btn-block center-block" />
+        <input type="submit" value="Save" class="btn btn-success btn-lg btn-block center-block" />
     </div>
 
     @* Generate hidden form with cookie for client to check against
@@ -83,11 +82,8 @@
 
 <!-- Song Index Redirection -->
 <div>
-    @Html.ActionLink("Back to songs list", "Index")
+    @Html.ActionLink("Back to Song List", "Index")
 </div>
-
-
-
 
 @* Enable Client Side Validations with JQuery of the Constraints Defined
     in the Data Annotation Attribiutes in the Model Class.  *@

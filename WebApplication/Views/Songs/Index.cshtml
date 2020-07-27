@@ -6,48 +6,65 @@
     CultureInfo timeStampCulture = CultureInfo.CreateSpecificCulture("es-ES");
 }
 
-<h1 style="color:greenyellow">@ViewBag.Title</h1>
-<p>
+<!-- Header Title -->
+<div>
+    <h2 style="color:lightgreen">@ViewBag.Message</h2>
+    <h1 style="color:greenyellow">@ViewBag.Title</h1>
+</div>
+
+<!-- New Song Button -->
+<div>
     @Html.ActionLink("Upload a New Song", "Create", null, new { @class = "btn btn-warning btn-md" })
-</p>
-<table class="table">
-    <thead>
-        <tr style="color:yellow">
-            <th>  @Html.DisplayNameFor(model => model.Artist)  </th>
-            <th>  @Html.DisplayNameFor(model => model.Title) </th>
-            <th>  @Html.DisplayNameFor(m => m.Created) </th>
-            <th>  @Html.DisplayNameFor(m => m.Modified) </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var song in Model)
-        {
-            <tr>
-                <td> @Html.DisplayFor(m => song.Artist)  </td>
-                <td> @Html.DisplayFor(m => song.Title) </td>
-                <td> @song.Created.Date.ToString("d", timeStampCulture)</td>
-                <td> @song.Modified.ToString("d", timeStampCulture) </td>
+</div>
 
-                <td>
-                    @{
-                        @Html.ActionLink("Details", "Details", new { id = song.Id }) <text> | </text>
-
-                        if (song.IsUserAuthorizedToEdit)
-                        {
-                            @Html.ActionLink("Edit", "Edit", new { id = song.Id }) <text> | </text>
-                        }
-                        else
-                        { <text> Edit |</text> }
-
-                    if (song.IsUserAuthorizedToEdit)
-                    {
-                        @Html.ActionLink("Delete", "Delete", new { id = song.Id })
-                    }
-                    else
-                    { <text> Delete </text> }
-                    }
-                </td>
+<!-- Song List -->
+<div>
+    <table class="table">
+        <!-- tables headers -->
+        <thead>
+            <tr style="color:yellow">
+                <th>  @Html.DisplayNameFor(model => model.Artist)  </th>
+                <th>  @Html.DisplayNameFor(model => model.Title) </th>
+                <th>  @Html.DisplayNameFor(m => m.Created) </th>
+                <th>  @Html.DisplayNameFor(m => m.Modified) </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+
+        <!-- tables contents -->
+        <tbody>
+
+            @foreach (var song in Model)
+            {
+                <tr>
+                    <td> @Html.DisplayFor(m => song.Artist)  </td>
+                    <td> @Html.DisplayFor(m => song.Title) </td>
+                    <td> @song.Created.Date.ToString("d", timeStampCulture)</td>
+                    <td> @song.Modified.ToString("d", timeStampCulture) </td>
+
+                    <!-- action links -->
+                    <td>
+                        @{
+                            @Html.ActionLink("Details", "Details", new { id = song.Id }) <text> | </text>
+
+                            if (song.IsUserAuthorizedToEdit)
+                            {
+                                @Html.ActionLink("Edit", "Edit", new { id = song.Id }) <text> | </text>
+                            }
+                            else
+                            {
+                                <text> Edit |</text>
+                            }
+
+                            if (song.IsUserAuthorizedToEdit)
+                            {
+                                @Html.ActionLink("Delete", "Delete", new { id = song.Id })
+                            }
+                            else
+                            { <text> Delete </text> }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -29,7 +29,7 @@ namespace CW.Soloist.WebApplication.Controllers
 
         #region Index
         // GET: Songs
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string message = null)
         {
             // fetch id of current logged-in user (if user is indeed logged-in...)
             string userId = User?.Identity?.GetUserId();
@@ -49,6 +49,9 @@ namespace CW.Soloist.WebApplication.Controllers
                     IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete),
                 });
             }
+
+            // if a message was passed for display, pass it to view 
+            if (message != null) ViewBag.Message = message;
 
             // pass the song list for the view for rendering 
             return View(songsViewModel);
@@ -176,7 +179,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 // TODO: if saving on file server failed, rollback DB changes 
 
                 // If creation was successful, redirect to new song details page
-                string successMessage = $"The Song '{song.Title}' was saved successfully!";
+                string successMessage = $"The Song '{song.Title}' by '{song.Artist}' was successfully uploaded.";
                 return RedirectToAction(nameof(Details), new { Id = song.Id, message = successMessage });
             }
             return View(songViewModel);
@@ -421,11 +424,13 @@ namespace CW.Soloist.WebApplication.Controllers
         [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
+            // validate song id 
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            // fetch song from the database
             Song song = await db.Songs.FindAsync(id);
 
             if (song == null)
@@ -443,8 +448,8 @@ namespace CW.Soloist.WebApplication.Controllers
             SongViewModel songViewModel = new SongViewModel(song);
 
             // add edit authorization data 
+            songViewModel.IsUserAuthorizedToDelete = true;
             songViewModel.IsUserAuthorizedToEdit = IsUserAuthorized(song, AuthorizationActivity.Update);
-            songViewModel.IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete);
 
             // try reading the chords & midi files and adding their content to the view model 
             string chordsFilePath = await GetSongPath(song.Id, SongFileType.ChordProgressionFile);
@@ -464,7 +469,7 @@ namespace CW.Soloist.WebApplication.Controllers
         }
 
         // POST: Songs/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName(nameof(Delete))]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<ActionResult> DeleteConfirmed(int id)
@@ -477,9 +482,13 @@ namespace CW.Soloist.WebApplication.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
+            // remove record from database
             db.Songs.Remove(song);
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+
+            // If delete succeeded, redirect song index with appropriate message 
+            string successMessage = $"The song '{song.Title}' by '{song.Artist}' was successfully deleted.";
+            return RedirectToAction(nameof(Index), new { Message = successMessage });
         }
 
         #region DownloadFile
