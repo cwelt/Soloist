@@ -1,4 +1,4 @@
-﻿@model SongEditViewModel
+﻿@model CW.Soloist.WebApplication.ViewModels.SongViewModel
 @using CW.Soloist.WebApplication.Controllers;
 
 @{
@@ -16,6 +16,9 @@
 {
     <!-- Update Section -->
     <div>
+        @* Song Id *@
+        @Html.HiddenFor(m => m.Id)
+
         <!-- Song Artist -->
         <div class="form-group">
             @Html.LabelFor(m => m.Artist, new { @class = "control-label", style = labelColor })
@@ -34,35 +37,9 @@
             </div>
         </div>
 
-        <!-- Melody Track Index -->
-        <div class="form-group">
-            @Html.LabelFor(m => m.MelodyTrackIndex, new { @class = "control-label", style = labelColor })
-            @Html.EnumDropDownListFor(m => m.MelodyTrackIndex, new { @class = "form-control" })
-            <div class="alert-danger">
-                @Html.ValidationMessageFor(m => m.MelodyTrackIndex)
-            </div>
-        </div>
-
-        <!-- MIDI File Upload -->
-        <div class="form-group">
-            @Html.LabelFor(expression: m => m.MidiFileHandler, htmlAttributes: new { @class = "control-label", style = labelColor })
-            @Html.TextBoxFor(m => m.MidiFileHandler, new { type = "file", @class = "form-control-file", accept = ".mid" })
-            <div class="alert-danger">
-                @Html.ValidationMessageFor(m => m.MidiFileHandler)
-            </div>
-        </div>
-
-        <!-- Chord Progression File Upload -->
-        <div class="form-group">
-            @Html.LabelFor(m => m.ChordsFileHandler, new { @class = "control-label", style = labelColor })
-            @Html.TextBoxFor(m => m.ChordsFileHandler, new { type = "file", @class = "form-control-file", accept = ".txt" })
-            <div class="alert-danger">
-                @Html.ValidationMessageFor(m => m.ChordsFileHandler)
-            </div>
-        </div>
-
         <!-- Is Song Public -->
         @{
+            @* Display edit option only if user is an admin *@
             string hidden = Model.IsAdminUser ? "" : "hidden";
         }
         <div class="checkbox" @Html.AttributeEncode(hidden)>
@@ -75,7 +52,7 @@
         </div>
     </div>
 
-    <!-- Display Only Property Desciprtion List  -->
+    <!-- Desciprtion List of Display Only Properties -->
     <div>
         <button type="button" class="collapsible" style="color:#b6ff00; background-color:transparent; border-color:yellow;">Display/Toggle Additional Properties</button>
         <div style="display:none">
@@ -84,17 +61,13 @@
                 <dt style="text-align: left; color:#b6ff00;">
                     @Html.DisplayNameFor(m => m.ChordsFileHandler)
                 </dt>
-                <dd>
-                    @Html.ActionLink(Model.ChordsFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.ChordProgressionFile })
-                </dd>
+                <dd>  @Html.ActionLink(Model.ChordsFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.ChordProgressionFile }) </dd>
 
                 <!-- Original MIDI File -->
                 <dt style="text-align: left; color:#b6ff00;">
-                    @Html.DisplayNameFor(m => m.MidiFileHandler)
+                    @Html.DisplayNameFor(m => m.MidiFileHandler) 
                 </dt>
-                <dd>
-                    @Html.ActionLink(Model.MidiFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiOriginalFile })
-                </dd>
+                <dd> @Html.ActionLink(Model.MidiFileName, nameof(SongsController.DownloadFile), new { id = Model.Id, songFileType = SongFileType.MidiOriginalFile })  </dd>
 
                 <!-- Playback MIDI File -->
                 <dt style="text-align: left; color:#b6ff00;">
@@ -123,6 +96,12 @@
                 <!-- Highest Pitch -->
                 <dt style="text-align: left; color:#b6ff00;"> Highest Pitch </dt>
                 <dd>  @Model.MidiData.HighestPitch.GetDisplayName() </dd>
+
+                <!-- Melody Track Index -->
+                <dt style="text-align: left; color:#b6ff00;">
+                    @Html.DisplayNameFor(m => m.MelodyTrackIndex)
+                </dt>
+                <dd>  @Model.MelodyTrackIndexDescription </dd>
             </dl>
         </div>
         <br /> <br />
@@ -163,7 +142,6 @@
             @Html.TextAreaFor(m => m.ChordProgression, 16, 80, new { @class = "green-border-focus", Style = "max-width: 40%; overflow=auto;", Spellcheck = "false" });
         </div>
     </div>
-
     <!-- Save Button -->
     <div class="form-group">
         <input type="submit" value="Save" class="btn btn-primary btn-lg btn-block center-block" />
@@ -192,22 +170,23 @@
 @section scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
-
-    <script>
-        let collapsibleElement = document.getElementsByClassName("collapsible");
-        let i;
-
-        for (i = 0; i < collapsibleElement.length; i++) {
-            collapsibleElement[i].addEventListener("click", function () {
-                this.classList.toggle("active");
-                var content = this.nextElementSibling;
-                if (content.style.display === "block") {
-                    content.style.display = "none";
-                }
-                else {
-                    content.style.display = "block";
-                }
-            });
-        }
-    </script>
 }
+
+<!-- handle collapisble elements -->
+<script>
+    let collapsibleElement = document.getElementsByClassName("collapsible");
+    let i;
+
+    for (i = 0; i < collapsibleElement.length; i++) {
+        collapsibleElement[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            }
+            else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>

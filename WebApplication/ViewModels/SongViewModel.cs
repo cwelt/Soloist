@@ -40,6 +40,7 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         public IMidiFile MidiData { get; set; }
 
+        [Required]
         [DisplayName("Melody Track Number")]
         public MelodyTrackIndex? MelodyTrackIndex { get; set; }
         public string MelodyTrackIndexDescription

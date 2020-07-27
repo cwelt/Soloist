@@ -1,8 +1,10 @@
 using Autofac;
 using Autofac.Integration.Mvc;
 using CW.Soloist.DataAccess;
+using CW.Soloist.DataAccess.DomainModels;
 using CW.Soloist.DataAccess.EntityFramework;
 using CW.Soloist.DataAccess.Repositories;
+using CW.Soloist.WebApplication.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

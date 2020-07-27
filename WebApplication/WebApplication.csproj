@@ -421,7 +421,6 @@
     <Compile Include="Validations\FileUploadValidation.cs" />
     <Compile Include="Validations\PitchRangeValidation.cs" />
     <Compile Include="ViewModels\CompositionParamsViewModel.cs" />
-    <Compile Include="ViewModels\SongEditViewModel.cs" />
     <Compile Include="ViewModels\SongViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

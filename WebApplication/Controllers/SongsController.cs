@@ -17,6 +17,8 @@ using CW.Soloist.WebApplication.Models;
 using Microsoft.AspNet.Identity;
 using System.Security.Principal;
 using CW.Soloist.CompositionService;
+using CW.Soloist.WebApplication.Validations;
+using CW.Soloist.CompositionService.MusicTheory;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
@@ -180,7 +182,7 @@ namespace CW.Soloist.WebApplication.Controllers
             return View(songViewModel);
         }
 
-        // GET: Songs/Edit/5
+        #region GET: Songs/Edit/5
         [Authorize]
         public async Task<ActionResult> Edit(int? id)
         {
@@ -204,19 +206,19 @@ namespace CW.Soloist.WebApplication.Controllers
             }
 
             // build a DTO view model of the song for the view to render 
-            SongEditViewModel editViewModel = new SongEditViewModel(song);
+            SongViewModel songViewModel = new SongViewModel(song);
 
             // add authorization data 
-            editViewModel.IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete);
-            editViewModel.IsAdminUser = User?.IsInRole(RoleName.Admin) ?? false;
+            songViewModel.IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete);
+            songViewModel.IsAdminUser = User?.IsInRole(RoleName.Admin) ?? false;
 
             // try reading the chords & midi files and adding their content to the view model 
             string chordsFilePath = await GetSongPath(song.Id, SongFileType.ChordProgressionFile);
             string midiFilePath = await GetSongPath(song.Id, SongFileType.MidiOriginalFile);
             try
             {
-                editViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
-                editViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
+                songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
+                songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
             }
             catch (Exception)
             {
@@ -224,14 +226,15 @@ namespace CW.Soloist.WebApplication.Controllers
             }
 
             // pass the view model to the view to render 
-            return View(editViewModel);
+            return View(songViewModel);
         }
+        #endregion
 
-        // POST: Songs/Edit/5
+        #region POST: Songs/Edit/5
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(SongEditViewModel updatedSong)
+        public async Task<ActionResult> Edit(Song updatedSong)
         {
             // validate song id 
             if (updatedSong.Id == 0)
@@ -250,25 +253,169 @@ namespace CW.Soloist.WebApplication.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
+            #region Validations on Upload Files - Canceled
+
+/*            // iniitialization for file validations 
+            IList<IBar> bars = null;
+            IMidiFile midiData = null;
+            SongFileType songFileType;
+            string errorMessage = null;
+            MelodyTrackIndex? melodyIndex = updatedSong.MelodyTrackIndex;
+            HttpPostedFileBase MidiFileHandler = null;
+            HttpPostedFileBase midiFileHandler = null;
+            HttpPostedFileBase chordFileHandler = MidiFileHandler; // song.ChordsFileHandler;
+
+            // chords file validations
+            if (chordFileHandler != null)
+            {
+                // init 
+                songFileType = SongFileType.ChordProgressionFile;
+
+                // file metadata 
+                if (!FileUploadValidation.IsFileMetadataValid(chordFileHandler, songFileType, out errorMessage))
+                    ModelState.AddModelError(nameof(SongViewModel.ChordsFileHandler), errorMessage);
+
+                // file content 
+                if (!FileUploadValidation.IsChordsFileValid(chordFileHandler, songFileType, out bars, out errorMessage))
+                    ModelState.AddModelError(nameof(SongViewModel.ChordsFileHandler), errorMessage);
+            }
+
+            // midi file validations
+            if (midiFileHandler != null)
+            {
+                // init 
+                songFileType = SongFileType.MidiOriginalFile;
+
+                // file metadata 
+                if (!FileUploadValidation.IsFileMetadataValid(midiFileHandler, songFileType, out errorMessage))
+                    ModelState.AddModelError(nameof(MidiFileHandler), errorMessage);
+
+                // file content 
+                if (!FileUploadValidation.IsMidiFileValid(midiFileHandler, out midiData, out errorMessage))
+                    ModelState.AddModelError(nameof(MidiFileHandler), errorMessage);
+            }
+
+            // validate melody track index against midi file if one of them has changed 
+            if ((midiFileHandler != null) || (melodyIndex != databaseSong.MelodyTrackIndex))
+            {
+                try
+                {   // lazy load midi data if it is absent 
+                    string originalMidiPath = await GetSongPath(updatedSong.Id, SongFileType.MidiOriginalFile);
+                    midiData = Composition.ReadMidiFile(originalMidiPath);
+
+                    // validate midi content 
+                    if (!Composition.IsMelodyTrackIndexValid((int?)melodyIndex, midiData, out errorMessage))
+                        ModelState.AddModelError(nameof(SongViewModel.MelodyTrackIndex), errorMessage);
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError(nameof(MidiFileHandler), errorMessage);
+                }
+            }
+
+            // validate midi file against chord file if one of them has changed 
+            if (chordFileHandler != null || midiFileHandler != null)
+            {
+                try
+                {
+                    // lazy load midi & chord data from persistance file server if necessary
+                    if (bars == null)
+                    {
+                        string persistedChordsPath = await GetSongPath(databaseSong.Id, SongFileType.ChordProgressionFile);
+                        bars = Composition.ReadChordsFromFile(persistedChordsPath);
+                    }
+
+                    if (midiData == null)
+                    {
+                        string persistedMidiPath = await GetSongPath(databaseSong.Id, SongFileType.MidiOriginalFile);
+                        midiData = Composition.ReadMidiFile(persistedMidiPath);
+                    }
+
+                    if (!Composition.AreBarsCompatible(bars, midiData, out errorMessage))
+                        ModelState.AddModelError(nameof(MidiFileHandler), errorMessage);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(nameof(MidiFileHandler), ex.Message);
+                }
+            }*/
+
+            #endregion
+
             if (ModelState.IsValid)
             {
                 // map updated data 
                 databaseSong.Artist = updatedSong.Artist;
                 databaseSong.Title = updatedSong.Title;
-                databaseSong.MelodyTrackIndex = updatedSong.MelodyTrackIndex;
+                databaseSong.IsPublic = updatedSong.IsPublic;
 
                 // update modified timestamp
                 databaseSong.Modified = DateTime.Now;
 
+                #region Update Files on FileServer - Canceled
+                /*
+                // update files on disk and file names on database record 
+                string directoryPath = await GetSongPath(databaseSong.Id);
+                string archivePath = directoryPath + @"Archive\";
+
+                try
+                {
+                    if (midiFileHandler != null)
+                    {
+                        Directory.CreateDirectory(archivePath);
+                        string originalMidiPath = await GetSongPath(databaseSong.Id, SongFileType.MidiOriginalFile);
+                        string originalPlaybackPath = await GetSongPath(databaseSong.Id, SongFileType.MidiPlaybackFile);
+                        System.IO.File.Move(originalMidiPath, archivePath);
+                        System.IO.File.Move(originalPlaybackPath, archivePath);
+                        string newMidiFileName = midiFileHandler.FileName;
+                        string newPath = directoryPath + newMidiFileName;
+                        databaseSong.MidiFileName = newMidiFileName;
+                        midiFileHandler.SaveAs(newPath);
+
+                        databaseSong.SetPlaybackName(newMidiFileName);
+                        string playbackNewPath = directoryPath + databaseSong.MidiPlaybackFileName;
+                        IMidiFile playbackFile = Composition.CreateMidiPlayback(midiFileHandler.InputStream, melodyIndex);
+                        playbackFile.SaveFile(outputPath: playbackNewPath, pathIncludesFileName: true);
+                    }
+
+                    if (chordFileHandler != null)
+                    {
+                        Directory.CreateDirectory(archivePath);
+                        string originalChordsPath = await GetSongPath(databaseSong.Id, SongFileType.ChordProgressionFile);
+                        System.IO.File.Move(originalChordsPath, archivePath);
+                        string newChordsFileName = chordFileHandler.FileName;
+                        string newChordsPath = directoryPath + newChordsFileName;
+                        databaseSong.ChordsFileName = newChordsFileName;
+                        chordFileHandler.SaveAs(newChordsPath);
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+
+                finally
+                {
+                    // dispose open resources 
+                    chordFileHandler?.InputStream?.Dispose();
+                    midiFileHandler?.InputStream?.Dispose();
+                }
+                */
+                #endregion
+
+                // commit change to database record
                 db.Entry(databaseSong).State = EntityState.Modified;
                 await db.SaveChangesAsync();
 
                 // If edit was successful, redirect to the updated song details page
-                string successMessage = $"The song '{databaseSong.Title}' is successfully updated!";
+                string successMessage = $"The song was successfully updated!";
                 return RedirectToAction(nameof(Details), new { Id = databaseSong.Id, message = successMessage });
             }
             return View(databaseSong);
         }
+        #endregion
 
         // GET: Songs/Delete/5
         [Authorize]
