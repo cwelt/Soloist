@@ -43,7 +43,7 @@ namespace CW.Soloist.CompositionService.Midi
         #region IMidiFile Interface Properties 
 
         public string FilePath { get; }
-
+        public Stream Stream { get; }
         public object Content => _midiContent;
         public string Title { get; }
         public IDuration KeySignature { get; }
@@ -78,6 +78,7 @@ namespace CW.Soloist.CompositionService.Midi
         /// <param name="fileStream"></param>
         internal DryWetMidiAdapter(Stream stream, string midiFileName = null, bool disposeStream = false)
         {
+            Stream = stream;
             stream.Position = 0;
             _midiContent = MidiFile.Read(stream);
             _tempoMap = _midiContent.GetTempoMap();

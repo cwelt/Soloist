@@ -1,6 +1,7 @@
 ﻿using CW.Soloist.CompositionService.MusicTheory;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,9 @@ namespace CW.Soloist.CompositionService.Midi
     {
         /// <summary> Absolute physical path of the MIDI file. </summary>
         string FilePath { get; }
+
+        /// <summary> Input source stream which is used to read the midi content from. </summary>
+        Stream Stream { get; }
 
         /// <summary> The actual content the MIDI file. </summary>
         object Content { get;  }

@@ -95,10 +95,15 @@ namespace CW.Soloist.WebApplication.Controllers
             {
                 songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
                 songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
+                
             }
             catch (Exception)
             {
-                throw;
+                
+            }
+            finally
+            {
+                songViewModel.MidiData?.Stream?.Dispose();
             }
 
             // if a message exists add it to view 
@@ -155,7 +160,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 await db.SaveChangesAsync();
 
                 // create on the file server a new directory for the new song 
-                string directoryPath = fileServerPath + $@"Songs\{song.Id}\";
+                string directoryPath = await GetSongPath(song.Id); 
                 Directory.CreateDirectory(directoryPath);
 
                 // save the midi file in the new directory 
@@ -174,6 +179,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 // dispose open resources 
                 songViewModel.ChordsFileHandler?.InputStream?.Dispose();
                 songViewModel.MidiFileHandler?.InputStream?.Dispose();
+                playbackFile?.Stream?.Dispose();
 
 
                 // TODO: if saving on file server failed, rollback DB changes 
@@ -225,7 +231,12 @@ namespace CW.Soloist.WebApplication.Controllers
             }
             catch (Exception)
             {
-                throw;
+                
+            }
+
+            finally
+            {
+                songViewModel.MidiData?.Stream?.Dispose();
             }
 
             // pass the view model to the view to render 
@@ -461,7 +472,12 @@ namespace CW.Soloist.WebApplication.Controllers
             }
             catch (Exception)
             {
-                throw;
+                
+            }
+
+            finally
+            {
+                songViewModel.MidiData?.Stream?.Dispose();
             }
 
             // pass the view model to the view to render 
@@ -480,6 +496,19 @@ namespace CW.Soloist.WebApplication.Controllers
             if (!IsUserAuthorized(song, AuthorizationActivity.Delete))
             {
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
+            // try removing the files from the file server 
+            string songDirectoryPath = await GetSongPath(song.Id);
+            try
+            {
+                Directory.Delete(songDirectoryPath, true);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = "An error occoured in attempt to remove song files: " + ex.Message;
+                ModelState.AddModelError(string.Empty, errorMessage);
+                return RedirectToAction(nameof(Delete), new { Id = id });
             }
 
             // remove record from database
