@@ -12,8 +12,8 @@ namespace CW.Soloist.WebApplication.Validations
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            CompositionParamsViewModel formData =
-                validationContext.ObjectInstance as CompositionParamsViewModel;
+            CompositionViewModel formData =
+                validationContext.ObjectInstance as CompositionViewModel;
 
             if (formData == null)
                 return ValidationResult.Success;

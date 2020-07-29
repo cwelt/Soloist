@@ -16,7 +16,7 @@ using CW.Soloist.WebApplication.Validations;
 
 namespace CW.Soloist.WebApplication.ViewModels
 {
-    public class CompositionParamsViewModel
+    public class CompositionViewModel
     {
         [Required]
         [DisplayName("Overall Note Duration Feel")]

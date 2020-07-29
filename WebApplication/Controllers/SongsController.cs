@@ -514,7 +514,11 @@ namespace CW.Soloist.WebApplication.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
-            // try removing the pfysical files from the file server 
+            // remove record from database
+            db.Songs.Remove(song);
+            await db.SaveChangesAsync();
+
+            // try removing the physical files from the file server 
             string songDirectoryPath = await GetSongPath(song.Id);
             try
             {
@@ -530,10 +534,6 @@ namespace CW.Soloist.WebApplication.Controllers
                 ModelState.AddModelError(string.Empty, errorMessage);
                 return RedirectToAction(nameof(Delete), new { Id = id });
             }
-
-            // remove record from database
-            db.Songs.Remove(song);
-            await db.SaveChangesAsync();
 
             // If delete succeeded, redirect song index with appropriate message 
             string successMessage = $"The song '{song.Title}' by '{song.Artist}' was successfully deleted.";
@@ -586,12 +586,14 @@ namespace CW.Soloist.WebApplication.Controllers
         /// Gets the path of the given song's resources on the file server. 
         /// </summary>
         /// <param name="songId"> The id of the requested song. </param>
+        /// <param name="db"> DbContext for getting song authorization data.
+        /// <param name="user"> User of current Http request session, is sucbh a user is logged in. 
         /// <param name="songFileType"> Optional parameter for specifing a specific 
         /// file resource of the song such as midi or chords file. If no specific file 
         /// is requested, set this parameter to null and the path to the song's directory 
         /// would be returned. </param>
         /// <returns> Full physcial path on the file server of the given song resources. </returns>
-        private async Task<string> GetSongPath(int songId, SongFileType? songFileType = null)
+        internal static async Task<string> GetSongPath(int songId, ApplicationDbContext db, IPrincipal user, SongFileType? songFileType = null)
         {
             // init 
             Song song;
@@ -601,7 +603,7 @@ namespace CW.Soloist.WebApplication.Controllers
             song = await db.Songs.FindAsync(songId);
 
             // check authorization for the retrieved song 
-            if (song == null || !IsUserAuthorized(song, AuthorizationActivity.Display))
+            if (song == null || !IsUserAuthorized(song, AuthorizationActivity.Display, user))
                 return null;
 
             // get the song's directory path on the file server 
@@ -628,6 +630,13 @@ namespace CW.Soloist.WebApplication.Controllers
 
             // return the requested path 
             return path;
+        }
+
+        /// <inheritdoc cref="GetSongPath(int, ApplicationDbContext, IPrincipal, SongFileType?)"/>
+        internal async Task<string> GetSongPath(int songId, SongFileType? songFileType = null)
+        {
+            // delegate work to the overloaded static version  
+            return await GetSongPath(songId, this.db, this.User, songFileType);
         }
         #endregion
 

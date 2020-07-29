@@ -51,7 +51,7 @@ namespace CW.Soloist.WebApplication.Controllers
                 ? await db.Songs.ToListAsync()
                 : await db.Songs.Where(s => s.IsPublic || s.UserId.Equals(userId)).ToListAsync();
 
-            CompositionParamsViewModel viewModel = new CompositionParamsViewModel
+            CompositionViewModel viewModel = new CompositionViewModel
             {
                 SongSelectList = new SelectList(songs.OrderBy(s => s.Artist).Select(s => new
                 {
@@ -72,11 +72,11 @@ namespace CW.Soloist.WebApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Compose(CompositionParamsViewModel model)
+        public async Task<ActionResult> Compose(CompositionViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                CompositionParamsViewModel viewModel = new CompositionParamsViewModel
+                CompositionViewModel viewModel = new CompositionViewModel
                 {
                     SongSelectList = new SelectList(db.Songs.OrderBy(s => s.Title), "Id", "Title"),
                     PitchSelectList = new SelectList(_pitchSelectList, "Pitch", "Description"),
@@ -86,10 +86,8 @@ namespace CW.Soloist.WebApplication.Controllers
 
             Song song = db.Songs.Where(s => s.Id == model.SongId)?.First();
 
-            var path = HomeController.GetFileServerPath();
-            path += $@"Songs\{song.Id}\";
-            var chordFilePath = path + song.ChordsFileName;
-            var midiFilePath = path + song.MidiFileName;
+            string chordFilePath = await SongsController.GetSongPath(song.Id, db, User, SongFileType.ChordProgressionFile);
+            string midiFilePath = await SongsController.GetSongPath(song.Id, db, User, SongFileType.MidiOriginalFile);
 
             Composition composition = new Composition(
                 chordProgressionFilePath: chordFilePath,

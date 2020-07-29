@@ -74,6 +74,7 @@ namespace CW.Soloist.WebApplication.Controllers
             return View();
         }
 
+        #region WriteErrorToLog
         /// <summary>
         /// Writes the given error message with to an error log on the server, alongside 
         /// other properties from given http context such as the logged-in user & http headers.
@@ -125,5 +126,6 @@ namespace CW.Soloist.WebApplication.Controllers
                 throw;
             }
         }
+        #endregion
     }
 }
