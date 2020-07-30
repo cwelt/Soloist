@@ -21,6 +21,20 @@ namespace CW.Soloist.DataAccess.DomainModels
         public IList<Song> Songs { get; set; }
     }
 
+
+    /// <summary>
+    /// Role name for managing authorizations & restricted customized access.
+    /// </summary>
+    public static class RoleName
+    {
+        /// <summary> Administrator role with maximum privileges. </summary>
+        public const string Admin = "Admin";
+
+        /// <summary> Regular user role with restricted privileges. </summary>
+        public const string ApplicationUser = "ApplicationUser";
+    }
+
+
     /// <summary>
     /// Enumeration that represents the various possible user activities 
     /// on the application resources that might require an authorization check, for 
