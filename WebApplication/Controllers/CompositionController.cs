@@ -60,7 +60,7 @@ namespace CW.Soloist.WebApplication.Controllers
                     Title = s.Artist + " - " + s.Title
                 }), "Id", "Title"),
                 MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
-                OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
+                OverallNoteDurationFeel = OverallNoteDurationFeel.Intense,
                 PitchSelectList = new SelectList(_pitchSelectList, "Pitch", "Description"),
                 MinPitch = NotePitch.C4,
                 MaxPitch = NotePitch.G6,
