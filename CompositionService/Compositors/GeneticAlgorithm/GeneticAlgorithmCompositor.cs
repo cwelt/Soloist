@@ -21,7 +21,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         private protected Dictionary<Action<MelodyCandidate, int?>, double> _barMutations;
         private protected Action<MelodyCandidate>[] _entireMelodyMutations;
         private protected const double MutationProbabilityStep = 0.025;
-        private protected const double MaxNumberOfIterations = 50;
+        private protected const double MaxNumberOfIterations = 500;
         private protected const double MinMutationProbability = 0.05;
 
         internal protected MelodyEvaluatorsWeights EvaluatorsWeights { get; private set; }
@@ -85,7 +85,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
                 // modify parts of individuals 
                 Mutate();
-                
+
                 // rate each individual 
                 EvaluateFitness();
 
@@ -99,14 +99,16 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                     terminateCondition = true;
                 }
 
-                Console.WriteLine($"Generation: {_currentGeneration}, " +
-                    $"Average: {_candidates.Select(c => c.FitnessGrade).Average() : 0.00}\t" +
-                    $"Best: {_candidates.Select(c => c.FitnessGrade).Max() : 0.00}\t" +
-                    $"Lowest: { _candidates.Select(c => c.FitnessGrade).Min() : 0.00}\n");
+                // Debugging statistics 
+                if (Environment.UserInteractive)
+                {
+                    Console.WriteLine($"Generation: {_currentGeneration}, " +
+                        $"Average: {_candidates.Select(c => c.FitnessGrade).Average(): 0.0000}\t" +
+                        $"Best: {_candidates.Select(c => c.FitnessGrade).Max(): 0.0000}\t" +
+                        $"Lowest: { _candidates.Select(c => c.FitnessGrade).Min(): 0.0000}\n");
+                }
             }
 
-
-            
 
             var composedMelodies = _candidates
                 .OrderByDescending(c => c.FitnessGrade)

@@ -637,7 +637,7 @@ namespace CW.Soloist.CompositionService.Compositors
             else // try to set second pitch to one of the scale nearst pitches
             {
                 firstPitch = existingNote.Pitch;
-                IChord chord = bar.GetOverlappingChordsForNote(bar.Notes.IndexOf(existingNote)).First();
+                IChord chord = bar.GetOverlappingChordsForNote(bar.Notes.IndexOf(existingNote)).FirstOrDefault();
                 NotePitch minPitch = (NotePitch)((byte)firstPitch - PitchInterval.MajorThird);
                 NotePitch maxPitch = (NotePitch)((byte)firstPitch + PitchInterval.MajorThird);
 

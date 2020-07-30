@@ -31,7 +31,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double densityBalanceGrade = EvaluateDensityBalance(candidate);
                 double accentedBeatsGrade = EvaluateAccentedBeats(candidate);
 
-                candidate.FitnessGrade = Math.Round(digits: 7, value:
+                candidate.FitnessGrade = (100 * Math.Round(digits: 7, value:
                     ((EvaluatorsWeights.ExtremeIntervals * extremeIntervalsGrade) +
                     (EvaluatorsWeights.SmoothMovement * adjacentPitchesGrade) +
                     (EvaluatorsWeights.PitchVariety * pitchVarietyGrade) +
@@ -39,9 +39,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                     (EvaluatorsWeights.ContourDirection * contourDirectionGrade) +
                     (EvaluatorsWeights.ContourStability * contourStabilityGrade) +
                     (EvaluatorsWeights.Syncopation * syncopationsGrade) +
-                    (EvaluatorsWeights.DensityBalance * densityBalanceGrade) + 
-                    (EvaluatorsWeights.AccentedBeats * accentedBeatsGrade)) 
-                    / EvaluatorsWeights.WeightSum);
+                    (EvaluatorsWeights.DensityBalance * densityBalanceGrade) +
+                    (EvaluatorsWeights.AccentedBeats * accentedBeatsGrade))
+                    / EvaluatorsWeights.WeightSum)) + MelodyEvaluatorsWeights.Factor;
             }
 
             // clean IsDirty flag from all candidates 
@@ -655,15 +655,17 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
     #region MelodyEvaluatorsWeights
     public class MelodyEvaluatorsWeights
     {
+        public const double Factor = 25;
+
         public double SmoothMovement { get; set; } = 20;
         public double ExtremeIntervals { get; set; } = 25;
         public double PitchVariety { get; set; } = 15;
         public double PitchRange { get; set; } = 15;
         public double ContourDirection { get; set; } = 5;
         public double ContourStability { get; set; } = 15;
-        public double Syncopation { get; set; } = 20; // 40
+        public double Syncopation { get; set; } = 20; 
         public double DensityBalance { get; set; } = 15;
-        public double AccentedBeats { get; set; } = 25; // 50 
+        public double AccentedBeats { get; set; } = 25; 
 
         private double _weightSum = 0;
         public double WeightSum
