@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,7 +32,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double accentedBeatsGrade = EvaluateAccentedBeats(candidate);
 
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
-                    (EvaluatorsWeights.ExtremeIntervals * extremeIntervalsGrade) +
+                    ((EvaluatorsWeights.ExtremeIntervals * extremeIntervalsGrade) +
                     (EvaluatorsWeights.SmoothMovement * adjacentPitchesGrade) +
                     (EvaluatorsWeights.PitchVariety * pitchVarietyGrade) +
                     (EvaluatorsWeights.PitchRange * pitchRangeGrade) +
@@ -39,7 +40,8 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                     (EvaluatorsWeights.ContourStability * contourStabilityGrade) +
                     (EvaluatorsWeights.Syncopation * syncopationsGrade) +
                     (EvaluatorsWeights.DensityBalance * densityBalanceGrade) + 
-                    (EvaluatorsWeights.AccentedBeats * accentedBeatsGrade));
+                    (EvaluatorsWeights.AccentedBeats * accentedBeatsGrade)) 
+                    / EvaluatorsWeights.WeightSum);
             }
 
             // clean IsDirty flag from all candidates 
@@ -662,6 +664,32 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         public double Syncopation { get; set; } = 20; // 40
         public double DensityBalance { get; set; } = 15;
         public double AccentedBeats { get; set; } = 25; // 50 
+
+        private double _weightSum = 0;
+        public double WeightSum
+        {
+            get
+            {
+                if (_weightSum != 0)
+                    return _weightSum;
+                else
+                {
+                    _weightSum =
+                        AccentedBeats +
+                        ContourStability +
+                        ContourDirection +
+                        DensityBalance +
+                        ExtremeIntervals +
+                        PitchRange +
+                        PitchVariety +
+                        SmoothMovement +
+                        Syncopation;
+                    return _weightSum;
+                }
+            }
+        }
+
+        
     }
     #endregion
 }

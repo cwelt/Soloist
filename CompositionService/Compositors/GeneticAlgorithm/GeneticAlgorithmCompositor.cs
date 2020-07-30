@@ -24,7 +24,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         private protected const double MaxNumberOfIterations = 50;
         private protected const double MinMutationProbability = 0.05;
 
-        internal protected MelodyEvaluatorsWeights EvaluatorsWeights { get; set; }
+        internal protected MelodyEvaluatorsWeights EvaluatorsWeights { get; private set; }
 
         #region Constructor 
         /// <summary>
