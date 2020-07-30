@@ -21,6 +21,9 @@ namespace CW.Soloist.WebApplication.Filters.ActionFilters
         // retrieve the actual physical path of the file server 
         private string fileServerPath = HomeController.GetFileServerPath();
 
+        // internal lock for prevent multithread parallel writes to the log file
+        private static object _logFileMutex = new object();
+
         /// <summary>
         /// Intervenes before the Http request executes and logs the 
         /// relevant data to disk.
@@ -63,10 +66,14 @@ namespace CW.Soloist.WebApplication.Filters.ActionFilters
             string logInternalPath = ConfigurationManager.AppSettings["requestLogInternalPath"];
             string logFullPath = fileServerPath + logInternalPath;
 
-            // save the request in the log file 
-            using (StreamWriter streamWriter = File.AppendText(logFullPath))
+            // lock the log file
+            lock (_logFileMutex)
             {
-                streamWriter.WriteLine(loggedAction + Environment.NewLine);
+                // save the request in the log file 
+                using (StreamWriter streamWriter = File.AppendText(logFullPath))
+                {
+                    streamWriter.WriteLine(loggedAction + Environment.NewLine);
+                }
             }
         }
     }
