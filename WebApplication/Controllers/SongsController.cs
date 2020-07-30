@@ -34,7 +34,10 @@ namespace CW.Soloist.WebApplication.Controllers
             // fetch songs from db according to user's privilages  
             var songs = User?.IsInRole(RoleName.Admin) ?? false
                 ? await db.Songs.ToListAsync()
-                : await db.Songs.Where(s => s.IsPublic || s.UserId.Equals(userId)).ToListAsync();
+                : await db.Songs.Where(s => s.IsPublic || s.UserId.Equals(userId))
+                    .OrderBy(s => s.Artist)
+                    .ThenBy(s => s.Title)
+                    .ToListAsync();
 
             // transfer db song list from to deticated DTO song list 
             List<SongViewModel> songsViewModel = new List<SongViewModel>(songs.Count);
