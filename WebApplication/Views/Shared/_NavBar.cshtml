@@ -17,6 +17,13 @@
                 <li>@Html.ActionLink("Documentation", "Documentation", "Home")</li>
                 <li>@Html.ActionLink("Source Code", "SourceCode", "Home")</li>
                 <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+
+                @{
+                    if (User.IsInRole(RoleName.Admin))
+                    {
+                        <li>@Html.ActionLink("Admin", "Index", "Admin", null, new { style = "text-decoration: underline; font-weight: bold; color: yellow;" })</li>
+                    }
+                }
             </ul>
             @Html.Partial("_LoginPartial")
         </div>

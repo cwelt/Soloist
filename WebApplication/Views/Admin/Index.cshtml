@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Manage Site";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="jumbotron">
+    <h1 style="color:gold; font-weight:bold">Site Administration</h1>
+    <p class="lead">
+        Manage the application from here with one of the following options.
+    </p>
+    <p>
+        <a href="@Url.Action("FileServer", "Admin")" class="btn btn-primary btn-lg" target = "_">File Server Application Data &raquo;</a>
+    </p>
+</div>
+
