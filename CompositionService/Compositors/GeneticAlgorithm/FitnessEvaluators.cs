@@ -9,7 +9,6 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 {
     internal partial class GeneticAlgorithmCompositor : Compositor
     {
-
         #region EvaluateFitness()
         /// <summary>
         /// Evaluates the candidate solution's fitness, i.e., grades (score).
@@ -30,17 +29,17 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                 double syncopationsGrade = EvaluateSyncopation(candidate);
                 double densityBalanceGrade = EvaluateDensityBalance(candidate);
                 double accentedBeatsGrade = EvaluateAccentedBeats(candidate);
+
                 candidate.FitnessGrade = Math.Round(digits: 7, value:
-                    (20 * extremeIntervalsGrade) +
-                    (25 * adjacentPitchesGrade) +
-                    (15 * pitchVarietyGrade) +
-                    (15 * pitchRangeGrade) +
-                    (5 * contourDirectionGrade) +
-                    (15 * contourStabilityGrade) +
-                    (20 * syncopationsGrade) +
-                    (15 * densityBalanceGrade) + 
-                    (25 * accentedBeatsGrade)
-                    );
+                    (EvaluatorsWeights.ExtremeIntervals * extremeIntervalsGrade) +
+                    (EvaluatorsWeights.SmoothMovement * adjacentPitchesGrade) +
+                    (EvaluatorsWeights.PitchVariety * pitchVarietyGrade) +
+                    (EvaluatorsWeights.PitchRange * pitchRangeGrade) +
+                    (EvaluatorsWeights.ContourDirection * contourDirectionGrade) +
+                    (EvaluatorsWeights.ContourStability * contourStabilityGrade) +
+                    (EvaluatorsWeights.Syncopation * syncopationsGrade) +
+                    (EvaluatorsWeights.DensityBalance * densityBalanceGrade) + 
+                    (EvaluatorsWeights.AccentedBeats * accentedBeatsGrade));
             }
 
             // clean IsDirty flag from all candidates 
@@ -650,4 +649,19 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         }
         #endregion
     }
+
+    #region MelodyEvaluatorsWeights
+    public class MelodyEvaluatorsWeights
+    {
+        public double SmoothMovement { get; set; } = 20;
+        public double ExtremeIntervals { get; set; } = 25;
+        public double PitchVariety { get; set; } = 15;
+        public double PitchRange { get; set; } = 15;
+        public double ContourDirection { get; set; } = 5;
+        public double ContourStability { get; set; } = 15;
+        public double Syncopation { get; set; } = 20; // 40
+        public double DensityBalance { get; set; } = 15;
+        public double AccentedBeats { get; set; } = 25; // 50 
+    }
+    #endregion
 }

@@ -76,9 +76,10 @@ namespace CW.Soloist.CompositionService.Compositors
             IList<IBar> melodyInitializationSeed = null,
             OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
             NotePitch minPitch = NotePitch.E2,
-            NotePitch maxPitch = NotePitch.E6)
+            NotePitch maxPitch = NotePitch.E6,
+            params object[] customParams)
         {
-            InitializeCompositionParams(chordProgression, melodyInitializationSeed, overallNoteDurationFeel, minPitch, maxPitch);
+            InitializeCompositionParams(chordProgression, melodyInitializationSeed, overallNoteDurationFeel, minPitch, maxPitch, customParams);
 
             return GenerateMelody();
         }
@@ -90,7 +91,8 @@ namespace CW.Soloist.CompositionService.Compositors
             IList<IBar> melodyInitializationSeed = null,
             OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium,
             NotePitch minPitch = NotePitch.E2,
-            NotePitch maxPitch = NotePitch.E6)
+            NotePitch maxPitch = NotePitch.E6,
+            params object[] additionalParams)
         {
             // initialize general parameters for the algorithm 
             ChordProgression = chordProgression;
@@ -127,7 +129,6 @@ namespace CW.Soloist.CompositionService.Compositors
             ShortestAllowedFraction = 1F / ShortestAllowedDurationDenominator;
             LongestAllowedFraction = 1F / LongestAllowedDurationDenominator;
         }
-
 
         #region NoteSequenceInitializer()
         /// <summary>

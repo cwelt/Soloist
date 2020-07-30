@@ -24,6 +24,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         private protected const double MaxNumberOfIterations = 50;
         private protected const double MinMutationProbability = 0.05;
 
+        internal protected MelodyEvaluatorsWeights EvaluatorsWeights { get; set; }
 
         #region Constructor 
         /// <summary>
@@ -42,19 +43,24 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             _entireMelodyMutations = new Action<MelodyCandidate>[] {
                 ReverseAllNotesMutation,
             };
-
-
         }
 
 
         #endregion
 
         #region InitializeCompositionParams()
-        private protected override void InitializeCompositionParams(IList<IBar> chordProgression, IList<IBar> melodyInitializationSeed = null, OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium, NotePitch minPitch = NotePitch.E2, NotePitch maxPitch = NotePitch.E6)
+        private protected override void InitializeCompositionParams(IList<IBar> chordProgression, IList<IBar> melodyInitializationSeed = null, OverallNoteDurationFeel overallNoteDurationFeel = OverallNoteDurationFeel.Medium, NotePitch minPitch = NotePitch.E2, NotePitch maxPitch = NotePitch.E6, params object[] additionalParams)
         {
+            // delegate the general initialization to base class 
             base.InitializeCompositionParams(chordProgression, melodyInitializationSeed, overallNoteDurationFeel, minPitch, maxPitch);
+
+            // initialize custom setting of the genetic algorithm 
             _currentGeneration = 0;
             _candidates = new List<MelodyCandidate>(120);
+
+            if (additionalParams.Length > 0 && additionalParams[0] is MelodyEvaluatorsWeights)
+                EvaluatorsWeights = additionalParams[0] as MelodyEvaluatorsWeights;
+            else EvaluatorsWeights = new MelodyEvaluatorsWeights();
         }
         #endregion
 

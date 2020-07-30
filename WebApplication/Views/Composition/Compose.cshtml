@@ -1,28 +1,42 @@
 ﻿@model CW.Soloist.WebApplication.ViewModels.CompositionViewModel
 
-<div class="panel panel-primary">
-    <div class="panel-heading text-center"><h2>Composition Form</h2></div>
+@{
+    ViewBag.Title = "Compose New Melody";
+    string labelColor = "color:yellow;";
+    string collapseStyle = "color:orange; background-color:transparent; border-color:orange;";
+}
+
+<div class="panel panel-success">
+    <!-- Header -->
+    <div class="panel-heading text-center" style="background-color:darkgoldenrod">
+        <h1><b>Generate a New Solo-Melody Improvisation</b></h1>
+    </div>
+
+    <!-- HTML Form -->
     <div class="panel-body">
         @using (Html.BeginForm("Compose", "Composition"))
         {
+            <!-- Song -->
             <div class="form-group">
-                @Html.LabelFor(m => m.SongId)
+                @Html.LabelFor(m => m.SongId, new { @class = "control-label", style = labelColor })
                 @Html.DropDownListFor(m => m.SongId, Model.SongSelectList, new { @class = "form-control" })
                 <div class="alert-danger">
                     @Html.ValidationMessageFor(m => m.SongId)
                 </div>
             </div>
 
+            <!-- Musical Instrument -->
             <div class="form-group">
-                @Html.LabelFor(m => m.MusicalInstrument)
+                @Html.LabelFor(m => m.MusicalInstrument, new { @class = "control-label", style = labelColor })
                 @Html.EnumDropDownListFor(m => m.MusicalInstrument, new { @class = "form-control" })
                 <div class="alert-danger">
                     @Html.ValidationMessageFor(m => m.MusicalInstrument)
                 </div>
             </div>
 
+            <!-- Overall Note Duration Density Feeling -->
             <div class="form-group">
-                @Html.LabelFor(m => m.OverallNoteDurationFeel)
+                @Html.LabelFor(m => m.OverallNoteDurationFeel, new { @class = "control-label", style = labelColor })
                 <div>
                     @Html.EnumDropDownListFor(m => m.OverallNoteDurationFeel, new { @class = "form-control" })
                     <div class="alert-danger">
@@ -31,40 +45,163 @@
                 </div>
             </div>
 
+            <!-- Pitch Range -->
             <div class="form-group">
-                @Html.LabelFor(m => m.MinPitch)
-                @Html.DropDownListFor(m => m.MinPitch, Model.PitchSelectList, new { @class = "form-control" })
-                <div class="alert-danger">
-                    @Html.ValidationMessageFor(m => m.MinPitch)
+                <!-- Minimum Pitch-->
+                <div style="display:inline-block;">
+                    @Html.LabelFor(m => m.MinPitch, new { @class = "control-label", style = labelColor })
+                    @Html.DropDownListFor(m => m.MinPitch, Model.PitchSelectList, new { @class = "form-control", style = "width:100px;" })
+                    <div class="alert-danger">
+                        @Html.ValidationMessageFor(m => m.MinPitch)
+                    </div>
                 </div>
 
-                @Html.LabelFor(m => m.MaxPitch)
-                @Html.DropDownListFor(m => m.MaxPitch, Model.PitchSelectList, new { @class = "form-control" })
-                <div class="alert-danger">
-                    @Html.ValidationMessageFor(m => m.MaxPitch)
+                <!-- Maximum Pitch-->
+                <div style="display:inline-block;">
+                    @Html.LabelFor(m => m.MaxPitch, new { style = "padding-left:50px; color:yellow;" })
+                    @Html.DropDownListFor(m => m.MaxPitch, Model.PitchSelectList, new { @class = "form-control", style = "width:100px; margin-left:50px;" })
+                    <div class="alert-danger">
+                        @Html.ValidationMessageFor(m => m.MaxPitch)
+                    </div>
                 </div>
             </div>
 
+            <!-- Melody Seed Checkbox -->
             <div class="checkbox">
-                <label>
+                <label class="control-label" style=@labelColor>
                     @Html.CheckBoxFor(m => m.useExistingMelodyAsSeed) Use Existing Melody As Seed?
+                    <br />(This option is relevant only if this song indeed contains a melody track)
                     <span class="alert-danger">
                         @Html.ValidationMessageFor(m => m.useExistingMelodyAsSeed)
                     </span>
                 </label>
             </div>
 
-            <div class="text-center">
-                <input class="btn btn-success" type="submit" value="Compose!" />
+
+            <!-- Melody Evaluators Proportional Weights -->
+            <div>
+                <button type="button" class="collapsible" style="@collapseStyle">Display/Toggle Melody Evaluators Weights</button>
+                <fieldset style="border: 2px groove; border-radius: 5px; padding:15px 15px; margin-top: 10px; position:relative; border-width:3px 4px; width:30%">
+                    <legend style="color:gold;"> Melody Fitness Function Evaluators Weights </legend>
+
+                    <!-- Smooth Movement -->
+                    <div>
+                        @Html.LabelFor(m => m.SmoothMovement, new { style = "padding-right:66px;" + labelColor})
+                        @Html.TextBoxFor(m => m.SmoothMovement, new { size = "3" })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.SmoothMovement)
+                        </div>
+                    </div>
+
+                    <!-- Extreme Interval -->
+                    <div>
+                        @Html.LabelFor(m => m.ExtremeIntervals, new { style = "padding-right:64px;" + labelColor })
+                        @Html.TextBoxFor(m => m.ExtremeIntervals, new { size = "3" })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.ExtremeIntervals)
+                        </div>
+                    </div>
+
+                    <!-- Pitch Variety -->
+                    <div>
+                        @Html.LabelFor(m => m.PitchVariety, new { style = "padding-right:124px;" + labelColor })
+                        @Html.TextBoxFor(m => m.PitchVariety, new { size = "3" })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.PitchVariety)
+                        </div>
+                    </div>
+
+                    <!-- Pitch Range -->
+                    <div>
+                        @Html.LabelFor(m => m.PitchRange, new { style = "padding-right:125px;" + labelColor })
+                        @Html.TextBoxFor(m => m.PitchRange, new { size = "3" })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.MaxPitch)
+                        </div>
+                    </div>
+
+                    <!-- Contour Direction -->
+                    <div>
+                        @Html.LabelFor(m => m.ContourDirection, new { style = "padding-right:68px;" + labelColor })
+                        @Html.TextBoxFor(m => m.ContourDirection, new { size = "3" })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.ContourDirection)
+                        </div>
+                    </div>
+
+                    <!-- Contour Stability -->
+                    <div>
+                        @Html.LabelFor(m => m.ContourStability, new { style = "padding-right:76px;" + labelColor })
+                        @Html.TextBoxFor(m => m.ContourStability, new { size = "3" })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.ContourStability)
+                        </div>
+                    </div>
+
+                    <!-- Syncopation -->
+                    <div>
+                        @Html.LabelFor(m => m.Syncopation, new { style = "padding-right:118px;" + labelColor })
+                        @Html.TextBoxFor(m => m.Syncopation, new { size = "3" })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.Syncopation)
+                        </div>
+                    </div>
+
+                    <!-- DensityBalance -->
+                    <div>
+                        @Html.LabelFor(m => m.DensityBalance, new { style = "padding-right:101px;" + labelColor })
+                        @Html.TextBoxFor(m => m.DensityBalance, new { size = "3" })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.DensityBalance)
+                        </div>
+                    </div>
+
+                    <!-- AccentedBeats -->
+                    <div>
+                        @Html.LabelFor(m => m.AccentedBeats, new { style = "padding-right:30px;" + labelColor})
+                        @Html.TextBoxFor(m => m.AccentedBeats, new { size = "3" })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.AccentedBeats)
+                        </div>
+                    </div>
+
+                </fieldset>
             </div>
 
+
+            <!-- Submit Form Button -->
+            <div class="text-center">
+                <input class="btn btn-warning btn-lg" type="submit" value="Compose!" />
+            </div>
+
+
             @* Generate hidden form with cookie for client to check against
-            when submitting the form in order to protect him from cross-
-            site request forgery (CSRF) attakcs. *@
+                when submitting the form in order to protect him from cross-
+                site request forgery (CSRF) attakcs. *@
             @Html.AntiForgeryToken()
         }
     </div>
 </div>
+
+<!-- js for handling collapisble elements -->
+<script>
+    let collapsibleElement = document.getElementsByClassName("collapsible");
+    let i;
+
+    for (i = 0; i < collapsibleElement.length; i++) {
+        collapsibleElement[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            }
+            else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>
+
 
 @* Enable Client Side Validations with JQuery of the Constraints Defined
     in the Data Annotation Attribiutes in the Model Class.  *@

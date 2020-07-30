@@ -420,7 +420,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Validations\FileUploadValidation.cs" />
     <Compile Include="Validations\PitchRangeValidation.cs" />
-    <Compile Include="ViewModels\CompositionParamsViewModel.cs" />
+    <Compile Include="ViewModels\CompositionViewModel.cs" />
     <Compile Include="ViewModels\SongViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

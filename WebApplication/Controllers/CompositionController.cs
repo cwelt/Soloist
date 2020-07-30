@@ -1,5 +1,6 @@
 ﻿using CW.Soloist.CompositionService;
 using CW.Soloist.CompositionService.Compositors;
+using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
@@ -94,6 +95,24 @@ namespace CW.Soloist.WebApplication.Controllers
                 midiFilePath: midiFilePath,
                 melodyTrackIndex: (byte?)song.MelodyTrackIndex);
 
+
+            // build evaluators weight 
+            MelodyEvaluatorsWeights weights = new MelodyEvaluatorsWeights
+            {
+                //AccentedBeats = 50,
+                //Syncopation = 40
+                AccentedBeats = model.AccentedBeats,
+                ContourDirection = model.ContourDirection,
+                ContourStability = model.ContourStability,
+                DensityBalance = model.DensityBalance,
+                ExtremeIntervals = model.ExtremeIntervals,
+                PitchRange = model.PitchRange,
+                PitchVariety = model.PitchVariety,
+                SmoothMovement = model.SmoothMovement,
+                Syncopation = model.Syncopation
+            };
+
+
             // Compose some melodies and fetch the first one 
             IMidiFile midiFile = composition.Compose(
                 strategy: CompositionStrategy.GeneticAlgorithmStrategy,
@@ -101,7 +120,8 @@ namespace CW.Soloist.WebApplication.Controllers
                 musicalInstrument: model.MusicalInstrument,
                 minPitch: model.MinPitch,
                 maxPitch: model.MaxPitch,
-                useExistingMelodyAsSeed: model.useExistingMelodyAsSeed)[0];
+                useExistingMelodyAsSeed: model.useExistingMelodyAsSeed,
+                customParams: weights)[0];
 
             _midiFile = midiFile;
 

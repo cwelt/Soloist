@@ -13,6 +13,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using CW.Soloist.WebApplication.Validations;
+using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 
 namespace CW.Soloist.WebApplication.ViewModels
 {
@@ -46,5 +47,42 @@ namespace CW.Soloist.WebApplication.ViewModels
         public int SongId { get; set; }
 
         public SelectList SongSelectList { get; set; }
+
+        [Range(0, 100)]
+        [DisplayName("Smooth Note Connectivity:")]
+        public double SmoothMovement { get; set; } = 20;
+
+        [Range(0, 100)]
+        [DisplayName("Mitigate Extreme Intervals:")]
+        public double ExtremeIntervals { get; set; } = 25;
+
+
+        [Range(0, 100)]
+        [DisplayName("Rich Pitch Variety:")]
+        public double PitchVariety { get; set; } = 15;
+
+        [Range(0, 100)]
+        [DisplayName("Wide Pitch Range:")]
+        public double PitchRange { get; set; } = 15;
+
+        [Range(0, 100)]
+        [DisplayName("Melody Contour Direction:")]
+        public double ContourDirection { get; set; } = 5;
+
+        [Range(0, 100)]
+        [DisplayName("Melody Contour Stability:")]
+        public double ContourStability { get; set; } = 15;
+
+        [Range(0, 100)]
+        [DisplayName("Syncopation Usage:")]
+        public double Syncopation { get; set; } = 20; // 40
+
+        [Range(0, 100)]
+        [DisplayName("Note Density Balance:")]
+        public double DensityBalance { get; set; } = 15;
+
+        [Range(0, 100)]
+        [DisplayName("Chord Notes On Accented Beats:")]
+        public double AccentedBeats { get; set; } = 25; // 50 
     }
 }

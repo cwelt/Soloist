@@ -6,6 +6,7 @@ using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.UtilEnums;
 using System.Linq;
+using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 
 namespace CW.Soloist.CompositionService
 {
@@ -175,7 +176,7 @@ namespace CW.Soloist.CompositionService
         /// <param name="compositionParams"> Data transfer object containing all the various 
         /// additional parameters for composition preferences and constriants.</param>
         /// <returns></returns>
-        public IMidiFile[] Compose(ICompositionParamsDTO compositionParams)
+        public IMidiFile[] Compose(ICompositionParamsDTO compositionParams, params object[] compositorParams)
         {
             return Compose(
                 strategy: compositionParams.CompositionStrategy,
@@ -184,7 +185,8 @@ namespace CW.Soloist.CompositionService
                 pitchRangeSource: compositionParams.PitchRangeSource,
                 minPitch: compositionParams.MinPitch,
                 maxPitch: compositionParams.MaxPitch,
-                useExistingMelodyAsSeed: compositionParams.UseExistingMelodyAsSeed);
+                useExistingMelodyAsSeed: compositionParams.UseExistingMelodyAsSeed,
+                customParams: compositorParams);
         }
         #endregion
 
@@ -201,6 +203,7 @@ namespace CW.Soloist.CompositionService
         /// <param name="minPitch"></param>
         /// <param name="maxPitch"></param>
         /// <param name="useExistingMelodyAsSeed"></param>
+        /// <param name="customParams"></param>
         /// <returns></returns>
         public IMidiFile[] Compose(
             CompositionStrategy strategy = CompositionStrategy.GeneticAlgorithmStrategy,
@@ -209,7 +212,8 @@ namespace CW.Soloist.CompositionService
             PitchRangeSource pitchRangeSource = PitchRangeSource.Custom,
             NotePitch minPitch = DefaultMinPitch,
             NotePitch maxPitch = DefaultMaxPitch,
-            bool useExistingMelodyAsSeed = true)
+            bool useExistingMelodyAsSeed = true, 
+            params object[] customParams)
         {
             // set compositor according to composition strategy
             _compositor = CompositorFactory.CreateCompositor(strategy);
@@ -256,7 +260,8 @@ namespace CW.Soloist.CompositionService
                 melodyInitializationSeed: _melodySeed,
                 overallNoteDurationFeel: overallNoteDurationFeel,
                 minPitch: minPitch,
-                maxPitch: maxPitch)
+                maxPitch: maxPitch,
+                customParams: customParams)
                 .ToArray();
 
             // Embed each new generated melody into a new separate midi file
