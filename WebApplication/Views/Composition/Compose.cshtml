@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Compose New Melody";
     string labelColor = "color:yellow;";
-    string collapseStyle = "color:orange; background-color:transparent; border-color:orange;";
+    string inputAlignStyle = "float: right;";
 }
 
 <div class="panel panel-success">
@@ -68,7 +68,7 @@
                             <!-- Maximum Pitch-->
                             <div style="display:inline-block;">
                                 @Html.LabelFor(m => m.MaxPitch, new { style = "padding-left:50px; color:yellow;" })
-                                @Html.DropDownListFor(m => m.MaxPitch, Model.PitchSelectList, new { @class = "form-control", style = "width:100px; margin-left:50px;" })
+                                @Html.DropDownListFor(m => m.MaxPitch, Model.PitchSelectList, new { @class = "form-control", style = "width:auto; margin-left:50px;" })
                                 <div class="alert-danger">
                                     @Html.ValidationMessageFor(m => m.MaxPitch)
                                 </div>
@@ -86,8 +86,8 @@
 
                         <!-- Smooth Movement -->
                         <div>
-                            @Html.LabelFor(m => m.SmoothMovement, new { style = "padding-right:66px;" + labelColor })
-                            @Html.TextBoxFor(m => m.SmoothMovement, new { size = "3" })
+                            @Html.LabelFor(m => m.SmoothMovement, new { style = labelColor })
+                            @Html.TextBoxFor(m => m.SmoothMovement, new { size = "3", style = @inputAlignStyle })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.SmoothMovement)
                             </div>
@@ -95,8 +95,8 @@
 
                         <!-- Extreme Interval -->
                         <div>
-                            @Html.LabelFor(m => m.ExtremeIntervals, new { style = "padding-right:64px;" + labelColor })
-                            @Html.TextBoxFor(m => m.ExtremeIntervals, new { size = "3" })
+                            @Html.LabelFor(m => m.ExtremeIntervals, new { style = labelColor })
+                            @Html.TextBoxFor(m => m.ExtremeIntervals, new { size = "3", style = @inputAlignStyle })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.ExtremeIntervals)
                             </div>
@@ -104,8 +104,8 @@
 
                         <!-- Pitch Variety -->
                         <div>
-                            @Html.LabelFor(m => m.PitchVariety, new { style = "padding-right:124px;" + labelColor })
-                            @Html.TextBoxFor(m => m.PitchVariety, new { size = "3" })
+                            @Html.LabelFor(m => m.PitchVariety, new { style = labelColor })
+                            @Html.TextBoxFor(m => m.PitchVariety, new { size = "3", style = @inputAlignStyle })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.PitchVariety)
                             </div>
@@ -113,8 +113,8 @@
 
                         <!-- Pitch Range -->
                         <div>
-                            @Html.LabelFor(m => m.PitchRange, new { style = "padding-right:125px;" + labelColor })
-                            @Html.TextBoxFor(m => m.PitchRange, new { size = "3" })
+                            @Html.LabelFor(m => m.PitchRange, new { style = labelColor })
+                            @Html.TextBoxFor(m => m.PitchRange, new { size = "3", style = @inputAlignStyle })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.MaxPitch)
                             </div>
@@ -122,8 +122,8 @@
 
                         <!-- Contour Direction -->
                         <div>
-                            @Html.LabelFor(m => m.ContourDirection, new { style = "padding-right:68px;" + labelColor })
-                            @Html.TextBoxFor(m => m.ContourDirection, new { size = "3" })
+                            @Html.LabelFor(m => m.ContourDirection, new { style = labelColor })
+                            @Html.TextBoxFor(m => m.ContourDirection, new { size = "3", style = @inputAlignStyle })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.ContourDirection)
                             </div>
@@ -131,8 +131,8 @@
 
                         <!-- Contour Stability -->
                         <div>
-                            @Html.LabelFor(m => m.ContourStability, new { style = "padding-right:76px;" + labelColor })
-                            @Html.TextBoxFor(m => m.ContourStability, new { size = "3" })
+                            @Html.LabelFor(m => m.ContourStability, new { style = labelColor })
+                            @Html.TextBoxFor(m => m.ContourStability, new { size = "3", style = @inputAlignStyle })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.ContourStability)
                             </div>
@@ -140,8 +140,8 @@
 
                         <!-- Syncopation -->
                         <div>
-                            @Html.LabelFor(m => m.Syncopation, new { style = "padding-right:118px;" + labelColor })
-                            @Html.TextBoxFor(m => m.Syncopation, new { size = "3" })
+                            @Html.LabelFor(m => m.Syncopation, new { style = labelColor })
+                            @Html.TextBoxFor(m => m.Syncopation, new { size = "3", style = @inputAlignStyle })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.Syncopation)
                             </div>
@@ -149,8 +149,8 @@
 
                         <!-- DensityBalance -->
                         <div>
-                            @Html.LabelFor(m => m.DensityBalance, new { style = "padding-right:101px;" + labelColor })
-                            @Html.TextBoxFor(m => m.DensityBalance, new { size = "3" })
+                            @Html.LabelFor(m => m.DensityBalance, new { style = labelColor })
+                            @Html.TextBoxFor(m => m.DensityBalance, new { size = "3", style = @inputAlignStyle })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.DensityBalance)
                             </div>
@@ -158,8 +158,8 @@
 
                         <!-- AccentedBeats -->
                         <div>
-                            @Html.LabelFor(m => m.AccentedBeats, new { style = "padding-right:30px;" + labelColor })
-                            @Html.TextBoxFor(m => m.AccentedBeats, new { size = "3" })
+                            @Html.LabelFor(m => m.AccentedBeats, new {style = labelColor })
+                            @Html.TextBoxFor(m => m.AccentedBeats, new { size = "3", style = @inputAlignStyle})
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.AccentedBeats)
                             </div>
@@ -171,7 +171,7 @@
             <hr />
 
             <!-- Melody Seed Checkbox -->
-            <div>
+            <div style="display: inline-block">
                 <div class="checkbox">
                     <label class="control-label" style=@labelColor>
                         @Html.CheckBoxFor(m => m.useExistingMelodyAsSeed) Use Existing Melody As Seed?
