@@ -54,13 +54,13 @@ namespace CW.Soloist.WebApplication.Controllers
 
             CompositionViewModel viewModel = new CompositionViewModel
             {
-                SongSelectList = new SelectList(songs.OrderBy(s => s.Artist).Select(s => new
+                SongSelectList = new SelectList(songs.Select(s => new
                 {
                     Id = s.Id,
                     Title = s.Artist + " - " + s.Title
-                }), "Id", "Title"),
+                }).OrderBy(s => s.Title), "Id", "Title"),
                 MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
-                OverallNoteDurationFeel = OverallNoteDurationFeel.Intense,
+                OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
                 PitchSelectList = new SelectList(_pitchSelectList, "Pitch", "Description"),
                 MinPitch = NotePitch.C4,
                 MaxPitch = NotePitch.G6,
