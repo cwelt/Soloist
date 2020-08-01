@@ -32,16 +32,14 @@ namespace CW.Soloist.WebApplication.Controllers
             string userId = User?.Identity?.GetUserId();
 
             // fetch songs from db according to user's privilages  
-            var songs = User?.IsInRole(RoleName.Admin) ?? false
+            List<Song> authorizedSongs = User?.IsInRole(RoleName.Admin) ?? false
                 ? await db.Songs.ToListAsync()
                 : await db.Songs.Where(s => s.IsPublic || s.UserId.Equals(userId))
-                    .OrderBy(s => s.Artist)
-                    .ThenBy(s => s.Title)
                     .ToListAsync();
 
             // transfer db song list from to deticated DTO song list 
-            List<SongViewModel> songsViewModel = new List<SongViewModel>(songs.Count);
-            foreach (Song song in songs)
+            List<SongViewModel> songsViewModel = new List<SongViewModel>(authorizedSongs.Count);
+            foreach (Song song in authorizedSongs)
             {
                 songsViewModel.Add(new SongViewModel(song)
                 {
@@ -49,6 +47,12 @@ namespace CW.Soloist.WebApplication.Controllers
                     IsUserAuthorizedToDelete = IsUserAuthorized(song, AuthorizationActivity.Delete),
                 });
             }
+
+            // sort the song list by artist & song name 
+            songsViewModel = songsViewModel
+                .OrderBy(s => s.Artist)
+                .ThenBy(s => s.Title)
+                .ToList();
 
             // if a message was passed for display, pass it to view 
             if (message != null) ViewBag.Message = message;
