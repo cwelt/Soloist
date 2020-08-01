@@ -390,7 +390,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// Evaluates fitness according to the melody's contour direction stability.
         /// <para> 
         /// Melodies which tend to have more directional flow consecutively, i.e., 
-        /// sequences of ascending and descending notes ine after the other,
+        /// sequences of ascending and descending notes one after the other,
         /// would generally score higher. 
         /// </para>
         /// <para>
@@ -527,7 +527,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// <summary>
         /// Evaluates fitness according to the note density balance across the melodie's bars. 
         /// <para> This fitness function objective is to assure the amount of notes in each bar 
-        /// are more or less balanced, and mitigate obscure sounding phrases of which  one bar
+        /// is more or less balanced, and mitigate obscure sounding phrases of which  one bar
         /// is very dense and another is very sparse, which in general leads to an un pleasant 
         /// drastic change in feel.  
         /// </para>
