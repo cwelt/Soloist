@@ -84,5 +84,11 @@ namespace CW.Soloist.WebApplication.ViewModels
         [Range(0, 100)]
         [DisplayName("Chord Notes On Accented Beats:")]
         public double AccentedBeats { get; set; } = 25; // 50 
+
+        /// <summary> Sums up all the proportional evaluators weights. </summary>
+        public double WeightSum => 
+                AccentedBeats + ContourDirection + ContourStability +
+                DensityBalance + ExtremeIntervals + PitchRange +
+                PitchVariety + SmoothMovement + Syncopation;
     }
 }

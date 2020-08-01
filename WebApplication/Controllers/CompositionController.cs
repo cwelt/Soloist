@@ -75,6 +75,18 @@ namespace CW.Soloist.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Compose(CompositionViewModel model)
         {
+            // validate that sum of weights is equal to 100
+            double weightSum = model.WeightSum;
+            if (weightSum != 100)
+            {
+                string errorMessage =
+                    $"The total weights of all fitness function " +
+                    $"evaluators must sum up to 100.\n" +
+                    $"The current sum is {weightSum}";
+                this.ModelState.AddModelError(nameof(model.AccentedBeats), errorMessage);
+            }
+            
+            // assure all validations are okay 
             if (!ModelState.IsValid)
             {
                 CompositionViewModel viewModel = new CompositionViewModel
@@ -85,22 +97,22 @@ namespace CW.Soloist.WebApplication.Controllers
                 return View("Compose", viewModel);
             }
 
+            // fetch song from datasource  
             Song song = db.Songs.Where(s => s.Id == model.SongId)?.First();
 
+            // get the chord and file paths on the file server
             string chordFilePath = await SongsController.GetSongPath(song.Id, db, User, SongFileType.ChordProgressionFile);
             string midiFilePath = await SongsController.GetSongPath(song.Id, db, User, SongFileType.MidiOriginalFile);
 
+            // create a compositon instance 
             Composition composition = new Composition(
                 chordProgressionFilePath: chordFilePath,
                 midiFilePath: midiFilePath,
                 melodyTrackIndex: (byte?)song.MelodyTrackIndex);
 
-
             // build evaluators weight 
             MelodyEvaluatorsWeights weights = new MelodyEvaluatorsWeights
             {
-                //AccentedBeats = 50,
-                //Syncopation = 40
                 AccentedBeats = model.AccentedBeats,
                 ContourDirection = model.ContourDirection,
                 ContourStability = model.ContourStability,
@@ -112,7 +124,6 @@ namespace CW.Soloist.WebApplication.Controllers
                 Syncopation = model.Syncopation
             };
 
-
             // Compose some melodies and fetch the first one 
             IMidiFile midiFile = composition.Compose(
                 strategy: CompositionStrategy.GeneticAlgorithmStrategy,
@@ -121,23 +132,21 @@ namespace CW.Soloist.WebApplication.Controllers
                 minPitch: model.MinPitch,
                 maxPitch: model.MaxPitch,
                 useExistingMelodyAsSeed: model.useExistingMelodyAsSeed,
-                customParams: weights)[0];
+                customParams: weights)
+                .FirstOrDefault();
 
+            // save the midifile output internally 
             _midiFile = midiFile;
-
             ViewBag.MidiFile = midiFile;
 
-
-            // save file and return it for client to download
+            // save file on the file server  
             string directoryPath = $@"{HomeController.GetFileServerPath()}Outputs\{song.Id}\";
-            //string directoryPath = AppDomain.CurrentDomain.BaseDirectory + "Outputs/";
-
             Directory.CreateDirectory(directoryPath);
             string filePath = _midiFile.SaveFile(directoryPath);
 
-            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            // return the file to the client client for downloading 
             string fileName = Path.GetFileName(filePath);
-
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
 

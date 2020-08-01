@@ -24,264 +24,270 @@
     <div class="panel-body">
         @using (Html.BeginForm("Compose", "Composition"))
         {
-            <div>
-                <!-- Basic Composition Parameter Settings -->
-                <div style="float:left">
-                    <fieldset style="border: 2px groove; border-radius: 5px; padding: 5px 15px; margin-top: 5px; position:relative; border-width:3px 4px; width:88%">
-                        <legend style="color:gold;">
-                            Song Selection and Basic Composition Settings
-                        </legend>
+        <div>
 
-                        <!-- Song -->
-                        <div>
-                            @{  string songToolTip = "Select a song for which the new melody would be composed for.";  }
-                            <div class="form-group" title="@songToolTip">
-                                @Html.LabelFor(m => m.SongId, new { @class = "control-label", style = labelColor })
-                                @Html.DropDownListFor(m => m.SongId, Model.SongSelectList, new { @class = "form-control", style = "width: 400px; max-width:90%;" })
-                                <div class="alert-danger">
-                                    @Html.ValidationMessageFor(m => m.SongId)
-                                </div>
+            <div class="alert-danger">
+                @Html.ValidationSummary(true)
+            </div>
+
+
+            <!-- Basic Composition Parameter Settings -->
+            <div style="float:left">
+                <fieldset style="border: 2px groove; border-radius: 5px; padding: 5px 15px; margin-top: 5px; position:relative; border-width:3px 4px; width:88%">
+                    <legend style="color:gold;">
+                        Song Selection and Basic Composition Settings
+                    </legend>
+
+                    <!-- Song -->
+                    <div>
+                        @{ string songToolTip = "Select a song for which the new melody would be composed for."; }
+                        <div class="form-group" title="@songToolTip">
+                            @Html.LabelFor(m => m.SongId, new { @class = "control-label", style = labelColor })
+                            @Html.DropDownListFor(m => m.SongId, Model.SongSelectList, new { @class = "form-control", style = "width: 400px; max-width:90%;" })
+                            <div class="alert-danger">
+                                @Html.ValidationMessageFor(m => m.SongId)
                             </div>
                         </div>
+                    </div>
 
 
-                        <!-- Musical Instrument -->
-                        <div>
-                            @{
-                                string instrumentToolTip =
-                                    "The musical instrument that would be used to play the new melody track\n" +
-                                    "in the MIDI file that would be created when the composition is done.";
-                            }
-                            <div class="form-group" title="@instrumentToolTip">
-                                @Html.LabelFor(m => m.MusicalInstrument, new { @class = "control-label", style = labelColor })
-                                @Html.EnumDropDownListFor(m => m.MusicalInstrument, new { @class = "form-control", style = "width: 400px; max-width:90%;" })
-                                <div class="alert-danger">
-                                    @Html.ValidationMessageFor(m => m.MusicalInstrument)
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Overall Note Duration Density Feeling -->
-                        <div>
-                            @{
-                                string densityFeelingToolTip =
-                                    "Overall Note Duration Density Feeling:\n" +
-                                    "Slow ~ quater-notes feeling\n" +
-                                    "Medium ~ 8th-notes feeling\n" +
-                                    "Fast ~ 16th-notes feeling\n" +
-                                    "Extreme ~ 32nd-notes feeling\n";
-                            }
-                            <div class="form-group" title="@densityFeelingToolTip">
-                                @Html.LabelFor(m => m.OverallNoteDurationFeel, new { @class = "control-label", style = labelColor })
-                                <div>
-                                    @Html.EnumDropDownListFor(m => m.OverallNoteDurationFeel, new { @class = "form-control" })
-                                    <div class="alert-danger">
-                                        @Html.ValidationMessageFor(m => m.OverallNoteDurationFeel)
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pitch Range -->
-                        <div class="form-group" style="display:inline-block;"></div>
-                        <div class="form-group">
-                            <!-- Minimum Pitch-->
-                            @{
-                                string minimumPitchToolTip =
-                                    "Lowest bound for a note pitch in the composed melody.\n" +
-                                    "For example C4:60 represents the C note on the 4th octave,\n" +
-                                    "which is encoded in MIDI as 60.";
-                            }
-                            <div style="display:inline-block;" title="@minimumPitchToolTip">
-
-                                @Html.LabelFor(m => m.MinPitch, new { @class = "control-label", style = labelColor })
-                                @Html.DropDownListFor(m => m.MinPitch, Model.PitchSelectList, new { @class = "form-control", style = "width:auto" })
-                                <div class="alert-danger">
-                                    @Html.ValidationMessageFor(m => m.MinPitch)
-                                </div>
-                            </div>
-
-                            <!-- Maximum Pitch-->
-                            @{
-                                string maximumPitchToolTip =
-                                    "Highest bound for a note pitch in the composed melody.\n" +
-                                    "For example G6:91 represents the G note on the 6th octave,\n" +
-                                    "which is encoded in MIDI as 91.";
-                            }
-                            <div style="display:inline-block;" title="@maximumPitchToolTip">
-                                @Html.LabelFor(m => m.MaxPitch, new { style = "padding-left:50px; color:yellow;" })
-                                @Html.DropDownListFor(m => m.MaxPitch, Model.PitchSelectList, new { @class = "form-control", style = "width:auto; margin-left:50px;" })
-                                <div class="alert-danger">
-                                    @Html.ValidationMessageFor(m => m.MaxPitch)
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                </div>
-
-                <!-- Melody Evaluators Proportional Weights -->
-                <div>
-                    <fieldset style="border: 2px groove; border-radius: 5px; padding:5px 15px; margin-top: 5px; position:relative; border-width:3px 4px; width:35%">
-                        @{ 
-                            string evaluatonLegenedToolTip =
-                                "Define the proportional weights of the fitness functions\n" +
-                                "which would be used to evaluate the quality of the composed melody.\n" +
-                                "Giving a higher weight to a certain evaluator function would generally result\n" +
-                                "in a melody which follows this evaluator's requirements.";
+                    <!-- Musical Instrument -->
+                    <div>
+                        @{
+                            string instrumentToolTip =
+                                "The musical instrument that would be used to play the new melody track\n" +
+                                "in the MIDI file that would be created when the composition is done.";
                         }
-                        <legend style="color:gold;" title="@evaluatonLegenedToolTip">
-                            Melody Fitness Function Evaluators Proportional Weights
-                        </legend>
-
-                        <!-- Extreme Interval -->
-                        <div>
-                            @{
-                                string extremeIntervalsToolTip =
-                                    "Evaluation which \"punishes\" melodies with large intervals between " +
-                                    "consecutive notes.\n" +
-                                    "The evaluation gives preference to melodies with small intervall movements.";
-                            }
-                            @Html.LabelFor(m => m.ExtremeIntervals, new { style = labelColor, title = @extremeIntervalsToolTip })
-                            @percentageLabel
-                            @Html.TextBoxFor(m => m.ExtremeIntervals, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="form-group" title="@instrumentToolTip">
+                            @Html.LabelFor(m => m.MusicalInstrument, new { @class = "control-label", style = labelColor })
+                            @Html.EnumDropDownListFor(m => m.MusicalInstrument, new { @class = "form-control", style = "width: 400px; max-width:90%;" })
                             <div class="alert-danger">
-                                @Html.ValidationMessageFor(m => m.ExtremeIntervals)
+                                @Html.ValidationMessageFor(m => m.MusicalInstrument)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overall Note Duration Density Feeling -->
+                    <div>
+                        @{
+                            string densityFeelingToolTip =
+                                "Overall Note Duration Density Feeling:\n" +
+                                "Slow ~ quater-notes feeling\n" +
+                                "Medium ~ 8th-notes feeling\n" +
+                                "Fast ~ 16th-notes feeling\n" +
+                                "Extreme ~ 32nd-notes feeling\n";
+                        }
+                        <div class="form-group" title="@densityFeelingToolTip">
+                            @Html.LabelFor(m => m.OverallNoteDurationFeel, new { @class = "control-label", style = labelColor })
+                            <div>
+                                @Html.EnumDropDownListFor(m => m.OverallNoteDurationFeel, new { @class = "form-control" })
+                                <div class="alert-danger">
+                                    @Html.ValidationMessageFor(m => m.OverallNoteDurationFeel)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pitch Range -->
+                    <div class="form-group" style="display:inline-block;"></div>
+                    <div class="form-group">
+                        <!-- Minimum Pitch-->
+                        @{
+                            string minimumPitchToolTip =
+                                "Lowest bound for a note pitch in the composed melody.\n" +
+                                "For example C4:60 represents the C note on the 4th octave,\n" +
+                                "which is encoded in MIDI as 60.";
+                        }
+                        <div style="display:inline-block;" title="@minimumPitchToolTip">
+
+                            @Html.LabelFor(m => m.MinPitch, new { @class = "control-label", style = labelColor })
+                            @Html.DropDownListFor(m => m.MinPitch, Model.PitchSelectList, new { @class = "form-control", style = "width:auto" })
+                            <div class="alert-danger">
+                                @Html.ValidationMessageFor(m => m.MinPitch)
                             </div>
                         </div>
 
-                        <!-- Smooth Movement -->
-                        <div>
-                            @{
-                                string smoothMovementToolTip =
-                                    "Evaluates how \"smooth\" the movement is from note to another,\n" +
-                                    "Considering the type of interval (perfect, consonants, dissonant),\n " +
-                                    "and the diatonic degree of the new note.";
-                            }
-                            @Html.LabelFor(m => m.SmoothMovement, new { style = labelColor, title = smoothMovementToolTip })
-                            @percentageLabel
-                            @Html.TextBoxFor(m => m.SmoothMovement, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
-                            <div class="alert-danger">
-                                @Html.ValidationMessageFor(m => m.SmoothMovement)
-                            </div>
-                        </div>
-
-                        <!-- Pitch Variety -->
-                        <div>
-                            @{
-                                string pitchVarietyToolTip =
-                                    "Evaluates melodies in a direct relation to the variety of distinct pitches they use:\n" +
-                                    "The more distinct pitches the melody will have, it would be considered better.";
-                            }
-                            @Html.LabelFor(m => m.PitchVariety, new { style = labelColor, title = @pitchVarietyToolTip })
-                            @percentageLabel
-                            @Html.TextBoxFor(m => m.PitchVariety, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
-                            <div class="alert-danger">
-                                @Html.ValidationMessageFor(m => m.PitchVariety)
-                            </div>
-                        </div>
-
-                        <!-- Pitch Range -->
-                        <div>
-                            @{
-                                string pitchRangeToolTip =
-                                    "Evaluates fitness according to the melody's pitch range.\n" +
-                                    "This fitness is calculated as the ration between your requested pitch range,\n" +
-                                    "and the actual pitch range in the composed melody.";
-                            }
-                            @Html.LabelFor(m => m.PitchRange, new { style = labelColor, title = @pitchRangeToolTip })
-                            @percentageLabel
-                            @Html.TextBoxFor(m => m.PitchRange, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <!-- Maximum Pitch-->
+                        @{
+                            string maximumPitchToolTip =
+                                "Highest bound for a note pitch in the composed melody.\n" +
+                                "For example G6:91 represents the G note on the 6th octave,\n" +
+                                "which is encoded in MIDI as 91.";
+                        }
+                        <div style="display:inline-block;" title="@maximumPitchToolTip">
+                            @Html.LabelFor(m => m.MaxPitch, new { style = "padding-left:50px; color:yellow;" })
+                            @Html.DropDownListFor(m => m.MaxPitch, Model.PitchSelectList, new { @class = "form-control", style = "width:auto; margin-left:50px;" })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.MaxPitch)
                             </div>
                         </div>
-
-                        <!-- Contour Direction -->
-                        <div>
-                            @{
-                                string contourDirectionToolTip =
-                                    "Evaluates melodies according to their contour direction.\n" +
-                                    "Melodies which would tend to have more directional flow, i.e., \n" +
-                                    "sequences of ascending and descending notes, would generally score higher.";
-                            }
-                            @Html.LabelFor(m => m.ContourDirection, new { style = labelColor, title = contourDirectionToolTip })
-                            @percentageLabel
-                            @Html.TextBoxFor(m => m.ContourDirection, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
-                            <div class="alert-danger">
-                                @Html.ValidationMessageFor(m => m.ContourDirection)
-                            </div>
-                        </div>
-
-                        <!-- Contour Stability -->
-                        <div>
-                            @{
-                                string contourStabilityToolTip =
-                                    "Evaluates melodies according to their contour direction stability.\n" +
-                                    "Melodies which would tend to have more directional flow consecutively, i.e., \n" +
-                                    "sequences of ascending and descending notes one after the other would generally score higher.\n" +
-                                    "This evaluation differs from contour direction by assuring the ups and downs\n" +
-                                    "are not randomly distributed, but rather stable consistent.";
-                            }
-                            @Html.LabelFor(m => m.ContourStability, new { style = labelColor, title = contourStabilityToolTip })
-                            @percentageLabel
-                            @Html.TextBoxFor(m => m.ContourStability, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
-                            <div class="alert-danger">
-                                @Html.ValidationMessageFor(m => m.ContourStability)
-                            </div>
-                        </div>
-
-                        <!-- Syncopation -->
-                        <div>
-                            @{
-                                string syncopationToolTip =
-                                    "Evaluates melodies according to the amount of syncopations they include:\n" +
-                                    "More syncopations would result in a better score for this evaluation.";
-                            }
-                            @Html.LabelFor(m => m.Syncopation, new { style = labelColor, title = syncopationToolTip })
-                            @percentageLabel
-                            @Html.TextBoxFor(m => m.Syncopation, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
-                            <div class="alert-danger">
-                                @Html.ValidationMessageFor(m => m.Syncopation)
-                            </div>
-                        </div>
-
-                        <!-- DensityBalance -->
-                        <div>
-                            @{
-                                string densityBalanceToolTip =
-                                    "Evaluates melodies according to the note density balance across their bars:\n" +
-                                    "This evaluation's objective is to assure the amount of notes in each bar is\n" +
-                                    "more or less balanced, and mitigate obscure sounding phrases of which one bar\n" +
-                                    "is very dense and another is very sparse, which in general leads to an un pleasant\n" +
-                                    "drastic change in feel.";
-                            }
-                            @Html.LabelFor(m => m.DensityBalance, new { style = labelColor, title = @densityBalanceToolTip })
-                            @percentageLabel
-                            @Html.TextBoxFor(m => m.DensityBalance, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
-                            <div class="alert-danger">
-                                @Html.ValidationMessageFor(m => m.DensityBalance)
-                            </div>
-                        </div>
-
-                        <!-- AccentedBeats -->
-                        <div>
-                            @{
-                                string accentedBeatsToolTip =
-                                    "The evaluation awards melodies which carry good transitions to strong accented beats,\n" +
-                                    "such as transitions which create a tension and solve it with an accented half-tone\n" +
-                                    "towards the first beat of the next bar.";
-                            }
-                            @Html.LabelFor(m => m.AccentedBeats, new { style = labelColor, title = @accentedBeatsToolTip })
-                            @percentageLabel
-                            @Html.TextBoxFor(m => m.AccentedBeats, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
-                            <div class="alert-danger">
-                                @Html.ValidationMessageFor(m => m.AccentedBeats)
-                            </div>
-                        </div>
-
-                    </fieldset>
-                </div>
+                    </div>
+                </fieldset>
             </div>
+
+            <!-- Melody Evaluators Proportional Weights -->
+            <div>
+                <fieldset style="border: 2px groove; border-radius: 5px; padding:5px 15px; margin-top: 5px; position:relative; border-width:3px 4px; width:35%">
+                    @{
+                        string evaluatonLegenedToolTip =
+                            "Define the proportional weights of the fitness functions\n" +
+                            "which would be used to evaluate the quality of the composed melody.\n" +
+                            "Giving a higher weight to a certain evaluator function would generally result\n" +
+                            "in a melody which follows this evaluator's requirements.";
+                    }
+                    <legend style="color:gold;" title="@evaluatonLegenedToolTip">
+                        Melody Fitness Function Evaluators Proportional Weights
+                    </legend>
+
+                    <!-- Extreme Interval -->
+                    <div>
+                        @{
+                            string extremeIntervalsToolTip =
+                                "Evaluation which \"punishes\" melodies with large intervals between " +
+                                "consecutive notes.\n" +
+                                "The evaluation gives preference to melodies with small intervall movements.";
+                        }
+                        @Html.LabelFor(m => m.ExtremeIntervals, new { style = labelColor, title = @extremeIntervalsToolTip })
+                        @percentageLabel
+                        @Html.TextBoxFor(m => m.ExtremeIntervals, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.ExtremeIntervals)
+                        </div>
+                    </div>
+
+                    <!-- Smooth Movement -->
+                    <div>
+                        @{
+                            string smoothMovementToolTip =
+                                "Evaluates how \"smooth\" the movement is from note to another,\n" +
+                                "Considering the type of interval (perfect, consonants, dissonant),\n " +
+                                "and the diatonic degree of the new note.";
+                        }
+                        @Html.LabelFor(m => m.SmoothMovement, new { style = labelColor, title = smoothMovementToolTip })
+                        @percentageLabel
+                        @Html.TextBoxFor(m => m.SmoothMovement, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.SmoothMovement)
+                        </div>
+                    </div>
+
+                    <!-- Pitch Variety -->
+                    <div>
+                        @{
+                            string pitchVarietyToolTip =
+                                "Evaluates melodies in a direct relation to the variety of distinct pitches they use:\n" +
+                                "The more distinct pitches the melody will have, it would be considered better.";
+                        }
+                        @Html.LabelFor(m => m.PitchVariety, new { style = labelColor, title = @pitchVarietyToolTip })
+                        @percentageLabel
+                        @Html.TextBoxFor(m => m.PitchVariety, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.PitchVariety)
+                        </div>
+                    </div>
+
+                    <!-- Pitch Range -->
+                    <div>
+                        @{
+                            string pitchRangeToolTip =
+                                "Evaluates fitness according to the melody's pitch range.\n" +
+                                "This fitness is calculated as the ration between your requested pitch range,\n" +
+                                "and the actual pitch range in the composed melody.";
+                        }
+                        @Html.LabelFor(m => m.PitchRange, new { style = labelColor, title = @pitchRangeToolTip })
+                        @percentageLabel
+                        @Html.TextBoxFor(m => m.PitchRange, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.MaxPitch)
+                        </div>
+                    </div>
+
+                    <!-- Contour Direction -->
+                    <div>
+                        @{
+                            string contourDirectionToolTip =
+                                "Evaluates melodies according to their contour direction.\n" +
+                                "Melodies which would tend to have more directional flow, i.e., \n" +
+                                "sequences of ascending and descending notes, would generally score higher.";
+                        }
+                        @Html.LabelFor(m => m.ContourDirection, new { style = labelColor, title = contourDirectionToolTip })
+                        @percentageLabel
+                        @Html.TextBoxFor(m => m.ContourDirection, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.ContourDirection)
+                        </div>
+                    </div>
+
+                    <!-- Contour Stability -->
+                    <div>
+                        @{
+                            string contourStabilityToolTip =
+                                "Evaluates melodies according to their contour direction stability.\n" +
+                                "Melodies which would tend to have more directional flow consecutively, i.e., \n" +
+                                "sequences of ascending and descending notes one after the other would generally score higher.\n" +
+                                "This evaluation differs from contour direction by assuring the ups and downs\n" +
+                                "are not randomly distributed, but rather stable consistent.";
+                        }
+                        @Html.LabelFor(m => m.ContourStability, new { style = labelColor, title = contourStabilityToolTip })
+                        @percentageLabel
+                        @Html.TextBoxFor(m => m.ContourStability, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.ContourStability)
+                        </div>
+                    </div>
+
+                    <!-- Syncopation -->
+                    <div>
+                        @{
+                            string syncopationToolTip =
+                                "Evaluates melodies according to the amount of syncopations they include:\n" +
+                                "More syncopations would result in a better score for this evaluation.";
+                        }
+                        @Html.LabelFor(m => m.Syncopation, new { style = labelColor, title = syncopationToolTip })
+                        @percentageLabel
+                        @Html.TextBoxFor(m => m.Syncopation, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.Syncopation)
+                        </div>
+                    </div>
+
+                    <!-- DensityBalance -->
+                    <div>
+                        @{
+                            string densityBalanceToolTip =
+                                "Evaluates melodies according to the note density balance across their bars:\n" +
+                                "This evaluation's objective is to assure the amount of notes in each bar is\n" +
+                                "more or less balanced, and mitigate obscure sounding phrases of which one bar\n" +
+                                "is very dense and another is very sparse, which in general leads to an un pleasant\n" +
+                                "drastic change in feel.";
+                        }
+                        @Html.LabelFor(m => m.DensityBalance, new { style = labelColor, title = @densityBalanceToolTip })
+                        @percentageLabel
+                        @Html.TextBoxFor(m => m.DensityBalance, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.DensityBalance)
+                        </div>
+                    </div>
+
+                    <!-- AccentedBeats -->
+                    <div>
+                        @{
+                            string accentedBeatsToolTip =
+                                "The evaluation awards melodies which carry good transitions to strong accented beats,\n" +
+                                "such as transitions which create a tension and solve it with an accented half-tone\n" +
+                                "towards the first beat of the next bar.";
+                        }
+                        @Html.LabelFor(m => m.AccentedBeats, new { style = labelColor, title = @accentedBeatsToolTip })
+                        @percentageLabel
+                        @Html.TextBoxFor(m => m.AccentedBeats, new { size = "2", style = @inputAlignStyle, title = @evaluatorInputToolTip })
+                        <div class="alert-danger">
+                            @Html.ValidationMessageFor(m => m.AccentedBeats)
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+        </div>
             <hr />
 
             <!-- Melody Seed Checkbox -->

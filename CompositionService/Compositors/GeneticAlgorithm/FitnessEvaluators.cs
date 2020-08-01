@@ -659,15 +659,15 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
     {
         public const double Factor = 25;
 
-        public double SmoothMovement { get; set; } = 20;
-        public double ExtremeIntervals { get; set; } = 25;
-        public double PitchVariety { get; set; } = 15;
-        public double PitchRange { get; set; } = 15;
+        public double SmoothMovement { get; set; } = 15;
+        public double ExtremeIntervals { get; set; } = 15;
+        public double PitchVariety { get; set; } = 10;
+        public double PitchRange { get; set; } = 5;
         public double ContourDirection { get; set; } = 5;
-        public double ContourStability { get; set; } = 15;
-        public double Syncopation { get; set; } = 20; 
+        public double ContourStability { get; set; } = 10;
+        public double Syncopation { get; set; } = 10; 
         public double DensityBalance { get; set; } = 15;
-        public double AccentedBeats { get; set; } = 25; 
+        public double AccentedBeats { get; set; } = 15; 
 
         private double _weightSum = 0;
         public double WeightSum
