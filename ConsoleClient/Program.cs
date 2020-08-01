@@ -58,8 +58,8 @@ namespace ConsoleClient
                 overallNoteDurationFeel: OverallNoteDurationFeel.Intense,
                 pitchRangeSource: PitchRangeSource.Custom,
                 minPitch: NotePitch.C3,
-                maxPitch: NotePitch.A5,
-                useExistingMelodyAsSeed: true,
+                maxPitch: NotePitch.G6,
+                useExistingMelodyAsSeed: false,
                 customParams: evaluatorsWeights);
 
             var bestCompositions = newMidiFiles.Take(5).ToArray();

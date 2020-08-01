@@ -284,7 +284,7 @@ namespace CW.Soloist.CompositionService.Compositors
 
             /* Randomly determine if to reserve the entire time span for the default  
              * duration's lengths or just half of it . */ 
-            randomRatio = random.NextDouble() < 0.3 ? 2 : 1;
+            randomRatio = random.NextDouble() < 0.275 ? 2 : 1;
             
             // calcuate amount of reserved durations according to the random selection above
             int reservedDefaultDurations = (int)(timeSpanLength / DefaultDurationFraction) / randomRatio;
