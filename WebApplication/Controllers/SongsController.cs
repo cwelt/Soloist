@@ -517,10 +517,6 @@ namespace CW.Soloist.WebApplication.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
-            // remove record from database
-            db.Songs.Remove(song);
-            await db.SaveChangesAsync();
-
             // try removing the physical files from the file server 
             string songDirectoryPath = await GetSongPath(song.Id);
             try
@@ -537,6 +533,10 @@ namespace CW.Soloist.WebApplication.Controllers
                 ModelState.AddModelError(string.Empty, errorMessage);
                 return RedirectToAction(nameof(Delete), new { Id = id });
             }
+
+            // remove record from database
+            db.Songs.Remove(song);
+            await db.SaveChangesAsync();
 
             // If delete succeeded, redirect song index with appropriate message 
             string successMessage = $"The song '{song.Title}' by '{song.Artist}' was successfully deleted.";
