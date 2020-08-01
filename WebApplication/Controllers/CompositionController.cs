@@ -121,7 +121,7 @@ namespace CW.Soloist.WebApplication.Controllers
             Composition composition = new Composition(
                 chordProgressionFilePath: chordFilePath,
                 midiFilePath: midiFilePath,
-                melodyTrackIndex: (byte?)song.MelodyTrackIndex);
+                melodyTrackIndex: song.MelodyTrackIndex);
 
             // build evaluators weight 
             MelodyEvaluatorsWeights weights = new MelodyEvaluatorsWeights

@@ -18,7 +18,7 @@ namespace CW.Soloist.CompositionService
     {
         private readonly string _midiInputFilePath;
         private readonly string _midiInputFileName;
-        private readonly byte? _melodyTrackIndex;
+        private readonly MelodyTrackIndex? _melodyTrackIndex;
         private IList<IBar> _melodySeed;
 
         /// <summary> Default lowest pitch that would be used for the composition. </summary>
@@ -120,7 +120,7 @@ namespace CW.Soloist.CompositionService
         /// of bars, or the duration of individual bars. </exception>
         /// <exception cref="IndexOutOfRangeException"> Throw when <paramref name="melodyTrackIndex"/> 
         /// has a value which equal or greater than the number of track in the given midi file. </exception>
-        public Composition(IList<IBar> chordProgression, IMidiFile midiFile, byte? melodyTrackIndex = null)
+        public Composition(IList<IBar> chordProgression, IMidiFile midiFile, MelodyTrackIndex? melodyTrackIndex = null)
         {
             // set chord progression and midi properties 
             ChordProgression = chordProgression;
@@ -133,7 +133,7 @@ namespace CW.Soloist.CompositionService
             string errorMessage;
 
             // validate melody track index is not out of bounds 
-            if (!Composition.IsMelodyTrackIndexValid(melodyTrackIndex, MidiInputFile, out errorMessage))
+            if (!Composition.IsMelodyTrackIndexValid((int?)melodyTrackIndex, MidiInputFile, out errorMessage))
                 throw new IndexOutOfRangeException(errorMessage);
 
             // validate that bars in CHORD progression are compatible with MIDI file 
@@ -161,7 +161,7 @@ namespace CW.Soloist.CompositionService
         /// constructed in the expected format syntax <see cref="ReadChordsFromFile(string)"/>. </exception>
         /// /// <exception cref="IndexOutOfRangeException"> Throw when <paramref name="melodyTrackIndex"/> 
         /// has a value which equal or greater than the number of track in the given midi file. </exception>
-        public Composition(string chordProgressionFilePath, string midiFilePath, byte? melodyTrackIndex = null)
+        public Composition(string chordProgressionFilePath, string midiFilePath, MelodyTrackIndex? melodyTrackIndex = null)
             : this(chordProgression: ReadChordsFromFile(chordProgressionFilePath),
                     midiFile: new DryWetMidiAdapter(midiFilePath), melodyTrackIndex)
         { }
@@ -225,7 +225,7 @@ namespace CW.Soloist.CompositionService
              * extract it out of the intended midi output file 
              * and if requested, save it in a separate bar sequence for further usage 
              * as a melody initialization seed for the composition if needed. */
-            if (_melodyTrackIndex.HasValue)
+            if (_melodyTrackIndex.HasValue && _melodyTrackIndex.Value != MelodyTrackIndex.NoMelodyTrackInFile)
             {
                 /* if the existing melody should serve as a seed, 
                  * initialize a bar-sequence place-holder for it, 

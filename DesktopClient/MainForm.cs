@@ -98,7 +98,7 @@ namespace DesktopClient
 
                 if(!string.IsNullOrWhiteSpace(_chordsFilePath) && !string.IsNullOrWhiteSpace(_midiFilePath))
                 {
-                    _composition = new Composition(_chordsFilePath, _midiFilePath, melodyTrackIndex: 1);
+                    _composition = new Composition(_chordsFilePath, _midiFilePath, melodyTrackIndex: MelodyTrackIndex.TrackNumber1);
                     _midiFile = _composition.Compose()[0];
                     lblMidiTitle.Text += ": " + _midiFile.Title;
                     lblMidiBpm.Text += ": " + _midiFile.BeatsPerMinute.ToString();
@@ -116,7 +116,7 @@ namespace DesktopClient
         private void btnCompose_Click(object sender, EventArgs e)
         {
 
-            var composition = new Composition(_chordsFilePath, _midiFilePath, melodyTrackIndex: 1);
+            var composition = new Composition(_chordsFilePath, _midiFilePath, melodyTrackIndex: MelodyTrackIndex.TrackNumber1);
             var newMelody = composition.Compose(musicalInstrument: _musicalInstrument);
 
             composition.MidiOutputFile.PlayAsync();

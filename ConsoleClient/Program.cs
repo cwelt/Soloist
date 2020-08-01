@@ -51,7 +51,7 @@ namespace ConsoleClient
 
 
             // create a new composition with injected strategy
-            var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: 1);
+            var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: MelodyTrackIndex.TrackNumber1);
             var newMidiFiles = composition.Compose(
                 compositionStrategy,
                 musicalInstrument: MusicalInstrument.ElectricGrandPiano,

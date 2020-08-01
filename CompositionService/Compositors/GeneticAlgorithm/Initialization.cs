@@ -83,11 +83,12 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                     crossoverParticipants = new List<MelodyCandidate> { reversedSeedCandidate, generatedCandidate };
                     offspringCandidates = NPointCrossover(crossoverParticipants, n);
                     offSpringCandidatesList.AddRange(offspringCandidates);
-                }
 
-                // add seed and all crossover offsprings to the candidate list 
-                _candidates.AddRange(offSpringCandidatesList);
-                _candidates.AddRange(new[] {seedCandidate, reversedSeedCandidate });
+                    // add seed and all crossover offsprings to the candidate list 
+                    // add seed and all crossover offsprings to the candidate list 
+                    _candidates.AddRange(offSpringCandidatesList);
+                    _candidates.AddRange(new[] { seedCandidate, reversedSeedCandidate });
+                }
             }
         }
         #endregion
