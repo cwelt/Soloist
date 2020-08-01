@@ -55,7 +55,7 @@ namespace ConsoleClient
             var newMidiFiles = composition.Compose(
                 compositionStrategy,
                 musicalInstrument: MusicalInstrument.ElectricGrandPiano,
-                overallNoteDurationFeel: OverallNoteDurationFeel.Slow,
+                overallNoteDurationFeel: OverallNoteDurationFeel.Intense,
                 pitchRangeSource: PitchRangeSource.Custom,
                 minPitch: NotePitch.C3,
                 maxPitch: NotePitch.A5,

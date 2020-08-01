@@ -78,8 +78,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             double chordStepsMetric;
             double intervalTypeMetric;
 
-
+            // additional initializtions
             double fitness = 0;
+            double factor = 0.5; // factor for balancing this fitness function 
             PitchInterval interval;
             int maxDistance = (int)maxInterval;
 
@@ -161,7 +162,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                       (0.20 * intervalTypeMetric);
 
             // return fitness result
-            return fitness;
+            return fitness + factor;
         }
         #endregion
 
@@ -333,6 +334,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             double totalBarsFitness = 0;
             double overallFitness = 0;
             double weightedFitness = 0;
+            double factor = 0.25;
 
             int barContourDirectionRadius = 0;
             int overallContourDirectionRadius = 0;
@@ -381,7 +383,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
             // return a weighted fitness combined from micro & macro fitnesses 
             weightedFitness = (0.75 * totalBarsFitness) + (0.25 * overallFitness);
-            return weightedFitness;
+            return weightedFitness + factor;
         }
         #endregion
 
@@ -456,8 +458,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             }
 
             /* return ratio between the total number of consecutive directional intervals 
-             * and the overall number of intervals in the candidate's melody */
-            return (double)directionalIntervalAccumulator / (pitches.Length - 1);
+             * and the overall number of intervals in the candidate's melody plus a factor */
+            double factor = 0.4;
+            return ((double)directionalIntervalAccumulator / (pitches.Length - 1)) + factor;
         }
         #endregion
 
@@ -657,17 +660,17 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
     #region MelodyEvaluatorsWeights
     public class MelodyEvaluatorsWeights
     {
-        public const double Factor = 25;
+        public const double Factor = 10;
 
         public double SmoothMovement { get; set; } = 15;
         public double ExtremeIntervals { get; set; } = 15;
-        public double PitchVariety { get; set; } = 10;
+        public double PitchVariety { get; set; } = 15;
         public double PitchRange { get; set; } = 5;
         public double ContourDirection { get; set; } = 5;
         public double ContourStability { get; set; } = 10;
         public double Syncopation { get; set; } = 10; 
         public double DensityBalance { get; set; } = 15;
-        public double AccentedBeats { get; set; } = 15; 
+        public double AccentedBeats { get; set; } = 10; 
 
         private double _weightSum = 0;
         public double WeightSum

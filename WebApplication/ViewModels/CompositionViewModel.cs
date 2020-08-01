@@ -50,11 +50,11 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         [Range(0, 100)]
         [DisplayName("Smooth Note Connectivity:")]
-        public double SmoothMovement { get; set; } = 20;
+        public double SmoothMovement { get; set; } = 15;
 
         [Range(0, 100)]
         [DisplayName("Mitigate Extreme Intervals:")]
-        public double ExtremeIntervals { get; set; } = 25;
+        public double ExtremeIntervals { get; set; } = 10;
 
 
         [Range(0, 100)]
@@ -63,7 +63,7 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         [Range(0, 100)]
         [DisplayName("Wide Pitch Range:")]
-        public double PitchRange { get; set; } = 15;
+        public double PitchRange { get; set; } = 5;
 
         [Range(0, 100)]
         [DisplayName("Melody Contour Direction:")]
@@ -71,11 +71,11 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         [Range(0, 100)]
         [DisplayName("Melody Contour Stability:")]
-        public double ContourStability { get; set; } = 15;
+        public double ContourStability { get; set; } = 10;
 
         [Range(0, 100)]
         [DisplayName("Syncopation Usage:")]
-        public double Syncopation { get; set; } = 20; // 40
+        public double Syncopation { get; set; } = 10; // 40
 
         [Range(0, 100)]
         [DisplayName("Note Density Balance:")]
@@ -83,7 +83,7 @@ namespace CW.Soloist.WebApplication.ViewModels
 
         [Range(0, 100)]
         [DisplayName("Chord Notes On Accented Beats:")]
-        public double AccentedBeats { get; set; } = 25; // 50 
+        public double AccentedBeats { get; set; } = 15; // 50 
 
         /// <summary> Sums up all the proportional evaluators weights. </summary>
         public double WeightSum => 
