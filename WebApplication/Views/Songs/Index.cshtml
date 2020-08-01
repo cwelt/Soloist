@@ -44,23 +44,33 @@
                     <!-- action links -->
                     <td>
                         @{
-                            @Html.ActionLink("Details", "Details", new { id = song.Id }) <text> | </text>
+                            <!-- Compose a New Melody For This Song -->
+                            <text> || </text>
+                            @Html.ActionLink("Compose ♫♪", nameof(Composition.Compose), nameof(Composition), new { songId = song.Id }, null)
+                            <text> || </text>
 
+                            <!-- Details -->
+                            @Html.ActionLink("Details", "Details", new { id = song.Id }) <text> || </text>
+
+                            <!-- Edit -->
                             if (song.IsUserAuthorizedToEdit)
                             {
-                                @Html.ActionLink("Edit", "Edit", new { id = song.Id }) <text> | </text>
+                                @Html.ActionLink("Edit", "Edit", new { id = song.Id }) <text> || </text>
                             }
                             else
                             {
-                                <text> Edit |</text>
+                                <text> Edit ||</text>
                             }
 
+                            <!-- Delete -->
                             if (song.IsUserAuthorizedToEdit)
                             {
-                                @Html.ActionLink("Delete", "Delete", new { id = song.Id })
+                                @Html.ActionLink("Delete", "Delete", new { id = song.Id }) <text> || </text>
                             }
                             else
-                            { <text> Delete </text> }
+                            {
+                                <text> Delete || </text>
+                            }
                         }
                     </td>
                 </tr>

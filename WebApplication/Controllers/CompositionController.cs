@@ -1,4 +1,5 @@
-﻿using CW.Soloist.CompositionService;
+﻿using CsQuery.ExtensionMethods.Internal;
+using CW.Soloist.CompositionService;
 using CW.Soloist.CompositionService.Compositors;
 using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Midi;
@@ -42,23 +43,35 @@ namespace CW.Soloist.WebApplication.Controllers
 
         // GET: Composition
         [HttpGet]
-        public async Task<ActionResult> Compose()
+        public async Task<ActionResult> Compose(int? songId = null)
         {
             // fetch id of current logged-in user (if user is indeed logged-in...)
             string userId = User?.Identity?.GetUserId();
 
             // fetch songs from db according to user's privilages  
-            var songs = User?.IsInRole(RoleName.Admin) ?? false
+            List<Song> authorizedSongs = User?.IsInRole(RoleName.Admin) ?? false
                 ? await db.Songs.ToListAsync()
                 : await db.Songs.Where(s => s.IsPublic || s.UserId.Equals(userId)).ToListAsync();
 
+            // project artist and song name from song list and sort the list accordingly
+            var sortedProjectedSongs = authorizedSongs.Select(s => new
+            {
+                Id = s.Id,
+                Title = s.Artist + " - " + s.Title
+            }).OrderBy(s => s.Title).ToList();
+
+            // if user requested a specific song, select it
+            int? selectedSongId = authorizedSongs.Exists(s => s.Id == songId)
+                ? songId
+                : authorizedSongs.FirstOrDefault()?.Id;
+
+            // build select list for the songs
+            SelectList songSelectList = new SelectList(sortedProjectedSongs, "Id", "Title", songId);
+
+            // build a view model with the prebuilt song list 
             CompositionViewModel viewModel = new CompositionViewModel
             {
-                SongSelectList = new SelectList(songs.Select(s => new
-                {
-                    Id = s.Id,
-                    Title = s.Artist + " - " + s.Title
-                }).OrderBy(s => s.Title), "Id", "Title"),
+                SongSelectList = songSelectList,
                 MusicalInstrument = MusicalInstrument.ElectricGrandPiano,
                 OverallNoteDurationFeel = OverallNoteDurationFeel.Medium,
                 PitchSelectList = new SelectList(_pitchSelectList, "Pitch", "Description"),
