@@ -21,7 +21,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         private protected Dictionary<Action<MelodyCandidate, int?>, double> _barMutations;
         private protected Action<MelodyCandidate>[] _entireMelodyMutations;
         private protected const double MutationProbabilityStep = 0.025;
-        private protected const double MaxNumberOfIterations = 500;
+        private protected const double MaxNumberOfIterations = 180;
         private protected const double MinMutationProbability = 0.05;
 
         internal protected MelodyEvaluatorsWeights EvaluatorsWeights { get; private set; }
@@ -94,7 +94,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 
                 //MelodyGenome.CurrentGeneration++;
                 if (++i == MaxNumberOfIterations || _candidates.Select(c => c.FitnessGrade).Max() >= 92
-                    && _currentGeneration > 30)
+                    && _currentGeneration > 50)
                 {
                     terminateCondition = true;
                 }

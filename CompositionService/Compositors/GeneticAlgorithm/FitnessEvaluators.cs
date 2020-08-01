@@ -50,11 +50,13 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         }
         #endregion
 
-        #region EvaluateSmoothMovement UPDATE DOCUMENTATION
-
-
+        #region EvaluateSmoothMovement
         /// <summary>
-        /// TODO: UPDATE DOCUMENTATION
+        /// Evaluates how "smooth" the movement is from tone to another. 
+        /// <para> This evaluation is based on the intervals between consecutive notes
+        /// and the notes' degrees in context of their underlying chord. 
+        /// According to the interval type (perfect, consonants, dissonant) and the 
+        /// note's degree (chord note, diatonic note, etc) a weighted fitness is set. </para>
         /// </summary>
         /// <param name="candidate"> The melody candidate to evaluate. </param>
         /// <returns> The fitness outcome score for the requested evaluation. </returns>

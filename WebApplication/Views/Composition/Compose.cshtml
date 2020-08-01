@@ -86,7 +86,7 @@
 
                         <!-- Smooth Movement -->
                         <div>
-                            @Html.LabelFor(m => m.SmoothMovement, new { style = labelColor })
+                            @Html.LabelFor(m => m.SmoothMovement, new { style = labelColor , title = "test"})
                             @Html.TextBoxFor(m => m.SmoothMovement, new { size = "3", style = @inputAlignStyle })
                             <div class="alert-danger">
                                 @Html.ValidationMessageFor(m => m.SmoothMovement)
