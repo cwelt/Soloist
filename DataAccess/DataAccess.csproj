@@ -104,18 +104,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SampleData\ad_machar_chords.txt" />
-    <Content Include="SampleData\after_20_years.mid" />
-    <Content Include="SampleData\beatles_here_there.mid" />
-    <Content Include="SampleData\Evyatar Banai - Ad Machar.mid" />
-    <Content Include="SampleData\here_there_chords.txt" />
-    <Content Include="SampleData\Klepter-Gader.txt" />
-    <Content Include="SampleData\Survive.mid" />
-    <Content Include="SampleData\survive.txt" />
-    <Content Include="SampleData\twenty_years_chords.txt" />
-    <Content Include="SampleData\YoshevGader.mid" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>

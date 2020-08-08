@@ -24,9 +24,6 @@ namespace CW.Soloist.DataAccess
         public int UpdateDb() => _context.SaveChanges();
         public async Task<int> UpdateDbAsync() => await _context.SaveChangesAsync();
 
-
-
-
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
