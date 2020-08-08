@@ -129,22 +129,31 @@
 <div>
     <footer>
         <br /><br />
-        <p>
-            @if (Model.IsUserAuthorizedToEdit)
-            {
-                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <text>|</text>
-            }
-            @if (Model.IsUserAuthorizedToDelete)
-            {
-                @Html.ActionLink("Delete", "Delete", new { id = Model.Id }) <text>|</text>
-            }
+              <p>
+                  <!-- Compose -->
+                  <text> || </text>
+                  @Html.ActionLink("Compose ♫♪", nameof(Composition.Compose), nameof(Composition), new { songId = Model.Id }, null)
+                  <text> || </text>
 
-            @Html.ActionLink("Back to Song List", "Index")
-        </p>
+                  <!-- Edit -->
+                  @if (Model.IsUserAuthorizedToEdit)
+                  {
+                      @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <text>||</text>
+                  }
+
+                  <!-- Delete -->
+                  @if (Model.IsUserAuthorizedToDelete)
+                  {
+                      @Html.ActionLink("Delete", "Delete", new { id = Model.Id }) <text>||</text>
+                  }
+
+                  <!-- Index -->
+                  @Html.ActionLink("Back to Song List", "Index") <text>||</text>
+              </p>
     </footer>
 </div>
 
-<!-- handle collapisble elements -->
+<!-- js logic for handling collapisble elements -->
 <script>
     let collapsibleElement = document.getElementsByClassName("collapsible");
     let i;

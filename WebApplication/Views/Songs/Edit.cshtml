@@ -175,12 +175,22 @@
 <!-- Footer Links -->
 <div>
     <footer>
-        @Html.ActionLink("Details", "Details", new { id = Model.Id }) <text>|</text>
+        <!-- Compose -->
+        <text> || </text>
+        @Html.ActionLink("Compose ♫♪", nameof(Composition.Compose), nameof(Composition), new { songId = Model.Id }, null)
+        <text> || </text>
+
+        <!-- Details -->
+        @Html.ActionLink("Details", "Details", new { id = Model.Id }) <text>||</text>
+
+        <!-- Delete -->
         @if (Model.IsUserAuthorizedToDelete)
         {
-            @Html.ActionLink("Delete", "Delete", new { id = Model.Id }) <text>|</text>
+            @Html.ActionLink("Delete", "Delete", new { id = Model.Id }) <text>||</text>
         }
-        @Html.ActionLink("Back to songs list", "Index")
+
+        <!-- Index -->
+        @Html.ActionLink("Back to songs list", "Index") <text> || </text>
     </footer>
 </div>
 
