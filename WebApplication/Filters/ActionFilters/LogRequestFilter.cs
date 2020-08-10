@@ -19,10 +19,10 @@ namespace CW.Soloist.WebApplication.Filters.ActionFilters
     public class LogRequestFilter : ActionFilterAttribute
     {
         // retrieve the actual physical path of the file server 
-        private string fileServerPath = HomeController.GetFileServerPath();
+        private static readonly string FileServerPath = HomeController.GetFileServerPath();
 
         // internal lock for prevent multithread parallel writes to the log file
-        private static object _logFileMutex = new object();
+        private static readonly object LogFileMutex = new object();
 
         /// <summary>
         /// Intervenes before the Http request executes and logs the 
@@ -64,10 +64,10 @@ namespace CW.Soloist.WebApplication.Filters.ActionFilters
             
             // set full path for the log file 
             string logInternalPath = ConfigurationManager.AppSettings["requestLogInternalPath"];
-            string logFullPath = fileServerPath + logInternalPath;
+            string logFullPath = FileServerPath + logInternalPath;
 
             // lock the log file
-            lock (_logFileMutex)
+            lock (LogFileMutex)
             {
                 // save the request in the log file 
                 using (StreamWriter streamWriter = File.AppendText(logFullPath))

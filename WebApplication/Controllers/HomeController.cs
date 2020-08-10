@@ -11,68 +11,78 @@ using System.Web.Mvc;
 
 namespace CW.Soloist.WebApplication.Controllers
 {
+    /// <summary>
+    /// Controller responsible for handling requestes on the home page,
+    /// and general util services for the other controllers such as 
+    /// retrieving the path for the parent directory on the file server.
+    /// </summary>
     [AllowAnonymous]
     public class HomeController : Controller
     {
-        public ActionResult Index()
-        {
-            return View();
-        }
+        // internal lock for preventing multithread-parallel writes to the error log file
+        private static readonly object LogFileMutex = new object();
 
-        public ActionResult About()
-        {
-            return View();
-        }
 
-        public ActionResult Documentation()
-        {
-            return View();
-        }
+        // Home page 
+        public ActionResult Index() => View();
 
-        [ValidateInput(false)]
-        public ActionResult SourceCode()
-        {
-            return View();
-            //return Content("<script>window.open('{https://github.com/cwelt/Soloist}','_blank')</script>");
-        }
 
+        // About page 
+        public ActionResult About() => View();
+
+
+        // Documentation: user manual, design documents & diagrams, etc.
+        public ActionResult Documentation() => View();
+
+
+        // Source code of the application 
+        public ActionResult SourceCode() => View();
+
+
+        // Redirect to the github repository
         public ActionResult Repository()
         {
             string repositoryUrl = ConfigurationManager.AppSettings["repositoryUrl"];
             return Redirect(repositoryUrl);
         }
 
+
+        // Contact info 
         [CrawlerFilter]
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Feel free to contact me in one of the following medium channels.";
+        public ActionResult Contact() => View();
 
-            return View();
-        }
 
+        // Download the seminar 
         public FileResult Seminar()
         {
-            // save file and return it for client to download
-
-            string seminarPaperPath = this.HttpContext.Server.MapPath("/App_Data/Seminar/GA_Seminar.pdf");
-
+            //upload the seminar paper document into memory from the file server
+            string seminarPaperPath = this.HttpContext.Server.MapPath(ConfigurationManager.AppSettings["seminarInternalPath"]);
             byte[] fileBytes = System.IO.File.ReadAllBytes(seminarPaperPath);
             string fileName = Path.GetFileName(seminarPaperPath);
 
+            // return file content to client for downloading
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
 
+
+        // Privacy policy statement
+        public ActionResult PrivacyPolicy() => View();
+
+
+        #region GetFileServerPath
+        /// <summary> 
+        /// Returns the path to the parent directory on the application file server. 
+        /// </summary>
+        /// <param name="server"> The running web server. </param>
+        /// <returns> The path to the parent directory on the application file server. /returns>
         internal static string GetFileServerPath(HttpServerUtilityBase server = null)
         {
-            if (server != null)
-                return server.MapPath(@"~\App_Data\");
-            else return AppDomain.CurrentDomain.BaseDirectory + @"App_Data\";
+            return server != null 
+                ? server.MapPath(@"~\App_Data\")
+                : AppDomain.CurrentDomain.BaseDirectory + @"App_Data\";
         }
+        #endregion
 
-        public ActionResult PrivacyPolicy()
-        {
-            return View();
-        }
 
         #region WriteErrorToLog
         /// <summary>
@@ -115,10 +125,14 @@ namespace CW.Soloist.WebApplication.Controllers
 
             try
             {
-                // save the request in the log file 
-                using (StreamWriter streamWriter = System.IO.File.AppendText(logFullPath))
+                // lock the log file
+                lock (LogFileMutex)
                 {
-                    streamWriter.WriteLine(loggedError + Environment.NewLine);
+                    // save the request in the log file 
+                    using (StreamWriter streamWriter = System.IO.File.AppendText(logFullPath))
+                    {
+                        streamWriter.WriteLine(loggedError + Environment.NewLine);
+                    }
                 }
             }
             catch (Exception)
