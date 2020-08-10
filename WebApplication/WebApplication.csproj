@@ -490,7 +490,6 @@
     <Content Include="Views\Shared\Error500.html" />
     <Content Include="Views\Home\Documentation.cshtml" />
     <Content Include="Views\Composition\Compose.cshtml" />
-    <Content Include="Views\Composition\Download.cshtml" />
     <Content Include="Views\Songs\Create.cshtml" />
     <Content Include="Views\Songs\Delete.cshtml" />
     <Content Include="Views\Songs\Details.cshtml" />

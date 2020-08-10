@@ -17,7 +17,7 @@ namespace CW.Soloist.DataAccess.Repositories
     /// </summary>
     /// <typeparam name="TEntity"> The type of entities managed in this repository.</typeparam>
     /// <typeparam name="TPKeyType"> The type of the primary key that uniquely identifies entities in this repostiory.</typeparam>
-    public class Repository<TEntity, TPKeyType> : IRepository<TEntity, TPKeyType> where TEntity : class
+    public class EntityFrameworkRepository<TEntity, TPKeyType> : IRepository<TEntity, TPKeyType> where TEntity : class
     {
         #region Properties
         /// <summary> The delegated repository context in the EF repository manager context. </summary>
@@ -32,7 +32,7 @@ namespace CW.Soloist.DataAccess.Repositories
         /// Constructs a repository of the given entity from the given context.
         /// </summary>
         /// <param name="context"></param>
-        public Repository(DbContext context)
+        public EntityFrameworkRepository(DbContext context)
         {
             Context = context;
             _entities = context.Set<TEntity>();

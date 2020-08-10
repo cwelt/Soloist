@@ -18,7 +18,7 @@ namespace CW.Soloist.DataAccess.Repositories
     /// </summary>
     /// <typeparam name="TEntity"> The type of domain object entites managed in this repository. </typeparam>
     /// <typeparam name="TPKeyType"> The type of the primary key that uniquely identifies domain object entities in this repository. </typeparam>
-    public interface IRepository<TEntity, TPKeyType> where TEntity : class
+    public interface IRepository<TEntity, TPKeyType> where TEntity : class 
     {
         #region Methods For Searching & Querying 
         #region Get

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CW.Soloist.DataAccess.Repositories
 {
-    public class SongRepository : Repository<Song, int>, ISongRepostiory
+    public class SongRepository : EntityFrameworkRepository<Song, int>, ISongRepostiory
     {
         public SongRepository(ApplicationDbContext context) 
             : base(context) { }
