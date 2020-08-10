@@ -1,9 +1,6 @@
-﻿using CW.Soloist.DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using CW.Soloist.DataAccess.Repositories;
 
 namespace CW.Soloist.DataAccess
 {

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.Entity;
+using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System.Collections.Generic;
+
 
 namespace CW.Soloist.DataAccess.Repositories
 {
@@ -17,7 +17,7 @@ namespace CW.Soloist.DataAccess.Repositories
     /// </summary>
     /// <typeparam name="TEntity"> The type of entities managed in this repository.</typeparam>
     /// <typeparam name="TPKeyType"> The type of the primary key that uniquely identifies entities in this repostiory.</typeparam>
-    public class EntityFrameworkRepository<TEntity, TPKeyType> : IRepository<TEntity, TPKeyType> where TEntity : class
+    public class EFRepository<TEntity, TPKeyType> : IRepository<TEntity, TPKeyType> where TEntity : class
     {
         #region Properties
         /// <summary> The delegated repository context in the EF repository manager context. </summary>
@@ -32,7 +32,7 @@ namespace CW.Soloist.DataAccess.Repositories
         /// Constructs a repository of the given entity from the given context.
         /// </summary>
         /// <param name="context"></param>
-        public EntityFrameworkRepository(DbContext context)
+        public EFRepository(DbContext context)
         {
             Context = context;
             _entities = context.Set<TEntity>();

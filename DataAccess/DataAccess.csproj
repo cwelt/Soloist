@@ -92,7 +92,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\ISongRepostiory.cs" />
-    <Compile Include="Repositories\EntityFrameworkRepository.cs" />
+    <Compile Include="Repositories\EFRepository.cs" />
     <Compile Include="Repositories\SongRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EFUnitOfWork.cs" />
