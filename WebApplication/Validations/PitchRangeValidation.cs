@@ -21,7 +21,7 @@ namespace CW.Soloist.WebApplication.Validations
             int minPitch = (int)formData.MinPitch;
             int maxPitch = (int)formData.MaxPitch;
 
-            if (Composition.isPitchRangeValid(minPitch, maxPitch, out string errorMessage))
+            if (Composition.IsPitchRangeValid(minPitch, maxPitch, out string errorMessage))
                 return ValidationResult.Success;
             else return new ValidationResult(errorMessage);
         }

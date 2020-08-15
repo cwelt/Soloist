@@ -251,7 +251,7 @@ namespace CW.Soloist.CompositionService
             }
 
             // validate pitch range is at least one octave long (12 semi-tones) 
-            if (!isPitchRangeValid((int)minPitch, (int)maxPitch, out string errorMessage))
+            if (!IsPitchRangeValid((int)minPitch, (int)maxPitch, out string errorMessage))
                 throw new ArgumentException(errorMessage);
 
             // compose a new melody 
@@ -486,7 +486,7 @@ namespace CW.Soloist.CompositionService
         /// i.e., when the returned result is false. If the validation succeeds and the 
         /// the returned result is true, this out parameter would be set to null. </param>
         /// <returns> True if range is valid (at least one octave long), and false otherwise. </returns>
-        public static bool isPitchRangeValid(int minPitch, int maxPitch, out string errorMessage)
+        public static bool IsPitchRangeValid(int minPitch, int maxPitch, out string errorMessage)
         {
             // if valid 
             if (maxPitch - minPitch >= MusicTheoryServices.SemitonesInOctave)
