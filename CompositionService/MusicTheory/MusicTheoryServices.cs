@@ -1,36 +1,62 @@
-﻿using CW.Soloist.CompositionService.UtilEnums;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.MusicTheory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using CW.Soloist.CompositionService.UtilEnums;
 
 namespace CW.Soloist.CompositionService.MusicTheory
 {
     /// <summary>
-    /// Provides services which support operations and manipulations low level musical components 
-    /// such as note, chord scale etc. 
+    /// Provides services which support operations and manipulations on 
+    /// low level musical components such as note, chord scale etc. 
     /// </summary>
-    internal partial class MusicTheoryServices : IMusicTheoryService
+    internal class MusicTheoryServices
     {
-
+        #region Constants  
+        /// <summary> The number of half-tones in a single octave. </summary>
         internal const byte SemitonesInOctave = 12;
 
-        internal enum AritmeticOperation { Add, Subtract };
+        /// <summary> Util enumeration for operations on durations. </summary>
+        internal enum ArithmeticOperation { Add, Subtract };
+        #endregion
 
+
+        #region Methods
+
+        #region GetNoteName
+        /// <summary> Returns the <see cref="NoteName"/> for the given pitch.</summary>
+        /// <param name="notePitch"></param>
+        /// <returns> The name of the given pitch</returns>
         private static NoteName GetNoteName(NotePitch notePitch)
         {
             var pitch = (SevenBitNumber)(int)(notePitch);
             var noteName = Melanchall.DryWetMidi.MusicTheory.Note.Get(pitch).NoteName;
             return ConvertToInternalNoteName(noteName);
         }
+        #endregion
 
+
+        #region ConvertToInternalNoteName
+        /// <summary>
+        /// Converts note name given in a third-party used library to the internal used note name. 
+        /// </summary>
+        /// <param name="noteName"> Note name as defined in the third-party library. </param>
+        /// <returns> The note name (see <see cref="NoteName"/> as defined in this project.</returns>
         private static NoteName ConvertToInternalNoteName(Melanchall.DryWetMidi.MusicTheory.NoteName noteName)
         {
             return (NoteName)Enum.Parse(typeof(NoteName), noteName.ToString());
         }
+        #endregion
 
+
+        #region ConvertToExternalNoteName
+        /// <summary>
+        /// Converts the given internal note name to a name defined in a third-party used library. 
+        /// </summary>
+        /// <param name="noteName"> The note name (see <see cref="NoteName"/> as defined in this project.</param>
+        /// <returns> Note name as defined in the third-party library. </returns>
         private static Melanchall.DryWetMidi.MusicTheory.NoteName ConvertToExternalNoteName(NoteName noteName)
         {
             switch (noteName)
@@ -72,12 +98,18 @@ namespace CW.Soloist.CompositionService.MusicTheory
                     throw new InvalidCastException("Undefined casting for this note name");
             }
         }
+        #endregion
 
-        public IEnumerable<NotePitch> GetChordNotes(IChord chord, ChordNoteMappingSource mappingSource = ChordNoteMappingSource.Chord, int minOctave = 0, int maxOctave = 9)
-        {
-            return MusicTheoryServices.GetNotes(chord, mappingSource, minOctave, maxOctave);
-        }
 
+        #region GetNotes
+        /// <summary>
+        /// Returns notes that sound "good" under the given chord and pitch range restriction. 
+        /// </summary>
+        /// <param name="chord"> he requested chrod to map the notes against. </param>
+        /// <param name="mappingSource"> The mapping source - either scale notes or the chord's arpeggio notes. </param>
+        /// <param name="minPitch"> Lower bound pitch range constraint for the mapped notes. </param>
+        /// <param name="maxPitch"> Upper bound pitch range constraint for the mapped notes. </param>
+        /// <returns> Notes that sound "good" under the given chord, mapping source, and pitch range restriction. </returns>
         internal static IEnumerable<NotePitch> GetNotes(IChord chord, ChordNoteMappingSource mappingSource, NotePitch minPitch, NotePitch maxPitch)
         {
             // build the scale (sequence of intervals from the chord's root note)
@@ -194,6 +226,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
             return result;
         }
 
+
+        /// <inheritdoc cref="GetNotes(IChord, ChordNoteMappingSource, NotePitch, NotePitch)"/>
         internal static IEnumerable<NotePitch> GetNotes(IChord chord, ChordNoteMappingSource mappingSource, int minOctave = 0, int maxOctave = 9)
         {
             int basePitch = MusicTheoryServices.SemitonesInOctave;
@@ -201,19 +235,29 @@ namespace CW.Soloist.CompositionService.MusicTheory
             NotePitch maxPitch = (NotePitch)(basePitch + ((maxOctave + 1) * MusicTheoryServices.SemitonesInOctave) - 1);
             return MusicTheoryServices.GetNotes(chord, mappingSource, minPitch, maxPitch);
         }
+        #endregion
 
 
-        internal static IDuration DurationAritmetic(AritmeticOperation operation, IDuration duration1, IDuration duration2)
+        #region DurationArithmetic
+        /// <summary>
+        /// Calculates durations that are the result of adding and/or subtracting 
+        /// length of existing durations. 
+        /// </summary>
+        /// <param name="operation"> The requested arithmetic operaton (add, subtract). </param>
+        /// <param name="duration1"> The first duration operand. </param>
+        /// <param name="duration2"> The second duration operand. </param>
+        /// <returns> The result duration of the operation (sum or difference). </returns>
+        internal static IDuration DurationArithmetic(ArithmeticOperation operation, IDuration duration1, IDuration duration2)
         {
             MusicalTimeSpan timeSpan1 = new MusicalTimeSpan(duration1.Numerator, duration1.Denominator, true);
             MusicalTimeSpan timeSpan2 = new MusicalTimeSpan(duration2.Numerator, duration2.Denominator, true);
             MusicalTimeSpan newTimeSpan = null;
             switch (operation)
             {
-                case AritmeticOperation.Add:
+                case ArithmeticOperation.Add:
                     newTimeSpan = timeSpan1.Add(timeSpan2, TimeSpanMode.LengthLength) as MusicalTimeSpan;
                     break;
-                case AritmeticOperation.Subtract:
+                case ArithmeticOperation.Subtract:
                     newTimeSpan = timeSpan1.Subtract(timeSpan2, TimeSpanMode.LengthLength) as MusicalTimeSpan;
                     break;
                 default:
@@ -221,5 +265,8 @@ namespace CW.Soloist.CompositionService.MusicTheory
             }
             return new Duration((byte)newTimeSpan?.Numerator, (byte)newTimeSpan?.Denominator);
         }
+        #endregion
+
+        #endregion
     }
 }

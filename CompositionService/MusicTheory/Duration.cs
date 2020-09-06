@@ -80,13 +80,13 @@ namespace CW.Soloist.CompositionService.MusicTheory
         #region IDuration Methods
         public IDuration Add(IDuration duration)
         {
-            return MusicTheoryServices.DurationAritmetic(MusicTheoryServices.AritmeticOperation.Add, this, duration)
+            return MusicTheoryServices.DurationArithmetic(MusicTheoryServices.ArithmeticOperation.Add, this, duration)
                 .ReduceFractionToLowestTerms();
         }
 
         public IDuration Subtract(IDuration duration)
         {
-            return MusicTheoryServices.DurationAritmetic(MusicTheoryServices.AritmeticOperation.Subtract, this, duration)
+            return MusicTheoryServices.DurationArithmetic(MusicTheoryServices.ArithmeticOperation.Subtract, this, duration)
                 .ReduceFractionToLowestTerms();
         }
 

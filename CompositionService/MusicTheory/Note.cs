@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CW.Soloist.CompositionService.MusicTheory
+﻿namespace CW.Soloist.CompositionService.MusicTheory
 {
+
+    /// <inheritdoc cref="INote"/>
     internal class Note : INote
     {
         #region Private Internal Data
@@ -49,14 +45,14 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
         /// <summary>
         /// Construct a note with given <paramref name="pitch"/> and a 
-        /// duration composed with the quotient of the nominator 
-        /// dividied by the denominator. 
+        /// duration composed with the quotient of the numerator 
+        /// divided by the denominator. 
         /// </summary>
         /// <param name="pitch">MIDI absolute pitch value.</param>
-        /// <param name="nominator">Duration nominator.</param>
+        /// <param name="numerator">Duration numerator.</param>
         /// <param name="denominator">Duration denominator.</param>
-        public Note(NotePitch pitch, byte nominator, byte denominator)
-            : this(pitch, new Duration(nominator, denominator)) { }
+        public Note(NotePitch pitch, byte numerator, byte denominator)
+            : this(pitch, new Duration(numerator, denominator)) { }
 
 
         /// <summary> 

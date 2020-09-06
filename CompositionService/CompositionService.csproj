@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Composition.cs" />
-    <Compile Include="CompositionParamsDTO.cs" />
     <Compile Include="Compositors\Arpeggiator\ArpeggiatorCompositor.cs" />
     <Compile Include="Compositors\ArpeggioScaleMix\ArpeggioScaleMixCompositor.cs" />
     <Compile Include="Compositors\CompositionStrategy.cs" />
@@ -62,7 +61,6 @@
     <Compile Include="Compositors\GeneticAlgorithm\Mutators.cs" />
     <Compile Include="Compositors\GeneticAlgorithm\Selectors.cs" />
     <Compile Include="Compositors\Scalerator\ScaleratorCompositor.cs" />
-    <Compile Include="ICompositionParamsDTO.cs" />
     <Compile Include="Midi\MelodyTrackNumber.cs" />
     <Compile Include="MusicTheory\Interval.cs" />
     <Compile Include="MusicTheory\MusicTheoryExtensions.cs" />
@@ -83,7 +81,6 @@
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="MusicTheory\IBar.cs" />
     <Compile Include="MusicTheory\IChord.cs" />
-    <Compile Include="MusicTheory\IMusicTheoryService.cs" />
     <Compile Include="MusicTheory\INote.cs" />
     <Compile Include="MusicTheory\MusicTheoryServices.cs" />
     <Compile Include="MusicTheory\Note.cs" />

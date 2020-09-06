@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CW.Soloist.CompositionService.MusicTheory
 {
     /// <summary> 
-    /// Represets an interval in semitones (halftones) within an octave. 
+    /// Represents an interval in semitones (halftones) within an octave. 
     /// </summary>
     internal enum PitchInterval
     {

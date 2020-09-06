@@ -1,8 +1,9 @@
-﻿using CW.Soloist.CompositionService.UtilEnums;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using CW.Soloist.CompositionService.UtilEnums;
 
 namespace CW.Soloist.CompositionService.MusicTheory
 {
+    /// <inheritdoc cref="IChord"/>
     internal class Chord : IChord
     {
         public NoteName ChordRoot { get; }
@@ -43,10 +44,6 @@ namespace CW.Soloist.CompositionService.MusicTheory
             return MusicTheoryServices.GetNotes(this, ChordNoteMappingSource.Scale, minPitch, maxPitch);
         }
 
-        public override string ToString()
-        {
-            return $"{{Root={ChordRoot}; ChordType={ChordType}; Duration={Duration}}}";
-        }
-
+        public override string ToString() => $"{{Root={ChordRoot}; ChordType={ChordType}; Duration={Duration}}}";
     }
 }

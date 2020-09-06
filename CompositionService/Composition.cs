@@ -167,28 +167,6 @@ namespace CW.Soloist.CompositionService
         { }
         #endregion
 
-        #region Compose(ICompositionParamsDTO compositionParams)
-        /// <summary>
-        /// <inheritdoc cref="Compose(CompositionStrategy, OverallNoteDurationFeel, MusicalInstrument, PitchRangeSource, NotePitch, NotePitch, bool)"/>
-        /// <para> This is an overloaded version which gathers all the input parameters in a single structure.
-        /// See <seealso cref="Compose(CompositionStrategy, OverallNoteDurationFeel, MusicalInstrument, PitchRangeSource, NotePitch, NotePitch, bool)"/> </para>
-        /// </summary>
-        /// <param name="compositionParams"> Data transfer object containing all the various 
-        /// additional parameters for composition preferences and constriants.</param>
-        /// <returns></returns>
-        public IMidiFile[] Compose(ICompositionParamsDTO compositionParams, params object[] compositorParams)
-        {
-            return Compose(
-                strategy: compositionParams.CompositionStrategy,
-                overallNoteDurationFeel: compositionParams.OverallFeel,
-                musicalInstrument: compositionParams.MusicalInstrument,
-                pitchRangeSource: compositionParams.PitchRangeSource,
-                minPitch: compositionParams.MinPitch,
-                maxPitch: compositionParams.MaxPitch,
-                useExistingMelodyAsSeed: compositionParams.UseExistingMelodyAsSeed,
-                customParams: compositorParams);
-        }
-        #endregion
 
         #region Compose
         /// <summary>

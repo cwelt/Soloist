@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace CW.Soloist.CompositionService.MusicTheory
 {
@@ -27,7 +23,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <summary>
         /// Returns an enumerator that can be used to iterate through the collection 
         /// of all note pitches which correspond to this chord's root and type, 
-        /// and fullfill the requested range constraint. 
+        /// and full fill the requested range constraint. 
         /// </summary>
         /// <param name="minOctave"> Minimum octave for note pitches.</param>
         /// <param name="maxOctave"> Maximum octave for note pitches</param>

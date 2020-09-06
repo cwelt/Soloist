@@ -1,9 +1,5 @@
-﻿using System;
+﻿using System.Text;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace CW.Soloist.CompositionService.MusicTheory
 {
@@ -54,7 +50,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <summary>
         /// <para>Default constructor.</para>
         /// Initializes a bar with a default time signature of 4/4, 
-        /// an empy list of chords and an empty list of notes.
+        /// an empty list of chords and an empty list of notes.
         /// </summary>
         public Bar()
             : this(new Duration(4, 4, false), new List<IChord>(), new List<INote>()) { }
@@ -93,7 +89,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         }
         #endregion
 
-
+        #region IBar Methods
         /// <inheritdoc cref="IBar.GetOverlappingNotesForChord(int, out IList{int})"/>
         public IList<INote> GetOverlappingNotesForChord(int chordIndex, out IList<int> chordNotesIndices)
         {
@@ -174,8 +170,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
             // return overlapping chords 
             return noteChords;
         }
-
-
+        #endregion
 
         public override string ToString()
         {
@@ -189,8 +184,6 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 chords.Append(Chords[i] + ",");
             chords.Append(Chords[Chords.Count - 1] + "}; ");
 
-
-
             // notes 
             StringBuilder notes = new StringBuilder();
             chords.Append("Notes={");
@@ -201,7 +194,5 @@ namespace CW.Soloist.CompositionService.MusicTheory
             // assemble & return the result   
             return timeSignature + chords + notes + "}";
         }
-
-
     }
 }

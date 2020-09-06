@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CW.Soloist.CompositionService.MusicTheory
+﻿namespace CW.Soloist.CompositionService.MusicTheory
 {
     /// <summary>
     /// Represents a single musical note instance. 
@@ -16,7 +10,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
     /// </summary>
     public interface INote
     {
-        /// <summary> The note's name (<see cref="NoteName"/>) .</summary>
+        /// <summary>    (<see cref="NoteName"/>) .</summary>
         NoteName? Name { get; }
 
         /// <summary> The note's absolute pitch (<see cref="NotePitch"/>) .</summary>
