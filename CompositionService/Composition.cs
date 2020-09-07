@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using CW.Soloist.CompositionService.Compositors;
-using CW.Soloist.CompositionService.Midi;
-using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.UtilEnums;
 using System.Linq;
-using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.CompositionService.UtilEnums;
+using CW.Soloist.CompositionService.Compositors;
+using CW.Soloist.CompositionService.MusicTheory;
 
 namespace CW.Soloist.CompositionService
 {

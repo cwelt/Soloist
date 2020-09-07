@@ -1,7 +1,5 @@
 ﻿namespace CW.Soloist.CompositionService.Midi
 {
-    // TODO: add setters to handle midi events in the individual chunks
-
 
     /// <summary>
     /// Represents a single track in a midi file. 
