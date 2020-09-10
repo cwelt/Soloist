@@ -62,6 +62,7 @@
     <Compile Include="Compositors\GeneticAlgorithm\Selectors.cs" />
     <Compile Include="Compositors\Scalerator\ScaleratorCompositor.cs" />
     <Compile Include="Midi\MelodyTrackNumber.cs" />
+    <Compile Include="Midi\MidiFactory.cs" />
     <Compile Include="MusicTheory\Interval.cs" />
     <Compile Include="MusicTheory\MusicTheoryExtensions.cs" />
     <Compile Include="UtilEnums\NodeSequenceMode.cs" />

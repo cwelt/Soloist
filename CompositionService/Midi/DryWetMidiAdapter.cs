@@ -1,37 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Melanchall.DryWetMidi.Common;
-using Melanchall.DryWetMidi.Composing;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using Melanchall.DryWetMidi.Core;
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Devices;
+using Melanchall.DryWetMidi.Composing;
 using Melanchall.DryWetMidi.Interaction;
+using CW.Soloist.CompositionService.MusicTheory;
 using DWMidiI = Melanchall.DryWetMidi.Interaction;
 using DWMidiMT = Melanchall.DryWetMidi.MusicTheory;
-using CW.Soloist.CompositionService.MusicTheory;
 using Note = CW.Soloist.CompositionService.MusicTheory.Note;
-using System.Threading.Tasks;
-using System.Threading;
-using Melanchall.DryWetMidi.Standards;
 
 namespace CW.Soloist.CompositionService.Midi
 {
     /// <summary>
     /// Provides a high level interface for a <a href="https://bit.ly/3bRVzQT"> SMF (Standard MIDI File) </a> 
     /// </summary>
-    internal partial class DryWetMidiAdapter : IMidiFile
+    internal class DryWetMidiAdapter : IMidiFile
     {
         #region Adapter Specific Private Data Members 
 
+        /// <summary> Delegate to the DryWetMidi library midi file entity . </summary>
         private readonly MidiFile _midiContent;
 
+        /// <summary> DryWetMidi library property for managing the timespans & tempo in the midi file. </summary>
         private readonly TempoMap _tempoMap;
 
+        /// <summary> Header chunk of the midi file. </summary>
         private readonly TrackChunk _metadataTrack;
 
+        /// <summary> MIDI events from the header chunk. </summary>
         private readonly List<MidiEvent> _metaEvents;
 
+        /// <summary> Default name that would be used for the composed melody track chunk in the midi file. </summary>
         private static readonly string DefaulTrackName = "Soloist Generated Melody";
 
         /// <summary> Medium for playing the MIDI files events on an output device. </summary>
@@ -62,24 +65,26 @@ namespace CW.Soloist.CompositionService.Midi
 
         #endregion
 
-        #region Consturctors 
 
-        /// <summary> Constructor </summary>
-        /// <param name="midiFilePath"></param>
+        #region Consturctors 
+        /// <summary> Constructs an IMidiFile insatnce based on a path to the actual MIDI file.  </summary>
+        /// <param name="midiFilePath"> Path to the actual physical MIDI file. </param>
         internal DryWetMidiAdapter(string midiFilePath)
-            : this(File.OpenRead(midiFilePath))
+            // obtain stream from file and delegate it to second constructor 
+            : this(File.OpenRead(midiFilePath)) 
         {
-            FilePath = midiFilePath;
+            FilePath = midiFilePath; // save path 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="fileStream"></param>
-        internal DryWetMidiAdapter(Stream stream, string midiFileName = null, bool disposeStream = false)
+        
+        /// <summary> Constructs an IMidiFile instance based on a MIDI file stream.</summary>
+        /// <param name="stream"> stream of the midi file content. </param>
+        /// <param name="disposeStream"> Set true if stream is to be closed by the constructor once it's done reading the file. </param>
+        internal DryWetMidiAdapter(Stream stream, bool disposeStream = false)
         {
+            // initialization 
             Stream = stream;
-            stream.Position = 0;
+            stream.Position = 0; 
             _midiContent = MidiFile.Read(stream);
             _tempoMap = _midiContent.GetTempoMap();
             IList<TrackChunk> trackChunks = _midiContent.GetTrackChunks().ToList();
@@ -97,7 +102,6 @@ namespace CW.Soloist.CompositionService.Midi
                                                      select e)?.First() as TimeSignatureEvent;
             KeySignature = new Duration(timeSignatureEvent.Numerator, timeSignatureEvent.Denominator, false);
 
-
             // set number of bars property
             BarBeatFractionTimeSpan duration = _midiContent.GetDuration<BarBeatFractionTimeSpan>();
             NumberOfBars = (int)duration.Bars + (int)Math.Ceiling(duration.Beats / timeSignatureEvent.Numerator);
@@ -106,7 +110,7 @@ namespace CW.Soloist.CompositionService.Midi
             BeatsPerMinute = (byte)(_midiContent.GetTempoMap()?.Tempo.AtTime(0).BeatsPerMinute);
 
             // set MIDI pitch range
-            var notes = _midiContent.GetNotes();
+            IEnumerable<DWMidiI.Note> notes = _midiContent.GetNotes();
             LowestPitch = (NotePitch)(byte)(notes.Min(note => note.NoteNumber));
             HighestPitch = (NotePitch)(byte)(notes.Max(note => note.NoteNumber));
 
@@ -116,10 +120,10 @@ namespace CW.Soloist.CompositionService.Midi
                 stream.Dispose();
             }
         }
-
-
         #endregion
 
+
+        #region IMidiFile Methods
         #region Play()
         public void Play()
         {
@@ -134,10 +138,12 @@ namespace CW.Soloist.CompositionService.Midi
         #endregion
 
         #region PlayAsync()
+        // wrap the synchronous method in a asynchronously task 
         public async Task PlayAsync() => await Task.Run(() => Play());
         #endregion
 
         #region Stop()
+        // stop the virtual player from playig the midi events.
         public void Stop() => _midiPlayer?.Stop();
         #endregion 
 
@@ -153,6 +159,93 @@ namespace CW.Soloist.CompositionService.Midi
             _midiContent.Chunks.Insert(indexOfNewTrack, melodyTrack);
         }
         #endregion
+
+        #region ExtractMelodyTrack()
+        /// <inheritdoc/>
+        public void ExtractMelodyTrack(byte trackNumber, in IList<IBar> melodyBars = null)
+        {
+            // get the requested track 
+            TrackChunk melodyTrack = _midiContent.Chunks[trackNumber] as TrackChunk;
+
+            // remove the track from the midi file 
+            _midiContent.Chunks.RemoveAt(trackNumber);
+
+            /* if requested, decode the melody from the removed track as a list of bars 
+             * with music notes and embed this sequence the melody bars reference parameter. */
+            if (melodyBars != null)
+            {
+                ConvertTrackChunkToMelody(melodyTrack, melodyBars);
+            }
+        }
+        #endregion
+
+        #region GetBarDuration()
+        /// <inheritdoc/>
+        public IDuration GetBarDuration(int barIndex)
+        {
+            // try to fetch key signature defined for the specified bar 
+            ValueChange<TimeSignature> barKeySignature = _tempoMap.TimeSignature.AtTime(new MusicalTimeSpan(barIndex, 1), _tempoMap).FirstOrDefault();
+
+            // if an explicit key signature for this bar was found, assemble an duration from it
+            if (barKeySignature != null)
+                return new Duration((byte)barKeySignature.Value.Numerator, (byte)barKeySignature.Value.Denominator, false);
+
+            // if no explicit key signature exists for this specific bar, return the default key signature from meta events
+            else return KeySignature;
+        }
+        #endregion
+
+        #region SaveFile()
+        /// <inheritdoc/>
+        public string SaveFile(string path = null, string fileNamePrefix = "", bool pathIncludesFileName = false)
+        {
+            // get time stamp 
+            string timeStamp = DateTime.Now.ToString("ddMMyyyy_HHmmss");
+
+            // set file name 
+            string fileName = string.Empty;
+            if (!pathIncludesFileName)
+            {
+                fileName = String.IsNullOrWhiteSpace(fileNamePrefix)
+                    ? fileNamePrefix + $"output_{timeStamp}.mid"
+                    : fileNamePrefix + $"_output_{timeStamp}.mid";
+            }
+
+            // set full path: if no path is specified then set desktop as the default path
+            path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\midioutput";
+
+            string fullPath;
+
+            if (!pathIncludesFileName)
+                fullPath = path + Path.DirectorySeparatorChar + fileName;
+            else fullPath = path;
+
+            // save file 
+            try
+            {
+                this._midiContent.Write(filePath: fullPath, overwriteFile: true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ex.InnerException?.Message);
+                throw;
+            }
+            return fullPath;
+        }
+        #endregion
+
+        #region GetPitchRangeForTrack()
+        public void GetPitchRangeForTrack(int trackIndex, out NotePitch? lowestPitch, out NotePitch? highestPitch)
+        {
+            IEnumerable<DWMidiI.Note> notes = (_midiContent.Chunks[trackIndex] as TrackChunk).GetNotes();
+            lowestPitch = (NotePitch)(byte)(notes.Min(note => note.NoteNumber));
+            highestPitch = (NotePitch)(byte)(notes.Max(note => note.NoteNumber));
+        }
+        #endregion
+        #endregion
+
+
+        #region Adapter Specific Methods
 
         #region ConvertMelodyToTrackChunk()
         /// <summary>
@@ -222,25 +315,6 @@ namespace CW.Soloist.CompositionService.Midi
 
             // return midi track to caller 
             return melodyTrackChunk;
-        }
-        #endregion
-
-        #region ExtractMelody()
-        /// <inheritdoc/>
-        public void ExtractMelodyTrack(byte trackNumber, in IList<IBar> melodyBars = null)
-        {
-            // get the requested track 
-            TrackChunk melodyTrack = _midiContent.Chunks[trackNumber] as TrackChunk;
-
-            // remove the track from the midi file 
-            _midiContent.Chunks.RemoveAt(trackNumber);
-
-            /* if requested, decode the melody from the removed track as a list of bars 
-             * with music notes and embed this sequence the melody bars reference parameter. */
-            if (melodyBars != null)
-            {
-                ConvertTrackChunkToMelody(melodyTrack, melodyBars);
-            }
         }
         #endregion
 
@@ -341,71 +415,9 @@ namespace CW.Soloist.CompositionService.Midi
         }
         #endregion
 
-        #region GetBarDuration()
-        /// <inheritdoc/>
-        public IDuration GetBarDuration(int barIndex)
-        {
-            // try to fetch key signature defined for the specified bar 
-            ValueChange<TimeSignature> barKeySignature = _tempoMap.TimeSignature.AtTime(new MusicalTimeSpan(barIndex, 1), _tempoMap).FirstOrDefault();
-
-            // if an explicit key signature for this bar was found, assemble an duration from it
-            if (barKeySignature != null)
-                return new Duration((byte)barKeySignature.Value.Numerator, (byte)barKeySignature.Value.Denominator, false);
-
-            // if no explicit key signature exists for this specific bar, return the default key signature from meta events
-            else return KeySignature;
-        }
         #endregion
-
-        #region SaveFile()
-        /// <inheritdoc/>
-        public string SaveFile(string path = null, string fileNamePrefix = "", bool pathIncludesFileName = false)
-        {
-            // get time stamp 
-            string timeStamp = DateTime.Now.ToString("ddMMyyyy_HHmmss");
-
-            // set file name 
-            string fileName = string.Empty;
-            if (!pathIncludesFileName)
-            {
-                fileName = String.IsNullOrWhiteSpace(fileNamePrefix)
-                    ? fileNamePrefix + $"output_{timeStamp}.mid"
-                    : fileNamePrefix + $"_output_{timeStamp}.mid";
-            }
-
-            // set full path: if no path is specified then set desktop as the default path
-            path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\midioutput";
-
-            string fullPath;
-
-            if (!pathIncludesFileName)
-                fullPath = path + Path.DirectorySeparatorChar + fileName;
-            else fullPath = path;
-
-            // save file 
-            try
-            {
-                this._midiContent.Write(filePath: fullPath, overwriteFile: true);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + ex.InnerException?.Message);
-                throw;
-            }
-            return fullPath;
-        }
-        #endregion
-
-        #region GetPitchRangeForTrack()
-        public void GetPitchRangeForTrack(int trackIndex, out NotePitch? lowestPitch, out NotePitch? highestPitch)
-        {
-            var notes = (_midiContent.Chunks[trackIndex] as TrackChunk).GetNotes();
-            lowestPitch = (NotePitch)(byte)(notes.Min(note => note.NoteNumber));
-            highestPitch = (NotePitch)(byte)(notes.Max(note => note.NoteNumber));
-        }
-        #endregion
-
     }
+
 
     #region DryWetMidiTrackAdapter : IMidiTrack
     /// <summary>
@@ -429,7 +441,7 @@ namespace CW.Soloist.CompositionService.Midi
 
         public int TrackNumber { get; }
         public string TrackName { get; }
-        public byte InstrumentMidiCode { get; }
+        public MusicalInstrument? InstrumentMidiCode { get; }
         public string InstrumentName { get; }
 
         /// <summary>
@@ -460,17 +472,18 @@ namespace CW.Soloist.CompositionService.Midi
                 ProgramChangeEvent instrumentEvent = programChangeEvent.First();
 
                 // instrument code 
-                InstrumentMidiCode = (byte)(instrumentEvent.ProgramNumber);
+                byte instrumentMidiCode = (byte)(instrumentEvent.ProgramNumber);
+                if (instrumentMidiCode >= MinInstrumentCode && instrumentMidiCode <= MaxInstrumentCode)
+                    InstrumentMidiCode = (MusicalInstrument)Enum.ToObject(typeof(MusicalInstrument), instrumentMidiCode);
 
                 // instrument name 
-                if (InstrumentMidiCode >= MinInstrumentCode && InstrumentMidiCode <= MaxInstrumentCode)
-                    InstrumentName = ((MusicalInstrument)InstrumentMidiCode).GetDisplayName();
+                if (InstrumentMidiCode.HasValue)
+                    InstrumentName = InstrumentMidiCode.GetDisplayName();
                 else if (instrumentEvent.Channel == DrumsMidiChannel)
                     InstrumentName = DrumsInstrumentDescription;
                 else InstrumentName = UnkownInstrumentDescription;
             }
-            else
-                InstrumentName = $"{UnkownInstrumentDescription} / {DrumsInstrumentDescription}";
+            else InstrumentName = $"{UnkownInstrumentDescription} / {DrumsInstrumentDescription}";
         }
     }
     #endregion

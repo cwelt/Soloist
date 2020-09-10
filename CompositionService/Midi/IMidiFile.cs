@@ -1,10 +1,8 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService.MusicTheory;
+
 
 namespace CW.Soloist.CompositionService.Midi
 {
@@ -40,6 +38,9 @@ namespace CW.Soloist.CompositionService.Midi
         /// <summary> Global highest pitch in the entire midi file. </summary>
         NotePitch? HighestPitch { get; }
 
+        /// <summary> The tracks contained in the MIDI file. </summary>
+        IReadOnlyList<IMidiTrack> Tracks { get; }
+
         /// <summary>
         /// Get local lowest and highest pitches contained in the given midi track.
         /// </summary>
@@ -48,13 +49,10 @@ namespace CW.Soloist.CompositionService.Midi
         /// <param name="highestPitch"> The highest pitch in the given track, or null, if track contains no notes. </param>
         void GetPitchRangeForTrack(int trackIndex, out NotePitch? lowestPitch, out NotePitch? highestPitch);
 
-        /// <summary> The tracks contained in the MIDI file. </summary>
-        IReadOnlyList<IMidiTrack> Tracks { get; }
-
-        /// <summary> Starts playing the MIDI events containd in the file. </summary>
+        /// <summary> Starts playing the MIDI events contained in the file. </summary>
         void Play();
 
-        /// <summary> Starts playing the MIDI events containd in the file. </summary>
+        /// <summary> Starts playing the MIDI events containd in the file asynchronously. </summary>
         Task PlayAsync();
 
 
@@ -66,7 +64,7 @@ namespace CW.Soloist.CompositionService.Midi
         /// <para> 
         /// Removes the the requested track from the midi file, 
         /// and returns the removed track content as a bar sequence 
-        /// in a music-theory representationthe containing the notes from the melody track 
+        /// in a music-theory representation containing the notes from the extracted melody track 
         /// if requested, i.e., if the reference <paramref name="melodyBars"/> is properly initialized. 
         /// If it is set to null, then the requested track would still be removed from midi file, 
         /// but it won't be returned for further processing.
@@ -96,14 +94,11 @@ namespace CW.Soloist.CompositionService.Midi
         /// <summary> Converts a melody contained in a collection of bars
         ///  into a midi track and adds it to the midi file. </summary>
         /// <param name="melody"> List of notes divided into bars. </param>
-        /// <param name="instrument">"> If specified, the new track would be inserted in this index position. </param>
+        /// <param name="instrument">"> If specified, the new track would be played with this instrument. </param>
         /// <param name="trackIndex"> Optional Index of the requested position to put the embedded melody track in.
         /// if no explict position is requested, leave this parameter null, and the new track would be appended.</param>
-        void EmbedMelody(IList<IBar> melody, MusicalInstrument instrument = MusicalInstrument.JazzGuitar, byte? trackIndex = null);
+        void EmbedMelody(IList<IBar> melody, MusicalInstrument instrument = MusicalInstrument.AcousticGrandPiano, byte? trackIndex = null);
 
-
-
-        // <param name="P Midi <a href="https://bit.ly/30pmSzP">program number</a>  which represents a musical instrument.</param>
 
 
         /// <summary> Save midi file on local device. </summary>

@@ -162,7 +162,7 @@ namespace CW.Soloist.CompositionService
         /// has a value which equal or greater than the number of track in the given midi file. </exception>
         public Composition(string chordProgressionFilePath, string midiFilePath, MelodyTrackIndex? melodyTrackIndex = null)
             : this(chordProgression: ReadChordsFromFile(chordProgressionFilePath),
-                    midiFile: new DryWetMidiAdapter(midiFilePath), melodyTrackIndex)
+                    midiFile: MidiFactory.CreateMidiFile(midiFilePath), melodyTrackIndex)
         { }
         #endregion
 
@@ -196,7 +196,7 @@ namespace CW.Soloist.CompositionService
             _compositor = CompositorFactory.CreateCompositor(strategy);
 
             // make a copy of the input midi file for the output file   
-            MidiOutputFile = new DryWetMidiAdapter(_midiInputFilePath);
+            MidiOutputFile = MidiFactory.CreateMidiFile(_midiInputFilePath);
 
             /* if the midi file already contains a melody track, 
              * extract it out of the intended midi output file 
@@ -246,7 +246,7 @@ namespace CW.Soloist.CompositionService
             for (int i = 0; i < composedMelodies.Length; i++)
             {
                 // TODO LATER: Clone the playback explictly 
-                midiOutputs[i] = new DryWetMidiAdapter(_midiInputFilePath);
+                midiOutputs[i] = MidiFactory.CreateMidiFile(_midiInputFilePath);
                 midiOutputs[i].ExtractMelodyTrack((byte)_melodyTrackIndex);
                 midiOutputs[i].EmbedMelody(composedMelodies[i], musicalInstrument);
             }
@@ -384,20 +384,17 @@ namespace CW.Soloist.CompositionService
 
         #region ReadMidiFile()
         /// <summary>
-        /// Reads contents of a standard midi file and returns a high-level  
+        /// Reads the contents of a standard midi file and returns a high-level  
         /// interface handler for the midi's content and metadata. 
         /// </summary>
         /// <param name="filePath"> Path of the midi file.</param>
-        /// <returns></returns>
-        public static IMidiFile ReadMidiFile(string filePath)
-        {
-            return new DryWetMidiAdapter(filePath);
-        }
+        /// <returns> IMidiFile which is handler for the midi's content and metadata. </returns>
+        public static IMidiFile ReadMidiFile(string filePath) => MidiFactory.CreateMidiFile(filePath);
 
-        public static IMidiFile ReadMidiFile(Stream stream)
-        {
-            return new DryWetMidiAdapter(stream);
-        }
+        /// <summary> <inheritdoc cref="ReadMidiFile(string)"/></summary>
+        /// <param name="filePath"> Stream containing the midi's file content.</param>
+        /// <returns> IMidiFile which is handler for the midi's content and metadata. </returns>
+        public static IMidiFile ReadMidiFile(Stream stream) => MidiFactory.CreateMidiFile(stream);
         #endregion
 
         #region CreateMidiPlayback()
@@ -415,7 +412,7 @@ namespace CW.Soloist.CompositionService
         public static IMidiFile CreateMidiPlayback(Stream midiStream, MelodyTrackIndex? melodyTrackNumber)
         {
             // create a new midi file instance 
-            IMidiFile midifile = new DryWetMidiAdapter(midiStream);
+            IMidiFile midifile = MidiFactory.CreateMidiFile(midiStream);
 
             // remove melody track is such exists on this midi file 
             if (melodyTrackNumber.HasValue && melodyTrackNumber != MelodyTrackIndex.NoMelodyTrackInFile)

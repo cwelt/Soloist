@@ -1,12 +1,11 @@
 ﻿namespace CW.Soloist.CompositionService.Midi
 {
-
     /// <summary>
     /// Represents a single track in a midi file. 
     /// </summary>
     public interface IMidiTrack
     {
-        /// <summary> Ordinal nubmer of this track in the midi file. </summary>
+        /// <summary> Ordinal number of this track in the midi file. </summary>
         int TrackNumber { get; }
 
         /// <summary> Midi sequence track name. </summary>
@@ -14,11 +13,11 @@
 
         /// <summary> 
         /// The general <a href="https://en.wikipedia.org/wiki/General_MIDI">MIDI program number</a> 
-        ///  which identifies this track's MIDI muscial instrument        
+        ///  which identifies this track's MIDI musical instrument.        
         /// </summary>
-        byte InstrumentMidiCode { get; }
+        MusicalInstrument? InstrumentMidiCode { get; }
 
-        /// <summary> The <see cref="InstrumentMidiCode"/> instrument description </summary>
+        /// <summary> The <see cref="InstrumentMidiCode"/> instrument description. </summary>
         string InstrumentName { get; }
     }
 }
