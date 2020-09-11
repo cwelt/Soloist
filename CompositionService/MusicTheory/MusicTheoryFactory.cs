@@ -28,7 +28,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// <returns></returns>
         internal static IDuration CreateDuration(byte numerator = 1, byte denominator = 4, bool reduceToLowestTerms = true)
         {
-            return MusicTheoryFactory.CreateDuration(numerator, denominator, reduceToLowestTerms);
+            return new Duration(numerator, denominator, reduceToLowestTerms);
         }
 
 
@@ -133,7 +133,5 @@ namespace CW.Soloist.CompositionService.MusicTheory
         internal static IBar CreateBar(IBar bar) => new Bar(bar);
 
         #endregion
-
-
     }
 }
