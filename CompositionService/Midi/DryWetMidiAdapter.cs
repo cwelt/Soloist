@@ -416,76 +416,78 @@ namespace CW.Soloist.CompositionService.Midi
         #endregion
 
         #endregion
-    }
 
 
-    #region DryWetMidiTrackAdapter : IMidiTrack
-    /// <summary>
-    /// Adapter/facade class which wraps the <see cref="Melanchall.DryWetMidi.Core.MidiChunk"/>
-    /// class and provides an implementation of the high-level friendly interface
-    /// <see cref="IMidiFile"/> which represents an individual track in a MIDI file. 
-    /// </summary>
-    internal class DryWetMidiTrackAdapter : IMidiTrack
-    {
-        /* define range for the midi instrument code values in-order
-         * to identify them in the raw midi data event values */
-        private const int MinInstrumentCode = 0;
-        private const int MaxInstrumentCode = 127;
-
-        // mark the reserved channel for percussion
-        private const int DrumsMidiChannel = 10;
-
-        // constant descriptions for external/un-recoginzed instruments 
-        private const string DrumsInstrumentDescription = "Drums & Percussion";
-        private const string UnkownInstrumentDescription = "Unknown";
-
-        public int TrackNumber { get; }
-        public string TrackName { get; }
-        public MusicalInstrument? InstrumentMidiCode { get; }
-        public string InstrumentName { get; }
-
+        #region The Inner Class 'DryWetMidiTrackAdapter : IMidiTrack'
         /// <summary>
-        /// Constructs an instace of a single midi track based on a wrapped/adapted 
-        /// instance of the <see cref="TrackChunk"/> class and the track's ordinal nubmer
-        /// in the context of it's containing midi file.
+        /// Adapter/facade class which wraps the <see cref="Melanchall.DryWetMidi.Core.MidiChunk"/>
+        /// class and provides an implementation of the high-level friendly interface
+        /// <see cref="IMidiFile"/> which represents an individual track in a MIDI file. 
         /// </summary>
-        /// <param name="track"> Raw midi track chunk which holds the raw midi event data of this midi track.</param>
-        /// <param name="trackNumber"> Ordinal track nubmer of this track in it's containing midi file.</param>
-        internal DryWetMidiTrackAdapter(TrackChunk track, int trackNumber)
+        private class DryWetMidiTrackAdapter : IMidiTrack
         {
-            // Set track nubmer 
-            TrackNumber = trackNumber;
+            // mark the reserved channel for percussion
+            private const int DrumsMidiChannel = 10;
 
-            // Set track name 
-            TrackName = (from e in track.Events
-                         where e.EventType == MidiEventType.SequenceTrackName
-                         select ((SequenceTrackNameEvent)e)).FirstOrDefault()?.Text;
+            // constant descriptions for external/un-recoginzed instruments 
+            private const string DrumsInstrumentDescription = "Drums & Percussion";
+            private const string UnkownInstrumentDescription = "Unknown";
 
-            // Extract the raw midi event which identifies the musical instrument 
-            IEnumerable<ProgramChangeEvent> programChangeEvent = from e in track.Events
-                                                                 where e.EventType == MidiEventType.ProgramChange
-                                                                 select ((ProgramChangeEvent)e);
+            public int TrackNumber { get; }
+            public string TrackName { get; }
+            public MusicalInstrument? InstrumentMidiCode { get; }
+            public string InstrumentName { get; }
 
-            // Set musical instrument code and description if an appropriate event is found 
-            if (programChangeEvent?.Count() > 0)
+            /// <summary>
+            /// Constructs an instace of a single midi track based on a wrapped/adapted 
+            /// instance of the <see cref="TrackChunk"/> class and the track's ordinal nubmer
+            /// in the context of it's containing midi file.
+            /// </summary>
+            /// <param name="track"> Raw midi track chunk which holds the raw midi event data of this midi track.</param>
+            /// <param name="trackNumber"> Ordinal track nubmer of this track in it's containing midi file.</param>
+            internal DryWetMidiTrackAdapter(TrackChunk track, int trackNumber)
             {
-                ProgramChangeEvent instrumentEvent = programChangeEvent.First();
+                /* define range for the midi instrument code values in-order
+                 * to identify them in the raw midi data event values */
+                int minInstrumentCode = 0;
+                Array soloistInstrumentValues = Enum.GetValues(typeof(MusicalInstrument));
+                int maxInstrumentCode = soloistInstrumentValues.Length - 1;
 
-                // instrument code 
-                byte instrumentMidiCode = (byte)(instrumentEvent.ProgramNumber);
-                if (instrumentMidiCode >= MinInstrumentCode && instrumentMidiCode <= MaxInstrumentCode)
-                    InstrumentMidiCode = (MusicalInstrument)Enum.ToObject(typeof(MusicalInstrument), instrumentMidiCode);
 
-                // instrument name 
-                if (InstrumentMidiCode.HasValue)
-                    InstrumentName = InstrumentMidiCode.GetDisplayName();
-                else if (instrumentEvent.Channel == DrumsMidiChannel)
-                    InstrumentName = DrumsInstrumentDescription;
-                else InstrumentName = UnkownInstrumentDescription;
+                // Set track nubmer 
+                TrackNumber = trackNumber;
+
+                // Set track name 
+                TrackName = (from e in track.Events
+                             where e.EventType == MidiEventType.SequenceTrackName
+                             select ((SequenceTrackNameEvent)e)).FirstOrDefault()?.Text;
+
+                // Extract the raw midi event which identifies the musical instrument 
+                IEnumerable<ProgramChangeEvent> programChangeEvent = from e in track.Events
+                                                                     where e.EventType == MidiEventType.ProgramChange
+                                                                     select ((ProgramChangeEvent)e);
+
+                // Set musical instrument code and description if an appropriate event is found 
+                if (programChangeEvent?.Count() > 0)
+                {
+                    ProgramChangeEvent instrumentEvent = programChangeEvent.First();
+
+                    // instrument code 
+                    byte instrumentMidiCode = (byte)(instrumentEvent.ProgramNumber);
+                    if (instrumentMidiCode >= minInstrumentCode && instrumentMidiCode <= maxInstrumentCode)
+                        InstrumentMidiCode = (MusicalInstrument)Enum.ToObject(typeof(MusicalInstrument), instrumentMidiCode);
+
+                    // instrument name 
+                    if (InstrumentMidiCode.HasValue)
+                        InstrumentName = InstrumentMidiCode.GetDisplayName();
+                    else if (instrumentEvent.Channel == DrumsMidiChannel)
+                        InstrumentName = DrumsInstrumentDescription;
+                    else InstrumentName = UnkownInstrumentDescription;
+                }
+                else InstrumentName = $"{UnkownInstrumentDescription} / {DrumsInstrumentDescription}";
             }
-            else InstrumentName = $"{UnkownInstrumentDescription} / {DrumsInstrumentDescription}";
         }
+        #endregion
     }
-    #endregion
 }
 
