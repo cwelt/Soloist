@@ -263,7 +263,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
                 default:
                     throw new NotSupportedException($"{nameof(operation)} is currently unsupported");
             }
-            return new Duration((byte)newTimeSpan?.Numerator, (byte)newTimeSpan?.Denominator);
+            return MusicTheoryFactory.CreateDuration((byte)newTimeSpan?.Numerator, (byte)newTimeSpan?.Denominator);
         }
         #endregion
 

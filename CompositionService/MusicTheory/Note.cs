@@ -31,7 +31,7 @@
         #region Constructors 
         /// <summary>
         /// <para  > Basic Constructor. </para>
-        /// Construct a new <see cref="INote"/> instance with 
+        /// Constructs a new <see cref="INote"/> instance with 
         /// the given <paramref name="pitch"/> and <paramref name="duration"/>.
         /// </summary>
         /// <param name="pitch"> MIDI absolute pitch value. </param>
@@ -40,7 +40,7 @@
         {
             Pitch = pitch;
             Name = GetNoteNameByNotePitch(pitch);
-            Duration = new Duration(duration.Numerator, duration.Denominator);
+            Duration = MusicTheoryFactory.CreateDuration(duration.Numerator, duration.Denominator);
         }
 
         /// <summary>
@@ -52,15 +52,15 @@
         /// <param name="numerator">Duration numerator.</param>
         /// <param name="denominator">Duration denominator.</param>
         public Note(NotePitch pitch, byte numerator, byte denominator)
-            : this(pitch, new Duration(numerator, denominator)) { }
+            : this(pitch, MusicTheoryFactory.CreateDuration(numerator, denominator)) { }
 
 
         /// <summary> 
-        /// Construct a note with given <paramref name="pitch"/> and default duration.
+        /// Constructs a note with given <paramref name="pitch"/> and default duration.
         /// </summary>
         /// <param name="pitch">Absolute pitch of the constructed note. </param>
         public Note(NotePitch pitch)
-            : this(pitch, new Duration()) { }
+            : this(pitch, MusicTheoryFactory.CreateDuration()) { }
 
 
         /// <summary> Copy Constructor </summary>

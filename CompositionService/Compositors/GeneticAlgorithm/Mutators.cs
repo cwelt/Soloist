@@ -132,7 +132,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             /* create a new note with the pitch of the first note and overall duration 
              * duration of the sum of the two notes durations */
             newDuration = note1.Duration.Add(note2.Duration);
-            newNote = new Note(note1.Pitch, newDuration);
+            newNote = MusicTheoryFactory.CreateNote(note1.Pitch, newDuration);
 
             // replace the two consecutive note with the new note 
             bar.Notes.RemoveAt(note1Index);
@@ -292,7 +292,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
             int originalNoteIndex = selectedBar.Notes.IndexOf(selectedNote);
 
             // replace selected note with a hold note
-            INote holdNote = new Note(NotePitch.HoldNote, selectedNote.Duration);
+            INote holdNote = MusicTheoryFactory.CreateNote(NotePitch.HoldNote, selectedNote.Duration);
             selectedBar.Notes.RemoveAt(originalNoteIndex);
             selectedBar.Notes.Insert(originalNoteIndex, holdNote);
         }

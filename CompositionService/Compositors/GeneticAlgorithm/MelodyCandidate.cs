@@ -47,7 +47,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                  * structure bar sequence: time signature, chords and notes as well. */
                 Bars = new List<IBar>(compositionStructure.Count());
                 foreach (IBar bar in compositionStructure)
-                    Bars.Add(new Bar(bar));
+                    Bars.Add(MusicTheoryFactory.CreateBar(bar));
             }
             else
             {

@@ -48,9 +48,9 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// Constructs an instance of <see cref="IDuration"/> 
         /// with a duration of <paramref name="numerator"/> / <paramref name="denominator"/>.
         /// </summary>
-        /// <param name="numerator"></param>
-        /// <param name="denominator"></param>
-        /// <param name="reduceToLowestTerms"></param>
+        /// <param name="numerator">Number of beats in the duration</param>
+        /// <param name="denominator">Duration of a single beat in the duration.</param>
+        /// <param name="reduceToLowestTerms"> If set, reduces the numerator and denominator do their lowest terms.</param>
         public Duration(byte numerator = 1, byte denominator = 4, bool reduceToLowestTerms = true)
         {
             if (reduceToLowestTerms)
@@ -71,7 +71,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// based on the <paramref name="duration"/> parameter values.
         /// </summary>
         /// <param name="duration"> The duration to base the values on. </param>
-        /// <param name="reduceToLowestTerms"> Reduces the numerator and denominator do their lowest terms. </param>
+        /// <param name="reduceToLowestTerms"> If set, reduces the numerator and denominator do their lowest terms. </param>
         public Duration(IDuration duration, bool reduceToLowestTerms = true)
             : this(duration.Numerator, duration.Denominator, reduceToLowestTerms) { }
         #endregion

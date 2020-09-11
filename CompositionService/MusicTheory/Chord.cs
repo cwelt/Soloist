@@ -12,7 +12,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
 
 
         /// <summary>
-        /// Construct a new <see cref="IChord"/> instance with the given
+        /// Constructs a new <see cref="IChord"/> instance with the given
         /// <paramref name="root"/>, <paramref name="type"/> and <paramref name="duration"/>. 
         /// </summary>
         /// <param name="root"> The name of the note which is the chord's root. </param>

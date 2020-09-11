@@ -338,7 +338,7 @@ namespace CW.Soloist.CompositionService
                     customErrorMessage = $"Invalid time signature format in line {lineNumber}: '{lineTokens[0]}'. The required format is 'numerator/denominator', for example 4/4.";
                     throw new FormatException(genericErrorMessage + customErrorMessage);
                 }
-                bar = new Bar(new Duration(barNumerator, barDenominator, false));
+                bar = MusicTheoryFactory.CreateBar(MusicTheoryFactory.CreateDuration(barNumerator, barDenominator, false));
 
                 // set bar's chords (rest of tokens in line)
                 for (int i = 1; i < lineTokens.Length; i++)
@@ -357,7 +357,7 @@ namespace CW.Soloist.CompositionService
                         throw new FormatException(genericErrorMessage + customErrorMessage);
                     }
                     totalBeatsInBar += numberOfBeats;
-                    bar.Chords.Add(new Chord(chordRoot, chordType, new Duration(numberOfBeats, bar.TimeSignature.Denominator)));
+                    bar.Chords.Add(MusicTheoryFactory.CreateChord(chordRoot, chordType, MusicTheoryFactory.CreateDuration(numberOfBeats, bar.TimeSignature.Denominator)));
                 }
 
                 // validate bar's chords total duration == bar's duration 
@@ -443,7 +443,7 @@ namespace CW.Soloist.CompositionService
             /* fill up the new bar sequence with the original bars' time signature & 
              * chords but with an empty note sequence in each bar (empty melody).  */
             foreach (IBar bar in chordProgression)
-                clonedBars.Add(new Bar(bar.TimeSignature, bar.Chords));
+                clonedBars.Add(MusicTheoryFactory.CreateBar(bar.TimeSignature, bar.Chords));
 
             // return the cloned bars
             return clonedBars;

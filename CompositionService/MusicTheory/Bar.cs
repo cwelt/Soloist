@@ -53,7 +53,7 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// an empty list of chords and an empty list of notes.
         /// </summary>
         public Bar()
-            : this(new Duration(4, 4, false), new List<IChord>(), new List<INote>()) { }
+            : this(MusicTheoryFactory.CreateDuration(4, 4, false), new List<IChord>(), new List<INote>()) { }
 
         /// <summary>
         /// Constructs an empty bar with the given time signature. />
@@ -81,11 +81,11 @@ namespace CW.Soloist.CompositionService.MusicTheory
         /// </summary>
         /// <param name="bar"></param>
         public Bar(IBar bar)
-            : this(new Duration(bar.TimeSignature, false), bar.Chords)
+            : this(MusicTheoryFactory.CreateDuration(bar.TimeSignature, false), bar.Chords)
         {
             this.Notes = new List<INote>(bar.Notes.Count);
             foreach (INote note in bar.Notes)
-                this.Notes.Add(new Note(note));
+                this.Notes.Add(MusicTheoryFactory.CreateNote(note));
         }
         #endregion
 

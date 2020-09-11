@@ -125,8 +125,8 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                     {
                         while (currentPosition < crossoverPoint)
                         {
-                            offspring1Bars.Add(new Bar(parent1.Bars[currentPosition]));
-                            offspring2Bars.Add(new Bar(parent2.Bars[currentPosition]));
+                            offspring1Bars.Add(MusicTheoryFactory.CreateBar(parent1.Bars[currentPosition]));
+                            offspring2Bars.Add(MusicTheoryFactory.CreateBar(parent2.Bars[currentPosition]));
                             currentPosition++;
                         }
 
@@ -139,8 +139,8 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                     // complete filling rest of candidate bars from the other parent
                     for (int k = currentPosition; k < numberOfBars; k++)
                     {
-                        offspring1Bars.Add(new Bar(parent1.Bars[k]));
-                        offspring2Bars.Add(new Bar(parent2.Bars[k]));
+                        offspring1Bars.Add(MusicTheoryFactory.CreateBar(parent1.Bars[k]));
+                        offspring2Bars.Add(MusicTheoryFactory.CreateBar(parent2.Bars[k]));
                     }
 
                     // create two new twin offsprings based on the pre-filled bars from the crossover

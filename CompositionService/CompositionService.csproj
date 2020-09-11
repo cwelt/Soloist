@@ -65,6 +65,7 @@
     <Compile Include="Midi\MidiFactory.cs" />
     <Compile Include="MusicTheory\Interval.cs" />
     <Compile Include="MusicTheory\MusicTheoryExtensions.cs" />
+    <Compile Include="MusicTheory\MusicTheoryFactory.cs" />
     <Compile Include="UtilEnums\NodeSequenceMode.cs" />
     <Compile Include="UtilEnums\DurationSplitRatio.cs" />
     <Compile Include="UtilEnums\OverallDurationFeel.cs" />

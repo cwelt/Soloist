@@ -27,7 +27,7 @@ namespace CW.Soloist.CompositionService.Compositors
         internal IList<IBar> ChordProgression { get; private protected set; }
 
         /// <summary> Default duration denominator for a single note. </summary>
-        internal IDuration DefaultDuration { get; private protected set; } = new Duration(1, Duration.EighthNoteDenominator);
+        internal IDuration DefaultDuration { get; private protected set; } = MusicTheoryFactory.CreateDuration(1, Duration.EighthNoteDenominator);
         internal byte DefaultDurationDenomniator { get; private protected set; } = Duration.EighthNoteDenominator;
         internal float DefaultDurationFraction { get; private protected set; } = Duration.EighthNoteFraction;
 
@@ -124,7 +124,7 @@ namespace CW.Soloist.CompositionService.Compositors
                     LongestAllowedDurationDenominator = Duration.HalfNoteDenominator;
                     break;
             }
-            DefaultDuration = new Duration(1, DefaultDurationDenomniator);
+            DefaultDuration = MusicTheoryFactory.CreateDuration(1, DefaultDurationDenomniator);
             DefaultDurationFraction = 1F / DefaultDurationDenomniator;
             ShortestAllowedFraction = 1F / ShortestAllowedDurationDenominator;
             LongestAllowedFraction = 1F / LongestAllowedDurationDenominator;
@@ -232,7 +232,7 @@ namespace CW.Soloist.CompositionService.Compositors
                         noteDuration = chordsNotesDurations[i];
 
                         // fetch a note for mapping and add it to note sequence 
-                        bar.Notes.Add(new Note(chordMappedNotes[j], noteDuration));
+                        bar.Notes.Add(MusicTheoryFactory.CreateNote(chordMappedNotes[j], noteDuration));
                         if (j == first || j == last)
                             j = middle;
                         else j += step;
@@ -322,7 +322,7 @@ namespace CW.Soloist.CompositionService.Compositors
 
             // return a projection of duration out of the fraction list 
             return durationFractions
-                .Select(fraction => new Duration(1, (byte)(1 / fraction)))
+                .Select(fraction => MusicTheoryFactory.CreateDuration(1, (byte)(1 / fraction)))
                 .ToArray();
         }
         #endregion
@@ -556,7 +556,7 @@ namespace CW.Soloist.CompositionService.Compositors
             NotePitch newPitch = filteredPitches[randomPitchIndex];
 
             // replace old note with new note with the selected pitch 
-            INote newNote = new Note(newPitch, oldNote.Duration);
+            INote newNote = MusicTheoryFactory.CreateNote(newPitch, oldNote.Duration);
             int indexOfOldNoteInBar = bar.Notes.IndexOf(oldNote);
             bar.Notes.RemoveAt(indexOfOldNoteInBar);
             bar.Notes.Insert(indexOfOldNoteInBar, newNote);
@@ -613,16 +613,16 @@ namespace CW.Soloist.CompositionService.Compositors
             {
                 case DurationSplitRatio.Equal:
                 default:
-                    firstDuration = new Duration(existingNumerator, newDenominator);
-                    secondDuration = new Duration(firstDuration);
+                    firstDuration = MusicTheoryFactory.CreateDuration(existingNumerator, newDenominator);
+                    secondDuration = MusicTheoryFactory.CreateDuration(firstDuration);
                     break;
                 case DurationSplitRatio.Anticipation:
-                    firstDuration = new Duration(existingNumerator, newDenominator);
-                    secondDuration = new Duration((byte)(existingNumerator * 3), newDenominator);
+                    firstDuration = MusicTheoryFactory.CreateDuration(existingNumerator, newDenominator);
+                    secondDuration = MusicTheoryFactory.CreateDuration((byte)(existingNumerator * 3), newDenominator);
                     break;
                 case DurationSplitRatio.Delay:
-                    firstDuration = new Duration((byte)(existingNumerator * 3), newDenominator);
-                    secondDuration = new Duration(existingNumerator, newDenominator);
+                    firstDuration = MusicTheoryFactory.CreateDuration((byte)(existingNumerator * 3), newDenominator);
+                    secondDuration = MusicTheoryFactory.CreateDuration(existingNumerator, newDenominator);
                     break;
             }
 
@@ -651,8 +651,8 @@ namespace CW.Soloist.CompositionService.Compositors
             }
 
             // create two new notes with preseted durations & pitches
-            INote firstNote = new Note(firstPitch, firstDuration);
-            INote secondNote = new Note(secondPitch, secondDuration);
+            INote firstNote = MusicTheoryFactory.CreateNote(firstPitch, firstDuration);
+            INote secondNote = MusicTheoryFactory.CreateNote(secondPitch, secondDuration);
 
             // replace the existing note with the two new notes 
             int originalNoteIndex = bar.Notes.IndexOf(existingNote);
@@ -792,7 +792,7 @@ namespace CW.Soloist.CompositionService.Compositors
             if (adjacentNote != null)
             {
                 // replace the hold note with the pitch found 
-                INote newNote = new Note(adjacentNote.Pitch, holdNote.Duration);
+                INote newNote = MusicTheoryFactory.CreateNote(adjacentNote.Pitch, holdNote.Duration);
                 selectedBar.Notes.RemoveAt(holdNoteIndex);
                 selectedBar.Notes.Insert(holdNoteIndex, newNote);
 
@@ -863,7 +863,7 @@ namespace CW.Soloist.CompositionService.Compositors
 
             /* replace bar's first note with a new hold syncoped note which will hold the 
              * pitch that would now be started early from the preceding bar */
-            INote newNote = new Note(NotePitch.HoldNote, originalNote.Duration);
+            INote newNote = MusicTheoryFactory.CreateNote(NotePitch.HoldNote, originalNote.Duration);
             selectedBar.Notes.RemoveAt(0);
             selectedBar.Notes.Insert(0, newNote);
 
@@ -873,7 +873,7 @@ namespace CW.Soloist.CompositionService.Compositors
             // case 1: preceding note's length is too short for splitting (8th note or shorter) - replace it directly
             if ((precedingNote.Duration.Numerator / (float)precedingNote.Duration.Denominator) <= Duration.EighthNoteFraction)
             {
-                INote newPrecedingNote = new Note(originalNote.Pitch, precedingNote.Duration);
+                INote newPrecedingNote = MusicTheoryFactory.CreateNote(originalNote.Pitch, precedingNote.Duration);
                 precedingBar.Notes.RemoveAt(precedingNoteIndex);
                 precedingBar.Notes.Insert(precedingNoteIndex, newPrecedingNote);
             }
@@ -889,9 +889,9 @@ namespace CW.Soloist.CompositionService.Compositors
             {
                 INote newPrecedingNote1, newPrecedingNote2;
                 //if (precedingNote.Duration.Denominator )
-                Duration eigthDuration = new Duration(1, 8);
-                newPrecedingNote1 = new Note(precedingNote.Pitch, precedingNote.Duration.Subtract(eigthDuration));
-                newPrecedingNote2 = new Note(originalNote.Pitch, eigthDuration);
+                IDuration eigthDuration = MusicTheoryFactory.CreateDuration(1, 8);
+                newPrecedingNote1 = MusicTheoryFactory.CreateNote(precedingNote.Pitch, precedingNote.Duration.Subtract(eigthDuration));
+                newPrecedingNote2 = MusicTheoryFactory.CreateNote(originalNote.Pitch, eigthDuration);
 
                 // replace the old preceding note with the two new preceding notes 
                 precedingBar.Notes.RemoveAt(precedingNoteIndex);

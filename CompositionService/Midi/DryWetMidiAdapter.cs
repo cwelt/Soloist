@@ -100,7 +100,7 @@ namespace CW.Soloist.CompositionService.Midi
             TimeSignatureEvent timeSignatureEvent = (from e in _metaEvents
                                                      where e.EventType == MidiEventType.TimeSignature
                                                      select e)?.First() as TimeSignatureEvent;
-            KeySignature = new Duration(timeSignatureEvent.Numerator, timeSignatureEvent.Denominator, false);
+            KeySignature = MusicTheoryFactory.CreateDuration(timeSignatureEvent.Numerator, timeSignatureEvent.Denominator, false);
 
             // set number of bars property
             BarBeatFractionTimeSpan duration = _midiContent.GetDuration<BarBeatFractionTimeSpan>();
@@ -188,7 +188,7 @@ namespace CW.Soloist.CompositionService.Midi
 
             // if an explicit key signature for this bar was found, assemble an duration from it
             if (barKeySignature != null)
-                return new Duration((byte)barKeySignature.Value.Numerator, (byte)barKeySignature.Value.Denominator, false);
+                return MusicTheoryFactory.CreateDuration((byte)barKeySignature.Value.Numerator, (byte)barKeySignature.Value.Denominator, false);
 
             // if no explicit key signature exists for this specific bar, return the default key signature from meta events
             else return KeySignature;
@@ -341,7 +341,7 @@ namespace CW.Soloist.CompositionService.Midi
             INote note; // current note in iteration 
             short pitch; // curent note's pitch 
             long startBar, endBar; // start & end bar indices of an current note
-            Duration barDuration, noteDuration; // current note's & current bar's duration 
+            IDuration barDuration, noteDuration; // current note's & current bar's duration 
 
             // fetch all notes & rests in midi file 
             IEnumerable<ILengthedObject> notesAndRests = melodyTrack.GetNotesAndRests(RestSeparationPolicy.NoSeparation);
@@ -371,7 +371,7 @@ namespace CW.Soloist.CompositionService.Midi
                 // case 1: current note fits entirely inside current bar 
                 if (endBar <= currentBarIndex)
                 {
-                    note = new Note((NotePitch)pitch, (byte)lengthF.Numerator, (byte)lengthF.Denominator);
+                    note = MusicTheoryFactory.CreateNote((NotePitch)pitch, (byte)lengthF.Numerator, (byte)lengthF.Denominator);
                     bars[currentBarIndex].Notes.Add(note);
 
                     // in case current note ends on edge of bar, advance to next one 
@@ -387,14 +387,14 @@ namespace CW.Soloist.CompositionService.Midi
                     barEndTime = new MusicalTimeSpan(currentBarIndex + 1, 1);
                     barLengthRemainder = barEndTime.Subtract(startTimeF, TimeSpanMode.TimeTime) as MusicalTimeSpan;
 
-                    note = new Note((NotePitch)pitch, (byte)barLengthRemainder.Numerator, (byte)barLengthRemainder.Denominator);
+                    note = MusicTheoryFactory.CreateNote((NotePitch)pitch, (byte)barLengthRemainder.Numerator, (byte)barLengthRemainder.Denominator);
                     bars[currentBarIndex++].Notes.Add(note);
 
                     // if bar spans over 3 bars or more, fill inbetween bars with hold notes. 
                     while (currentBarIndex < endBar)
                     {
-                        barDuration = new Duration(bars[currentBarIndex].TimeSignature.Numerator, bars[currentBarIndex].TimeSignature.Denominator);
-                        note = new Note(NotePitch.HoldNote, barDuration);
+                        barDuration = MusicTheoryFactory.CreateDuration(bars[currentBarIndex].TimeSignature.Numerator, bars[currentBarIndex].TimeSignature.Denominator);
+                        note = MusicTheoryFactory.CreateNote(NotePitch.HoldNote, barDuration);
                         bars[currentBarIndex++].Notes.Add(note);
                     }
 
@@ -402,8 +402,8 @@ namespace CW.Soloist.CompositionService.Midi
                     noteLengthRemainder = endTimeF.Subtract(new MusicalTimeSpan(currentBarIndex, 1), TimeSpanMode.TimeTime) as MusicalTimeSpan;
                     if (noteLengthRemainder.Numerator > 0)
                     {
-                        noteDuration = new Duration((byte)noteLengthRemainder.Numerator, (byte)noteLengthRemainder.Denominator);
-                        note = new Note(NotePitch.HoldNote, noteDuration);
+                        noteDuration = MusicTheoryFactory.CreateDuration((byte)noteLengthRemainder.Numerator, (byte)noteLengthRemainder.Denominator);
+                        note = MusicTheoryFactory.CreateNote(NotePitch.HoldNote, noteDuration);
                         bars[currentBarIndex].Notes.Add(note);
                     }
 
