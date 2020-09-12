@@ -1,4 +1,6 @@
-﻿namespace CW.Soloist.CompositionService.MusicTheory
+﻿using CW.Soloist.CompositionService.Enums;
+
+namespace CW.Soloist.CompositionService.MusicTheory
 {
 
     /// <inheritdoc cref="INote"/>

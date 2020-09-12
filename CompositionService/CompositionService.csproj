@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Composition.cs" />
+    <Compile Include="CompositionContext.cs" />
     <Compile Include="Compositors\Arpeggiator\ArpeggiatorCompositor.cs" />
     <Compile Include="Compositors\ArpeggioScaleMix\ArpeggioScaleMixCompositor.cs" />
     <Compile Include="Compositors\CompositionStrategy.cs" />
@@ -66,21 +66,21 @@
     <Compile Include="MusicTheory\Interval.cs" />
     <Compile Include="MusicTheory\MusicTheoryExtensions.cs" />
     <Compile Include="MusicTheory\MusicTheoryFactory.cs" />
-    <Compile Include="UtilEnums\NodeSequenceMode.cs" />
-    <Compile Include="UtilEnums\DurationSplitRatio.cs" />
-    <Compile Include="UtilEnums\OverallDurationFeel.cs" />
-    <Compile Include="UtilEnums\Permutation.cs" />
-    <Compile Include="UtilEnums\PitchRangeSource.cs" />
-    <Compile Include="UtilEnums\SortDirection.cs" />
+    <Compile Include="Enums\NodeSequenceMode.cs" />
+    <Compile Include="Enums\DurationSplitRatio.cs" />
+    <Compile Include="Enums\OverallDurationFeel.cs" />
+    <Compile Include="Enums\Permutation.cs" />
+    <Compile Include="Enums\PitchRangeSource.cs" />
+    <Compile Include="Enums\SortDirection.cs" />
     <Compile Include="Midi\DryWetMidiAdapter.cs" />
     <Compile Include="Midi\IMidiFile.cs" />
     <Compile Include="Midi\IMidiTrack.cs" />
     <Compile Include="Midi\MusicalInstrument.cs" />
     <Compile Include="MusicTheory\Bar.cs" />
     <Compile Include="MusicTheory\Chord.cs" />
-    <Compile Include="UtilEnums\ChordNoteMappingSource.cs" />
+    <Compile Include="Enums\ChordNoteMappingSource.cs" />
     <Compile Include="MusicTheory\ChordType.cs" />
-    <Compile Include="EnumExtensions.cs" />
+    <Compile Include="Enums\EnumExtensions.cs" />
     <Compile Include="MusicTheory\IBar.cs" />
     <Compile Include="MusicTheory\IChord.cs" />
     <Compile Include="MusicTheory\INote.cs" />

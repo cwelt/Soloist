@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace CW.Soloist.CompositionService.UtilEnums
+namespace CW.Soloist.CompositionService.Enums
 {
     /// <summary>
     /// Determines the overall feel and density regarding the amount of notes

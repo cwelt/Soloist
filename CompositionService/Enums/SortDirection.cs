@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.UtilEnums
+namespace CW.Soloist.CompositionService.Enums
 {
     /// <summary>
     /// Represents a sort ordering direction: ascending or descending.

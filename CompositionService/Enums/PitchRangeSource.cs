@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace CW.Soloist.CompositionService.UtilEnums
+namespace CW.Soloist.CompositionService.Enums
 {
     /// <summary>
     /// Source for determining the pitch value range for the composition - 

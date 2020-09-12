@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.UtilEnums
+namespace CW.Soloist.CompositionService.Enums
 {
     /// <summary>
     /// Represents a source for mapping between a given chord and note pitches. 

@@ -8,6 +8,7 @@ using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Devices;
 using Melanchall.DryWetMidi.Composing;
 using Melanchall.DryWetMidi.Interaction;
+using CW.Soloist.CompositionService.Enums;
 using CW.Soloist.CompositionService.MusicTheory;
 using DWMidiI = Melanchall.DryWetMidi.Interaction;
 using DWMidiMT = Melanchall.DryWetMidi.MusicTheory;

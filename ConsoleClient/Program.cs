@@ -3,7 +3,7 @@ using CW.Soloist.CompositionService.Compositors;
 using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.UtilEnums;
+using CW.Soloist.CompositionService.Enums;
 using System;
 using System.Configuration;
 using System.Globalization;
@@ -51,7 +51,7 @@ namespace ConsoleClient
 
 
             // create a new composition with injected strategy
-            var composition = new Composition(chordsFilePath, filePath, melodyTrackIndex: MelodyTrackIndex.TrackNumber1);
+            var composition = new CompositionContext(chordsFilePath, filePath, melodyTrackIndex: MelodyTrackIndex.TrackNumber1);
             var newMidiFiles = composition.Compose(
                 compositionStrategy,
                 musicalInstrument: MusicalInstrument.ElectricGrandPiano,

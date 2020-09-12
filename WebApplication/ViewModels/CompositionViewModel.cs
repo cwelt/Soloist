@@ -1,7 +1,7 @@
 ﻿using CW.Soloist.CompositionService.Compositors;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.UtilEnums;
+using CW.Soloist.CompositionService.Enums;
 using CW.Soloist.DataAccess.DomainModels;
 using CW.Soloist.CompositionService;
 using System;

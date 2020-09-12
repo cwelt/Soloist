@@ -55,7 +55,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
                  * initialize bars to contain only the time signature and chords 
                  * from the given composition structure bar sequence, setting the 
                  * notes in each bar to an empty melody. */
-                Bars = Composition.CloneChordProgressionBars(compositionStructure);
+                Bars = CompositionContext.CloneChordProgressionBars(compositionStructure);
             }
 
         }

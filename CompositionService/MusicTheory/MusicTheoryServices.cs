@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.MusicTheory;
-using CW.Soloist.CompositionService.UtilEnums;
+using CW.Soloist.CompositionService.Enums;
 
 namespace CW.Soloist.CompositionService.MusicTheory
 {

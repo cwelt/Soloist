@@ -103,7 +103,7 @@ namespace CW.Soloist.WebApplication.Controllers
             try
             {
                 songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
-                songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
+                songViewModel.MidiData = CompositionContext.ReadMidiFile(midiFilePath);
             }
             catch (Exception ex)
             {
@@ -189,7 +189,7 @@ namespace CW.Soloist.WebApplication.Controllers
 
                 // save the midi playback file in the new directory 
                 string midiPlaybackFullPath = directoryPath + song.MidiPlaybackFileName;
-                playbackFile = Composition.CreateMidiPlayback(songViewModel.MidiFileHandler.InputStream, song.MelodyTrackIndex);
+                playbackFile = CompositionContext.CreateMidiPlayback(songViewModel.MidiFileHandler.InputStream, song.MelodyTrackIndex);
                 playbackFile.SaveFile(outputPath: midiPlaybackFullPath, pathIncludesFileName: true);
 
                 // save the chord progression file in the new directory 
@@ -254,7 +254,7 @@ namespace CW.Soloist.WebApplication.Controllers
             try
             {
                 songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
-                songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
+                songViewModel.MidiData = CompositionContext.ReadMidiFile(midiFilePath);
             }
             catch (Exception ex)
             {
@@ -497,7 +497,7 @@ namespace CW.Soloist.WebApplication.Controllers
             try
             {
                 songViewModel.ChordProgression = System.IO.File.ReadAllText(chordsFilePath);
-                songViewModel.MidiData = Composition.ReadMidiFile(midiFilePath);
+                songViewModel.MidiData = CompositionContext.ReadMidiFile(midiFilePath);
             }
             catch (Exception ex)
             {

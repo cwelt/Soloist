@@ -1,5 +1,5 @@
 ﻿using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.UtilEnums;
+using CW.Soloist.CompositionService.Enums;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,7 +9,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
 {
     /// <summary> <para> Compose a solo-melody over a given playback by implementing a genetic algorithm. </para>
     /// This class implements a concrete composition strategy (<see cref="Compositor"/>)
-    /// for use by a <see cref="Composition"/> context instance. </summary>
+    /// for use by a <see cref="CompositionContext"/> context instance. </summary>
     internal partial class GeneticAlgorithmCompositor : Compositor
     {
         private protected uint _currentGeneration;

@@ -1,13 +1,12 @@
-﻿using CW.Soloist.CompositionService;
+﻿using System;
+using System.Web;
+using System.ComponentModel;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.CompositionService.Enums;
 using CW.Soloist.WebApplication.Validations;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+
 
 namespace CW.Soloist.WebApplication.ViewModels
 {

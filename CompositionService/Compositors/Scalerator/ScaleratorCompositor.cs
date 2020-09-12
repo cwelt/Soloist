@@ -1,5 +1,5 @@
 ﻿using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.UtilEnums;
+using CW.Soloist.CompositionService.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

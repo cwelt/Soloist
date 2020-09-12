@@ -1,5 +1,5 @@
 ﻿using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.UtilEnums;
+using CW.Soloist.CompositionService.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace CW.Soloist.CompositionService.Compositors
     /// Abstract compositor strategy class. 
     /// Subclasses of this class implement concrete composition strategies. 
     /// <para><remarks>
-    /// Composition strategies are used by the <see cref="Composition"/> context class.
+    /// Composition strategies are used by the <see cref="CompositionContext"/> context class.
     /// This class is the abstract strategy class in the strategy design pattern.
     /// </remarks></para>
     /// </summary>

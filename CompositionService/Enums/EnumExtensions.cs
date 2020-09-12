@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService
+namespace CW.Soloist.CompositionService.Enums
 {
     /// <summary>
     /// Enumeration static class for providing general extensions for enum types,

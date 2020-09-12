@@ -76,11 +76,11 @@ namespace CW.Soloist.WebApplication.Validations
             if (fileHandler == midiFileHandler)
             {
                 // validate melody track index is not out of bounds 
-                if (!Composition.IsMelodyTrackIndexValid((int?)melodyTrackIndex, midi, out errorMessage))
+                if (!CompositionContext.IsMelodyTrackIndexValid((int?)melodyTrackIndex, midi, out errorMessage))
                     return new ValidationResult(errorMessage);
 
                 // validate that bars in CHORD progression are compatible with MIDI file 
-                if (!Composition.AreBarsCompatible(bars, midi, out errorMessage))
+                if (!CompositionContext.AreBarsCompatible(bars, midi, out errorMessage))
                     return new ValidationResult(errorMessage);
             }
 
@@ -140,7 +140,7 @@ namespace CW.Soloist.WebApplication.Validations
             {
                 // build a stream reader for reading the chord progression 
                 StreamReader streamReader = new StreamReader(chordsFileHandler.InputStream);
-                bars = Composition.ReadChordsFromFile(streamReader);
+                bars = CompositionContext.ReadChordsFromFile(streamReader);
 
                 // reset stream origin seek to beginning 
                 chordsFileHandler.InputStream.Position = 0;
@@ -168,7 +168,7 @@ namespace CW.Soloist.WebApplication.Validations
             errorMessage = null;
             try
             {   // fetch midi content from stream 
-                midiFile = Composition.ReadMidiFile(midiFileHandler.InputStream);
+                midiFile = CompositionContext.ReadMidiFile(midiFileHandler.InputStream);
                 return true;
             }
             catch (Exception ex)

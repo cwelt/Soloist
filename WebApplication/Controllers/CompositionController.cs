@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using CW.Soloist.DataAccess;
 using CW.Soloist.CompositionService;
 using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.CompositionService.Enums;
 using CW.Soloist.DataAccess.DomainModels;
 using CW.Soloist.WebApplication.ViewModels;
-using CW.Soloist.CompositionService.UtilEnums;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.Compositors;
 using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
@@ -128,7 +128,7 @@ namespace CW.Soloist.WebApplication.Controllers
             string midiFilePath = await SongsController.GetSongPath(song.Id, _databaseGateway, User, SongFileType.MidiOriginalFile);
 
             // create a compositon instance 
-            Composition composition = new Composition(
+            CompositionContext composition = new CompositionContext(
                 chordProgressionFilePath: chordFilePath,
                 midiFilePath: midiFilePath,
                 melodyTrackIndex: song.MelodyTrackIndex);
