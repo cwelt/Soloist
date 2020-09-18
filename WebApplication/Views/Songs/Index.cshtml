@@ -46,7 +46,7 @@
                         @{
                             <!-- Compose a New Melody For This Song -->
                             <text> || </text>
-                            @Html.ActionLink("Compose ♫♪", nameof(Composition.Compose), nameof(Composition), new { songId = song.Id }, null)
+                            @Html.ActionLink("Compose ♫♪", nameof(CompositionContext.Compose), nameof(CompositionContext), new { songId = song.Id }, null)
                             <text> || </text>
 
                             <!-- Details -->
