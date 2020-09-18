@@ -263,7 +263,7 @@ namespace CW.Soloist.CompositionService.Midi
         public void FadeOutTrack(int trackIndex)
         {
             // set the amount of bars that are subject to the fadeout process 
-            const int DefaultNumOfFadeoutBars = 8;
+            const int DefaultNumOfFadeoutBars = 16;
             int numOfFadeoutBars = NumberOfBars >= DefaultNumOfFadeoutBars ? DefaultNumOfFadeoutBars : NumberOfBars;
 
             // set index of the first bar that is subject for the fadeout process
@@ -303,12 +303,12 @@ namespace CW.Soloist.CompositionService.Midi
                         // decrease note on event velocity 
                         if (note.Velocity >= currentVelocityStepSize)
                             note.Velocity -= currentVelocityStepSize;
-                        else note.Velocity = (SevenBitNumber)(note.Velocity / 2);
+                        else note.Velocity = (SevenBitNumber)(2);
 
                         // decrease note off event velocity 
                         if (note.OffVelocity >= currentVelocityStepSize)
                             note.OffVelocity -= currentVelocityStepSize;
-                        else note.OffVelocity = (SevenBitNumber)(note.OffVelocity / 2);
+                        else note.OffVelocity = (SevenBitNumber)(2);
                     }
                 }
 
