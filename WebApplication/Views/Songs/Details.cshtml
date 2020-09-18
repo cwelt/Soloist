@@ -133,7 +133,7 @@
         <p>
             <!-- Compose -->
             <text> || </text>
-            @Html.ActionLink("Compose ♫♪", nameof(CompositionContext.Compose), nameof(CompositionContext), new { songId = Model.Id }, null)
+            @Html.ActionLink("Compose ♫♪", "Compose", "Composition", new { songId = Model.Id }, null)
             <text> || </text>
 
             <!-- Edit -->
