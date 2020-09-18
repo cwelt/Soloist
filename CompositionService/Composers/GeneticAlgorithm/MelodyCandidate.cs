@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
+namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 {
     // TODO: Use abstraction -> Implement interface of  melody genome 
     internal class MelodyCandidate

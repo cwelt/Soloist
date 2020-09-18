@@ -1,4 +1,4 @@
-﻿using CW.Soloist.CompositionService.Compositors;
+﻿using CW.Soloist.CompositionService.Composers;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.Enums;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using CW.Soloist.WebApplication.Validations;
-using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
+using CW.Soloist.CompositionService.Composers.GeneticAlgorithm;
 
 namespace CW.Soloist.WebApplication.ViewModels
 {

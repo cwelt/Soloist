@@ -47,20 +47,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompositionContext.cs" />
-    <Compile Include="Compositors\Arpeggiator\ArpeggiatorCompositor.cs" />
-    <Compile Include="Compositors\ArpeggioScaleMix\ArpeggioScaleMixCompositor.cs" />
-    <Compile Include="Compositors\CompositionStrategy.cs" />
-    <Compile Include="Compositors\CompositorExtensions.cs" />
-    <Compile Include="Compositors\CompositorFactory.cs" />
-    <Compile Include="Compositors\GeneticAlgorithm\Crossovers.cs" />
-    <Compile Include="Compositors\GeneticAlgorithm\FitnessEvaluators.cs" />
-    <Compile Include="Compositors\GeneticAlgorithm\GeneticAlgorithmCompositor.cs" />
-    <Compile Include="Compositors\Compositor.cs" />
-    <Compile Include="Compositors\GeneticAlgorithm\Initialization.cs" />
-    <Compile Include="Compositors\GeneticAlgorithm\MelodyCandidate.cs" />
-    <Compile Include="Compositors\GeneticAlgorithm\Mutators.cs" />
-    <Compile Include="Compositors\GeneticAlgorithm\Selectors.cs" />
-    <Compile Include="Compositors\Scalerator\ScaleratorCompositor.cs" />
+    <Compile Include="Composers\Arpeggiator\ArpeggiatorComposer.cs" />
+    <Compile Include="Composers\ArpeggioScaleMix\ArpeggioScaleMixComposer.cs" />
+    <Compile Include="Composers\CompositionStrategy.cs" />
+    <Compile Include="Composers\CompositorExtensions.cs" />
+    <Compile Include="Composers\CompositorFactory.cs" />
+    <Compile Include="Composers\GeneticAlgorithm\Crossovers.cs" />
+    <Compile Include="Composers\GeneticAlgorithm\FitnessEvaluators.cs" />
+    <Compile Include="Composers\GeneticAlgorithm\GeneticAlgorithmComposer.cs" />
+    <Compile Include="Composers\Composer.cs" />
+    <Compile Include="Composers\GeneticAlgorithm\Initialization.cs" />
+    <Compile Include="Composers\GeneticAlgorithm\MelodyCandidate.cs" />
+    <Compile Include="Composers\GeneticAlgorithm\Mutators.cs" />
+    <Compile Include="Composers\GeneticAlgorithm\Selectors.cs" />
+    <Compile Include="Composers\Scalerator\ScaleratorComposer.cs" />
     <Compile Include="Midi\MelodyTrackNumber.cs" />
     <Compile Include="Midi\MidiFactory.cs" />
     <Compile Include="MusicTheory\Interval.cs" />

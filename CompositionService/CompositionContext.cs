@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.Enums;
-using CW.Soloist.CompositionService.Compositors;
+using CW.Soloist.CompositionService.Composers;
 using CW.Soloist.CompositionService.MusicTheory;
 
 namespace CW.Soloist.CompositionService
@@ -21,7 +21,7 @@ namespace CW.Soloist.CompositionService
         #region Private Field Members
 
         /// <summary> compositor responsible for composing the solo melody with the desired composition strategy.</summary>
-        private Compositor _compositor;
+        private Composer _compositor;
 
         /// <summary> Original melody from the midi file that coud be used as initialization seed for new melody. </summary>
         private IList<IBar> _melodySeed;

@@ -1,14 +1,9 @@
 ﻿using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.Enums;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.Compositors.Scalerator
+namespace CW.Soloist.CompositionService.Composers.Scalerator
 {
-    internal class ScaleratorCompositor : Compositor
+    internal class ScaleratorComposer : Composer
     {
         private protected override IEnumerable<IList<IBar>> GenerateMelody()
         {

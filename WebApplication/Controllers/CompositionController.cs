@@ -13,8 +13,8 @@ using CW.Soloist.CompositionService.Enums;
 using CW.Soloist.DataAccess.DomainModels;
 using CW.Soloist.WebApplication.ViewModels;
 using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.Compositors;
-using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
+using CW.Soloist.CompositionService.Composers;
+using CW.Soloist.CompositionService.Composers.GeneticAlgorithm;
 
 namespace CW.Soloist.WebApplication.Controllers
 {

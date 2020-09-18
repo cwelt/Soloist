@@ -1,6 +1,6 @@
 ﻿using CW.Soloist.CompositionService;
-using CW.Soloist.CompositionService.Compositors;
-using CW.Soloist.CompositionService.Compositors.GeneticAlgorithm;
+using CW.Soloist.CompositionService.Composers;
+using CW.Soloist.CompositionService.Composers.GeneticAlgorithm;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.Enums;

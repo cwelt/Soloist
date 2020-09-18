@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
+namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 {
-    internal partial class GeneticAlgorithmCompositor : Compositor
+    internal partial class GeneticAlgorithmComposer : Composer
     {
 
         private protected virtual void RegisterMutators()
@@ -299,9 +299,9 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         #endregion
 
         #region SyncopedNoteMutation()
-        /// <summary> <inheritdoc cref="Compositor.SyncopizeANote(IList{IBar}, int?)"/></summary>
+        /// <summary> <inheritdoc cref="Composer.SyncopizeANote(IList{IBar}, int?)"/></summary>
         /// <param name="melody"> The candidate melody which contains the bar sequence to operate on. </param>
-        /// <param name="barIndex"> <inheritdoc cref="Compositor.SyncopizeANote(IList{IBar}, int?)"/> "</param>
+        /// <param name="barIndex"> <inheritdoc cref="Composer.SyncopizeANote(IList{IBar}, int?)"/> "</param>
         private protected virtual void SyncopedNoteMutation(MelodyCandidate melody, int? barIndex = null)
         {
             SyncopizeANote(melody.Bars, barIndex);

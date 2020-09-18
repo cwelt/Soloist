@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CW.Soloist.CompositionService.Compositors
+namespace CW.Soloist.CompositionService.Composers
 {
     /// <summary>
     /// Extension methods for compositors usage. 

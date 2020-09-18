@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
+namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 {
-    internal partial class GeneticAlgorithmCompositor : Compositor
+    internal partial class GeneticAlgorithmComposer : Composer
     {
         #region EvaluateFitness()
         /// <summary>

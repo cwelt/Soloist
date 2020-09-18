@@ -1,10 +1,11 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.Enums;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService.Enums;
+using CW.Soloist.CompositionService.MusicTheory;
 
-namespace CW.Soloist.CompositionService.Compositors
+
+namespace CW.Soloist.CompositionService.Composers
 {
 
     /// <summary>
@@ -15,23 +16,35 @@ namespace CW.Soloist.CompositionService.Compositors
     /// This class is the abstract strategy class in the strategy design pattern.
     /// </remarks></para>
     /// </summary>
-    public abstract class Compositor
+    public abstract class Composer
     {
+        #region Properties & Fields
+        
         /// <summary> Melody seed to base on the composition of the new melody. </summary>
         internal IList<IBar> Seed { get; private protected set; }
+
 
         /// <summary> The outcome of the <see cref="Compose"/> method. </summary>
         internal IList<IBar> ComposedMelody { get; private protected set; }
 
+
         /// <summary> The playback's harmony. </summary>
         internal IList<IBar> ChordProgression { get; private protected set; }
 
-        /// <summary> Default duration denominator for a single note. </summary>
+
+        /// <summary> Default duration for a single note. </summary>
         internal IDuration DefaultDuration { get; private protected set; } = MusicTheoryFactory.CreateDuration(1, Duration.EighthNoteDenominator);
+
+
+        /// <summary> Default duration denominator for a single note. </summary>
         internal byte DefaultDurationDenomniator { get; private protected set; } = Duration.EighthNoteDenominator;
+
+
+        /// <summary> Fraction of the default duration for a single note. </summary>
         internal float DefaultDurationFraction { get; private protected set; } = Duration.EighthNoteFraction;
 
-        private protected readonly float[] PossibleDurationFractions =
+        /// <summary> Constant duration fractions of the most used durations. </summary>
+        internal static readonly float[] PossibleDurationFractions =
         {
             Duration.HalfNoteFraction,
             Duration.QuaterNoteFraction,
@@ -40,15 +53,17 @@ namespace CW.Soloist.CompositionService.Compositors
             Duration.ThirtySecondNoteFraction
         };
 
-
+        /// <summary> Denominator upper bound that is set according to the requested <see cref="OverallNoteDurationFeel"/>. </summary>
         internal byte LongestAllowedDurationDenominator { get; private protected set; } = 2;
+
+        /// <summary> Fraction upper bound that is set according to <see cref="OverallNoteDurationFeel"/>. </summary>
         internal float LongestAllowedFraction { get; private protected set; } = Duration.HalfNoteFraction;
+
+        /// <summary> Denominator lowest bound that is set according to the requested <see cref="OverallNoteDurationFeel"/>. </summary>
         internal byte ShortestAllowedDurationDenominator { get; private protected set; } = 16;
+
+        /// <summary> Fraction lowest bound that is set according to <see cref="OverallNoteDurationFeel"/>. </summary>
         internal float ShortestAllowedFraction { get; private protected set; } = Duration.SixteenthNoteFraction;
-        internal byte DefaultNumOfNotesInBar { get; private protected set; }
-
-
-
 
         /// <summary> Minimum octave of note pitch range for the composition. </summary>
         public byte MinOctave { get; private protected set; } = 4;
@@ -62,7 +77,13 @@ namespace CW.Soloist.CompositionService.Compositors
         /// <summary> Upper bound of a  note pitch for the composition. </summary>
         public NotePitch MaxPitch { get; private protected set; } = NotePitch.E6;
 
+        #endregion
 
+
+        private protected abstract IEnumerable<IList<IBar>> GenerateMelody();
+
+
+        #region Compose
         /// <summary> Compose a solo-melody over a given playback. </summary>
         /// <param name="chordProgression"> The chords of the song in the playback. </param>
         /// <param name="melodyInitializationSeed"> Optional existing melody on which to base the composition on.</param>
@@ -79,13 +100,25 @@ namespace CW.Soloist.CompositionService.Compositors
             NotePitch maxPitch = NotePitch.E6,
             params object[] customParams)
         {
+            // init 
             InitializeCompositionParams(chordProgression, melodyInitializationSeed, overallNoteDurationFeel, minPitch, maxPitch, customParams);
 
+            // execute the actual business logic for composing a melody
             return GenerateMelody();
         }
+        #endregion
 
 
-        private protected abstract IEnumerable<IList<IBar>> GenerateMelody();
+        #region InitializeCompositionParams
+        /// <summary>
+        /// Initialization phase of the composition algorithm before the actual composition process.
+        /// </summary>
+        /// <param name="chordProgression"> The chord progression of the musical peace. </param>
+        /// <param name="melodyInitializationSeed"> An existing melody that might be used as seed for the new melody</param>
+        /// <param name="overallNoteDurationFeel"> Requested overall note density feeling. </param>
+        /// <param name="minPitch"> Lowest bound for pitch in the composition. </param>
+        /// <param name="maxPitch"> Toppest bound for pitch in the composition. </param>
+        /// <param name="additionalParams"> Additional algorithm-specific parameters. </param>
         private protected virtual void InitializeCompositionParams(
             IList<IBar> chordProgression,
             IList<IBar> melodyInitializationSeed = null,
@@ -129,12 +162,16 @@ namespace CW.Soloist.CompositionService.Compositors
             ShortestAllowedFraction = 1F / ShortestAllowedDurationDenominator;
             LongestAllowedFraction = 1F / LongestAllowedDurationDenominator;
         }
+        #endregion
+
+
+        #region Common Basic Utillity Services 
 
         #region NoteSequenceInitializer()
         /// <summary>
         /// Initializes an entire note sequence for a given sequence of bars, 
         /// based on custom user preferences such as melody contour direction 
-        /// and chord-note mapping source.
+        /// and a chord-note mapping source.
         /// </summary>
         /// <param name="barCollection"> The subject bar sequence that should be populated with notes.</param>
         /// <param name="mode"> Melody Contour direction of added notes: ascending, descending, zigzag, etc. </param>
@@ -250,7 +287,7 @@ namespace CW.Soloist.CompositionService.Compositors
 
         #region Generate Durations Based on Overall Density Feel
         /// <summary>
-        /// Generates a sequence of durartions that sum up to <paramref name="timeSpanLength"/>
+        /// Generates a sequence of durations that sum up to <paramref name="timeSpanLength"/>
         /// parameter, where the duration density, i.e., number of notes, is based on the 
         /// <paramref name="durationDefaultLength"/> parameter, or on the 
         /// <see cref="DefaultDurationFraction"/> property if the input parameter is set to null.
@@ -263,7 +300,7 @@ namespace CW.Soloist.CompositionService.Compositors
         /// If it invalidly exceeds it, the method would set the default independently 
         /// to the highest possible length which is shorter or equal to total time span. </param>
         /// <returns></returns>
-        private IDuration[] GenerateDurations(float timeSpanLength, float? durationDefaultLength = null)
+        private protected virtual IDuration[] GenerateDurations(float timeSpanLength, float? durationDefaultLength = null)
         {
             // initialization 
             int randomIndex;
@@ -411,71 +448,153 @@ namespace CW.Soloist.CompositionService.Compositors
         #endregion
 
         #region Arpeggiator Initializers
-        private protected void ArpeggiatorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
+
+        #region ArpeggiatorInitializer
+        /// <summary>
+        ///  Initializes an entire note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression arpeggio notes and requested <see cref="NoteSequenceMode"/>       
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        /// <param name="mode"> Ascending, descending or zigzag. See <see cref="NoteSequenceMode"/> for details.</param>
+        private protected virtual void ArpeggiatorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode, mappingSource: ChordNoteMappingSource.Chord);
         }
+        #endregion
 
-        private protected void ArpeggiatorInitializerAscending(IEnumerable<IBar> bars)
+        #region ArpeggiatorInitializerAscending
+        /// <summary>
+        ///  Initializes a note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression arpeggio notes in ascending order.
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        private protected virtual void ArpeggiatorInitializerAscending(IEnumerable<IBar> bars)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode: NoteSequenceMode.Ascending, mappingSource: ChordNoteMappingSource.Chord);
         }
+        #endregion
 
-        private protected void ArpeggiatorInitializerDescending(IEnumerable<IBar> bars)
+        #region ArpeggiatorInitializerDescending
+        /// <summary>
+        ///  Initializes a note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression arpeggio notes in descending order.
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        private protected virtual void ArpeggiatorInitializerDescending(IEnumerable<IBar> bars)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode: NoteSequenceMode.Descending, mappingSource: ChordNoteMappingSource.Chord);
         }
+        #endregion
 
-        private protected void ArpeggiatorInitializerChordZigzag(IEnumerable<IBar> bars)
+        #region ArpeggiatorInitializerChordZigzag
+        /// <summary>
+        ///  Initializes a note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression arpeggio notes in alternate order for each chord.
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        private protected virtual void ArpeggiatorInitializerChordZigzag(IEnumerable<IBar> bars)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode: NoteSequenceMode.ChordZigzag, mappingSource: ChordNoteMappingSource.Chord);
         }
+        #endregion
 
-        private protected void ArpeggiatorInitializerBarZigzag(IEnumerable<IBar> bars)
+        #region ArpeggiatorInitializerBarZigzag
+        /// <summary>
+        ///  Initializes a note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression arpeggio notes in alternate order for each bar.
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        private protected virtual void ArpeggiatorInitializerBarZigzag(IEnumerable<IBar> bars)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode: NoteSequenceMode.BarZigzag, mappingSource: ChordNoteMappingSource.Chord);
         }
         #endregion
 
+        #endregion
+
         #region Scale Initializers
-        private protected void ScaleratorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
+
+        #region ScaleratorInitializer
+        /// <summary>
+        ///  Initializes an note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression mapped scale notes and requested <see cref="NoteSequenceMode"/>.     
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        /// <param name="mode"> Ascending, descending or zigzag. See <see cref="NoteSequenceMode"/> for details.</param>
+        private protected virtual void ScaleratorInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.BarZigzag)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode, mappingSource: ChordNoteMappingSource.Scale);
         }
+        #endregion
 
-        private protected void ScaleratorInitializerAscending(IEnumerable<IBar> bars)
+        #region ScaleratorInitializerAscending
+        /// <summary>
+        ///  Initializes an note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression mapped scale notes in ascending order.     
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        private protected virtual void ScaleratorInitializerAscending(IEnumerable<IBar> bars)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode: NoteSequenceMode.Ascending, mappingSource: ChordNoteMappingSource.Scale);
         }
+        #endregion
 
-        private protected void ScaleratorInitializerDescending(IEnumerable<IBar> bars)
+        #region ScaleratorInitializerDescending
+        /// <summary>
+        ///  Initializes an note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression mapped scale notes in descending order.     
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        private protected virtual void ScaleratorInitializerDescending(IEnumerable<IBar> bars)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode: NoteSequenceMode.Descending, mappingSource: ChordNoteMappingSource.Scale);
         }
+        #endregion
 
-        private protected void ScaleratorInitializerChordZigzag(IEnumerable<IBar> bars)
+        #region ScaleratorInitializerChordZigzag
+        /// <summary>
+        ///  Initializes an note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression mapped scale notes with alternating order with each chord.     
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        private protected virtual void ScaleratorInitializerChordZigzag(IEnumerable<IBar> bars)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode: NoteSequenceMode.ChordZigzag, mappingSource: ChordNoteMappingSource.Scale);
         }
+        #endregion
 
-        private protected void ScaleratorInitializerBarZigzag(IEnumerable<IBar> bars)
+        #region ScaleratorInitializerBarZigzag
+        /// <summary>
+        ///  Initializes an note sequence for a given sequence of bars, 
+        ///  based on the bars chord progression mapped scale notes with alternating order with each bar.     
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        private protected virtual void ScaleratorInitializerBarZigzag(IEnumerable<IBar> bars)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode: NoteSequenceMode.BarZigzag, mappingSource: ChordNoteMappingSource.Scale);
         }
         #endregion
 
+        #endregion
+
         #region ScaleArpeggioeMixInitializer()
-        private protected void ScaleArpeggioeMixInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.ChordZigzag)
+        /// <summary>
+        ///  Initializes an note sequence for a given sequence of bars, 
+        ///  based both on the bars chord progression mapped scale notes and arpeggio notes,     
+        /// </summary>
+        /// <param name="bars"> Bar sequence which contains the chord progression. </param>
+        /// <param name="mode"> Melody Contour direction of added notes: ascending, descending, zigzag, etc. </param>
+        private protected virtual void ScaleArpeggioeMixInitializer(IEnumerable<IBar> bars, NoteSequenceMode mode = NoteSequenceMode.ChordZigzag)
         {
             // delegate the work to the generic method 
             NoteSequenceInitializer(bars, mode, mappingSource: ChordNoteMappingSource.Scale, toggleMappingSource: true); ;
@@ -807,14 +926,14 @@ namespace CW.Soloist.CompositionService.Compositors
 
         #region SyncopizeANote()
         /// <summary>
-        /// Syncopes a bar's first note by preceding it's start time to it's preceding bar,
-        /// on behalf of the duration of it' preceding note (last note from preceding bar).
+        /// Syncopes a bar's first note by preceding its start time to it's preceding bar,
+        /// on behalf of the duration of its preceding note (last note from preceding bar).
         /// <para> The bar containing the note to be syncoped must meet some requirments: 
-        /// It cannot be empty, nor it's preceding bar either. It can't start with a 
-        /// hold note or a rest note, and it's first note and it's preceding note must 
+        /// It cannot be empty, nor its preceding bar either. It can't start with a 
+        /// hold note or a rest note, and its first note and its preceding note must 
         /// have durations with a denominator which is a power of two. This constraint is 
         /// held inorder to maintain balanced durations when making arithmetic operations 
-        /// on the duration of the syncoped note and it's preceding note. If the requested 
+        /// on the duration of the syncoped note and its preceding note. If the requested 
         /// bar does not meet these constraints then a random bar which does meet them is selected 
         /// instead. If no such bar is found then this method retuns false. otherwise it returns true.
         /// </para>
@@ -934,6 +1053,8 @@ namespace CW.Soloist.CompositionService.Compositors
             }
             #endregion
         }
+        #endregion
+
         #endregion
     }
 }

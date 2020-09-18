@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
-namespace CW.Soloist.CompositionService.Compositors
+namespace CW.Soloist.CompositionService.Composers
 {
     /// <summary>
     /// Strategy algorithm for composing a melody.

@@ -1,16 +1,16 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.Enums;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Data;
 using System.Linq;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService.Enums;
+using CW.Soloist.CompositionService.MusicTheory;
 
-namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
+namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 {
     /// <summary> <para> Compose a solo-melody over a given playback by implementing a genetic algorithm. </para>
-    /// This class implements a concrete composition strategy (<see cref="Compositor"/>)
+    /// This class implements a concrete composition strategy (<see cref="Composer"/>)
     /// for use by a <see cref="CompositionContext"/> context instance. </summary>
-    internal partial class GeneticAlgorithmCompositor : Compositor
+    internal partial class GeneticAlgorithmComposer : Composer
     {
         private protected uint _currentGeneration;
         private protected List<MelodyCandidate> _candidates;
@@ -30,7 +30,7 @@ namespace CW.Soloist.CompositionService.Compositors.GeneticAlgorithm
         /// <summary>
         /// Constructor
         /// </summary>
-        public GeneticAlgorithmCompositor()
+        public GeneticAlgorithmComposer()
         {
 
             // register initializers for first generation
