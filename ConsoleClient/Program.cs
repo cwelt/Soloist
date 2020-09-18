@@ -68,6 +68,7 @@ namespace ConsoleClient
                 bestCompositions[i].SaveFile(fileNamePrefix: $"consoleTest_{i+1}_");
             }
 
+            bestCompositions.FirstOrDefault()?.FadeOut();
             bestCompositions.FirstOrDefault()?.Play();
         }
     }

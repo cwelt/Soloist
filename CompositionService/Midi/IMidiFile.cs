@@ -111,5 +111,12 @@ namespace CW.Soloist.CompositionService.Midi
         /// <param name="barIndex"> Zero-based index of the bar in the midi file.</param>
         /// <returns> Duration defined in the bar's key signature on the midi file. </returns>
         IDuration GetBarDuration(int barIndex);
+
+        /// <summary> Fades out the volume of all played notes towards the end of the melody. </summary>
+        void FadeOut();
+
+        /// <summary> Fades out the volume of the played notes in the requested track towards the melody ending. </summary>
+        /// <param name="index">The index of the requested track.</param>
+        void FadeOutTrack(int index);
     }
 }

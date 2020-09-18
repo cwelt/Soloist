@@ -13,6 +13,7 @@ using CW.Soloist.CompositionService.MusicTheory;
 using DWMidiI = Melanchall.DryWetMidi.Interaction;
 using DWMidiMT = Melanchall.DryWetMidi.MusicTheory;
 using Note = CW.Soloist.CompositionService.MusicTheory.Note;
+using Melanchall.DryWetMidi.Tools;
 
 namespace CW.Soloist.CompositionService.Midi
 {
@@ -58,7 +59,7 @@ namespace CW.Soloist.CompositionService.Midi
         public NotePitch? HighestPitch { get; }
         public IReadOnlyList<IMidiTrack> Tracks => _midiContent
             .GetTrackChunks()
-            .Select((trackChunk, trackIndex) => 
+            .Select((trackChunk, trackIndex) =>
                 new DryWetMidiTrackAdapter(trackChunk, trackIndex))
             .Cast<IMidiTrack>()
             .ToList()
@@ -72,12 +73,12 @@ namespace CW.Soloist.CompositionService.Midi
         /// <param name="midiFilePath"> Path to the actual physical MIDI file. </param>
         internal DryWetMidiAdapter(string midiFilePath)
             // obtain stream from file and delegate it to second constructor 
-            : this(File.OpenRead(midiFilePath)) 
+            : this(File.OpenRead(midiFilePath))
         {
             FilePath = midiFilePath; // save path 
         }
 
-        
+
         /// <summary> Constructs an IMidiFile instance based on a MIDI file stream.</summary>
         /// <param name="stream"> stream of the midi file content. </param>
         /// <param name="disposeStream"> Set true if stream is to be closed by the constructor once it's done reading the file. </param>
@@ -85,7 +86,7 @@ namespace CW.Soloist.CompositionService.Midi
         {
             // initialization 
             Stream = stream;
-            stream.Position = 0; 
+            stream.Position = 0;
             _midiContent = MidiFile.Read(stream);
             _tempoMap = _midiContent.GetTempoMap();
             IList<TrackChunk> trackChunks = _midiContent.GetTrackChunks().ToList();
@@ -243,6 +244,93 @@ namespace CW.Soloist.CompositionService.Midi
             highestPitch = (NotePitch)(byte)(notes.Max(note => note.NoteNumber));
         }
         #endregion
+
+        #region Fadeout
+
+        #region FadeOut all tracks
+        /// <inheritdoc cref="IMidiFile.FadeOut"/>
+        public void FadeOut()
+        {
+            for (int i = 0; i < Tracks.Count; i++)
+            {
+                FadeOutTrack(i);
+            }
+        }
+        #endregion
+
+        #region FadeOutTrack
+        /// <inheritdoc cref="IMidiFile.FadeOutTrack"/>
+        public void FadeOutTrack(int trackIndex)
+        {
+            // set the amount of bars that are subject to the fadeout process 
+            const int DefaultNumOfFadeoutBars = 8;
+            int numOfFadeoutBars = NumberOfBars >= DefaultNumOfFadeoutBars ? DefaultNumOfFadeoutBars : NumberOfBars;
+
+            // set index of the first bar that is subject for the fadeout process
+            int startBar = this.NumberOfBars - DefaultNumOfFadeoutBars;
+
+            // retrieve requested track for the fadeout 
+            TrackChunk trackChunk = this._midiContent.GetTrackChunks().ElementAt(trackIndex);
+
+            // set notes manager to manage and commit the changes in this track in the midi file 
+            using (NotesManager notesManager = trackChunk.ManageNotes())
+            {
+                // get all notes from the subject bars that are relevant for the fadeout
+                List<DWMidiI.Note> allNotesForFadeout = notesManager.Notes
+                    .Where(n => n.TimeAs<BarBeatFractionTimeSpan>(_tempoMap).Bars >= startBar).ToList();
+                if (allNotesForFadeout.Count == 0) return;
+
+                // set volume step size for decrease in each bar 
+                SevenBitNumber singleVelocityStepSize = (SevenBitNumber)(4);
+                SevenBitNumber currentVelocityStepSize = (SevenBitNumber)0;
+
+                // fadeout each bar: decrease volume (velocity) gradually 
+                for (int i = 0; i < numOfFadeoutBars; i++)
+                {
+                    // get all notes from current bar 
+                    List<DWMidiI.Note> currentBarNotes = allNotesForFadeout
+                        .Where(n => n.TimeAs<BarBeatFractionTimeSpan>(_tempoMap).Bars >= startBar + i
+                                 && n.TimeAs<BarBeatFractionTimeSpan>(_tempoMap).Bars < startBar + i + 1).ToList();
+                    if (currentBarNotes.Count == 0) continue;
+
+                    // set velocity step size for current bar 
+                    if (currentVelocityStepSize + singleVelocityStepSize <= SevenBitNumber.MaxValue)
+                        currentVelocityStepSize += singleVelocityStepSize;
+
+                    // decrease velocity of each note in current bar by appropriate step size 
+                    foreach (DWMidiI.Note note in currentBarNotes)
+                    {
+                        // decrease note on event velocity 
+                        if (note.Velocity >= currentVelocityStepSize)
+                            note.Velocity -= currentVelocityStepSize;
+                        else note.Velocity = (SevenBitNumber)(note.Velocity / 2);
+
+                        // decrease note off event velocity 
+                        if (note.OffVelocity >= currentVelocityStepSize)
+                            note.OffVelocity -= currentVelocityStepSize;
+                        else note.OffVelocity = (SevenBitNumber)(note.OffVelocity / 2);
+                    }
+                }
+
+                // further emphasis the fadeout on the last bar 
+                DWMidiI.Note[] lastBarNotes = allNotesForFadeout
+                    .Where(n => n.TimeAs<BarBeatFractionTimeSpan>(_tempoMap).Bars >= NumberOfBars - 1).ToArray();
+                SevenBitNumber velocityStep = (SevenBitNumber)0;
+                for (int i = 0; i < lastBarNotes.Length; i++)
+                {
+                    if (i <= SevenBitNumber.MaxValue)
+                        velocityStep = (SevenBitNumber)(i);
+                    if (lastBarNotes[i].Velocity >= velocityStep)
+                        lastBarNotes[i].Velocity -= velocityStep;
+                    if (lastBarNotes[i].OffVelocity >= velocityStep)
+                        lastBarNotes[i].OffVelocity -= velocityStep;
+                }
+            }
+        }
+        #endregion
+
+        #endregion
+
         #endregion
 
 
@@ -269,7 +357,7 @@ namespace CW.Soloist.CompositionService.Midi
             melodyTrackBuilder.ProgramChange((SevenBitNumber)(byte)instrument);
 
             // set default velocity (volume)
-            melodyTrackBuilder.SetVelocity((SevenBitNumber)100);
+            melodyTrackBuilder.SetVelocity((SevenBitNumber)88);
 
             // enumerate over all notes         
             for (int i = 0; i < melodyBars.Count; i++)
@@ -415,6 +503,9 @@ namespace CW.Soloist.CompositionService.Midi
             }
         }
         #endregion
+
+
+
 
         #endregion
 

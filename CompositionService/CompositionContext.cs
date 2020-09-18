@@ -522,6 +522,7 @@ namespace CW.Soloist.CompositionService
                 midiOutputs[i] = MidiFactory.CreateMidiFile(_midiInputFilePath);
                 midiOutputs[i].ExtractMelodyTrack((byte)_melodyTrackIndex);
                 midiOutputs[i].EmbedMelody(composedMelodies[i], musicalInstrument);
+                midiOutputs[i].FadeOut();
             }
 
             // save first output in dedicated placeholder 
