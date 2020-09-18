@@ -1,4 +1,5 @@
-﻿@using CW.Soloist.WebApplication.Controllers;
+﻿@using CW.Soloist.CompositionService.Enums;
+@using CW.Soloist.WebApplication.Controllers;
 @model CW.Soloist.WebApplication.ViewModels.SongViewModel
 
 
@@ -129,27 +130,27 @@
 <div>
     <footer>
         <br /><br />
-              <p>
-                  <!-- Compose -->
-                  <text> || </text>
-                  @Html.ActionLink("Compose ♫♪", nameof(CompositionContext.Compose), nameof(CompositionContext), new { songId = Model.Id }, null)
-                  <text> || </text>
+        <p>
+            <!-- Compose -->
+            <text> || </text>
+            @Html.ActionLink("Compose ♫♪", nameof(CompositionContext.Compose), nameof(CompositionContext), new { songId = Model.Id }, null)
+            <text> || </text>
 
-                  <!-- Edit -->
-                  @if (Model.IsUserAuthorizedToEdit)
-                  {
-                      @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <text>||</text>
-                  }
+            <!-- Edit -->
+            @if (Model.IsUserAuthorizedToEdit)
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <text>||</text>
+            }
 
-                  <!-- Delete -->
-                  @if (Model.IsUserAuthorizedToDelete)
-                  {
-                      @Html.ActionLink("Delete", "Delete", new { id = Model.Id }) <text>||</text>
-                  }
+            <!-- Delete -->
+            @if (Model.IsUserAuthorizedToDelete)
+            {
+                @Html.ActionLink("Delete", "Delete", new { id = Model.Id }) <text>||</text>
+            }
 
-                  <!-- Index -->
-                  @Html.ActionLink("Back to Song List", "Index") <text>||</text>
-              </p>
+            <!-- Index -->
+            @Html.ActionLink("Back to Song List", "Index") <text>||</text>
+        </p>
     </footer>
 </div>
 

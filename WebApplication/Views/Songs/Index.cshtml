@@ -1,4 +1,5 @@
-﻿@model IEnumerable<SongViewModel>
+﻿@using CW.Soloist.WebApplication.Controllers;
+@model IEnumerable<SongViewModel>
 
 @{
     ViewBag.Title = "Song Index";
@@ -46,7 +47,7 @@
                         @{
                             <!-- Compose a New Melody For This Song -->
                             <text> || </text>
-                            @Html.ActionLink("Compose ♫♪", nameof(CompositionContext.Compose), nameof(CompositionContext), new { songId = song.Id }, null)
+                            @Html.ActionLink("Compose ♫♪", "Compose", "Composition", new { songId = song.Id }, null)
                             <text> || </text>
 
                             <!-- Details -->
