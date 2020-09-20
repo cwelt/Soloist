@@ -80,7 +80,20 @@ namespace CW.Soloist.CompositionService.Composers
         #endregion
 
 
+        #region GenerateMelody
+        /// <summary>
+        /// Generates a melody (or a list of melodies) represented by a sequence of bars,
+        /// that in turn contain sequences of notes.
+        /// The outcome melody is implemenation dependent. 
+        /// Some implementations may return a single melody and some multipile melodies.
+        /// </summary>
+        /// <remarks>
+        /// This method is the hook for subclasses to intervene and supply 
+        /// their requested business logic for composing a melody. 
+        /// </remarks>
+        /// <returns> A list of one more generated melodies. </returns>
         private protected abstract IEnumerable<IList<IBar>> GenerateMelody();
+        #endregion
 
 
         #region Compose

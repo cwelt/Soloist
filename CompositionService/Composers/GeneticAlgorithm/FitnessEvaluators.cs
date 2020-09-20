@@ -658,6 +658,12 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
     }
 
     #region MelodyEvaluatorsWeights
+    /// <summary>
+    /// A Model POCO [Plain Old CLR (Common Language Runtime) Object] for concentrating 
+    /// the proportional weights of the various evaluation methods that are used to
+    /// evaluate how "good" is one generated melody candidate solution in comparison 
+    /// to another meldoy candidate solution.
+    /// </summary>
     public class MelodyEvaluatorsWeights
     {
         public const double Factor = 10;
@@ -695,8 +701,6 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
                 }
             }
         }
-
-        
     }
     #endregion
 }

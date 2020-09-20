@@ -12,19 +12,35 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
     /// for use by a <see cref="CompositionContext"/> context instance. </summary>
     internal partial class GeneticAlgorithmComposer : Composer
     {
+        #region Fields and Properties 
+
+        /// <summary> Current iteration of the genetic algorithm. </summary>
         private protected uint _currentGeneration;
+
+        /// <summary> The candidate generated melodies that are competeing to be selected. </summary>
         private protected List<MelodyCandidate> _candidates;
+
+        /// <summary> Upper bound of the melody candidate population. </summary>
         private protected const int MaxPopulationSize = 50;
 
+        /// <summary> Delegates of melody initialization methods. </summary>
         private protected Action<IEnumerable<IBar>>[] _initializers;
 
+        /// <summary> Delegates of melody mutation methods and their probability to execute. </summary>
         private protected Dictionary<Action<MelodyCandidate, int?>, double> _barMutations;
-        private protected Action<MelodyCandidate>[] _entireMelodyMutations;
+
+        /// <summary> Step size between iterations for reducing probabilty of executing a mutation method. </summary>
         private protected const double MutationProbabilityStep = 0.025;
+
+        /// <summary> Upper bound of generations for the algorithm to execute. </summary>
         private protected const double MaxNumberOfIterations = 120;
+
+        /// <summary> Low bound of probability for a mutation method to execute. </summary>
         private protected const double MinMutationProbability = 0.05;
 
+        /// <summary> Evaluation methods set of propotional weights for their significance. </summary>
         internal protected MelodyEvaluatorsWeights EvaluatorsWeights { get; private set; }
+        #endregion
 
         #region Constructor 
         /// <summary>
@@ -38,11 +54,6 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 
             // register bar mutators 
             RegisterMutators();
-
-            // register mutator which mutate the entire melody 
-            _entireMelodyMutations = new Action<MelodyCandidate>[] {
-                ReverseAllNotesMutation,
-            };
         }
 
 
