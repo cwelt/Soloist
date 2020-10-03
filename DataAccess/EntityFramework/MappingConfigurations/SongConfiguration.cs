@@ -1,22 +1,23 @@
 ﻿using CW.Soloist.DataAccess.DomainModels;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq.Expressions;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CW.Soloist.DataAccess.EntityFramework.MappingConfigurations
 {
+    /// <summary>
+    /// Configuration mapping class between the <see cref="Song"/> model class, 
+    /// and the underlying database table "Songs". 
+    /// </summary>
     internal class SongConfiguration : EntityTypeConfiguration<Song>
     {
         public SongConfiguration()
         {
+            // Define name of the mapped database table 
             ToTable("Songs");
 
+            // Define the property that represent the unique identifier that should be used as a primary key 
             HasKey(s => s.Id);
 
+            // Map class properties to table columns 
             Property(s => s.Title)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -48,10 +49,12 @@ namespace CW.Soloist.DataAccess.EntityFramework.MappingConfigurations
             Property(s => s.IsPublic)
                 .HasColumnName(nameof(Song.IsPublic));
 
+            // define properties that should not be mapped to the database such as navigation properties 
             Ignore(s => s.Chords);
 
             Ignore(s => s.Midi);
 
+            // map mutliplicty relationship to Users database table 
             HasRequired(s => s.User)
                 .WithMany(u => u.Songs)
                 .HasForeignKey(s => s.UserId)

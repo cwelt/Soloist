@@ -7,9 +7,9 @@ namespace CW.Soloist.DataAccess.EntityFramework
 {
     /// <summary>
     /// The DbContext that is used to manage all the persisted entites 
-    /// managed in this web application view the Entity Framework.
+    /// managed in this web application via the Entity Framework.
     /// <para> This context is used both for cross-platform custom application 
-    /// entities, such as Song, and general entities for managing the AAA security 
+    /// entities, such as Song, as well as general entities for managing the AAA security 
     /// prinicple, such as the User and Role entities. </para>
     /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

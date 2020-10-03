@@ -25,8 +25,8 @@ namespace CW.Soloist.DataAccess.UnitOfWork
         // repositories of entities managed by this unit of work interface.
         ISongRepostiory Songs { get; }
 
-        /// <summary> Registers a tracked entity as dirty so it's corresponding 
-        /// record would get updated in the database in th end of the unit of 
+        /// <summary> Registers a tracked entity as dirty so its corresponding 
+        /// record would get updated in the database in the end of the unit of 
         /// work when a request to commit the changes is made. </summary>
         /// <param name="dirtyEntity"> The tracked dirty entity instance. </param>
         void RegisterDirty(object dirtyEntity);
