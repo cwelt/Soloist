@@ -1,19 +1,12 @@
-﻿using CW.Soloist.CompositionService.Composers;
-using CW.Soloist.CompositionService.Midi;
-using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.Enums;
-using CW.Soloist.DataAccess.DomainModels;
-using CW.Soloist.CompositionService;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Web.Mvc;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.CompositionService.Enums;
 using CW.Soloist.WebApplication.Validations;
-using CW.Soloist.CompositionService.Composers.GeneticAlgorithm;
+using CW.Soloist.CompositionService.Composers;
+using CW.Soloist.CompositionService.MusicTheory;
 
 namespace CW.Soloist.WebApplication.ViewModels
 {

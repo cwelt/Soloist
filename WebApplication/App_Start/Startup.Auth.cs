@@ -1,16 +1,13 @@
-﻿using System;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
+﻿using Owin;
+using System;
 using Microsoft.Owin;
-using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.Google;
-using Owin.Security.Providers.LinkedIn;
-using Owin;
-using CW.Soloist.WebApplication.Models;
 using System.Configuration;
-using Owin.Security.Providers.GitHub;
-using CW.Soloist.DataAccess.EntityFramework;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security.Google;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security.Cookies;
 using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.DataAccess.EntityFramework;
 
 namespace CW.Soloist.WebApplication
 {

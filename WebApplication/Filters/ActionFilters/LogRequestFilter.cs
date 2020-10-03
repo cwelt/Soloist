@@ -1,13 +1,10 @@
-﻿using CW.Soloist.WebApplication.Controllers;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
+using System.Configuration;
+using CW.Soloist.WebApplication.Controllers;
+
 
 namespace CW.Soloist.WebApplication.Filters.ActionFilters
 {
