@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using CW.Soloist.DataAccess.Repositories;
 
-namespace CW.Soloist.DataAccess
+namespace CW.Soloist.DataAccess.UnitOfWork
 {
     /// <summary>
     /// This interface represents a partial high-level abstraction of the 

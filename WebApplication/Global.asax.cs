@@ -1,20 +1,12 @@
 using Autofac;
 using Autofac.Integration.Mvc;
-using CW.Soloist.DataAccess;
-using CW.Soloist.DataAccess.DomainModels;
-using CW.Soloist.DataAccess.EntityFramework;
-using CW.Soloist.DataAccess.Repositories;
-using CW.Soloist.WebApplication.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Optimization;
 using System.Web.Routing;
-using Autofac.Core;
-using Evernote.EDAM.Type;
+using System.Web.Optimization;
+using System.Data.Entity;
+using CW.Soloist.DataAccess.UnitOfWork;
+using CW.Soloist.DataAccess.Repositories;
+using CW.Soloist.DataAccess.EntityFramework;
 
 namespace CW.Soloist.WebApplication
 {

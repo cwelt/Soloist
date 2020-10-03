@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using System.Security.Principal;
 using System.Collections.Generic;
-using CW.Soloist.DataAccess;
 using CW.Soloist.CompositionService;
 using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.DataAccess.UnitOfWork;
 using CW.Soloist.DataAccess.DomainModels;
 using CW.Soloist.DataAccess.EntityFramework;
 using CW.Soloist.WebApplication.ViewModels;
-
 
 namespace CW.Soloist.WebApplication.Controllers
 {

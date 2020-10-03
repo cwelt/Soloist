@@ -4,7 +4,7 @@ using CW.Soloist.DataAccess.Repositories;
 using CW.Soloist.DataAccess.EntityFramework;
 
 
-namespace CW.Soloist.DataAccess
+namespace CW.Soloist.DataAccess.UnitOfWork
 {
     /// <summary>
     /// This class provies a concrete implementation to the <see cref="IUnitOfWork"/>

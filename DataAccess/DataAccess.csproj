@@ -67,7 +67,7 @@
     <Compile Include="DomainModels\Song.cs" />
     <Compile Include="EntityFramework\ApplicationDbContext.cs" />
     <Compile Include="EntityFramework\MappingConfigurations\SongConfiguration.cs" />
-    <Compile Include="IUnitOfWork.cs" />
+    <Compile Include="UnitOfWork\IUnitOfWork.cs" />
     <Compile Include="Migrations\202007150708153_InitialModel.cs" />
     <Compile Include="Migrations\202007150708153_InitialModel.designer.cs">
       <DependentUpon>202007150708153_InitialModel.cs</DependentUpon>
@@ -94,7 +94,7 @@
     <Compile Include="Repositories\EFRepository.cs" />
     <Compile Include="Repositories\SongRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EFUnitOfWork.cs" />
+    <Compile Include="UnitOfWork\EFUnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CompositionService\CompositionService.csproj">

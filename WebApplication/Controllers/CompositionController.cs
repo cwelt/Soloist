@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
-using CW.Soloist.DataAccess;
+using CW.Soloist.DataAccess.UnitOfWork;
+using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.WebApplication.ViewModels;
 using CW.Soloist.CompositionService;
 using CW.Soloist.CompositionService.Midi;
 using CW.Soloist.CompositionService.Enums;
-using CW.Soloist.DataAccess.DomainModels;
-using CW.Soloist.WebApplication.ViewModels;
-using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.Composers;
+using CW.Soloist.CompositionService.MusicTheory;
 using CW.Soloist.CompositionService.Composers.GeneticAlgorithm;
 
 namespace CW.Soloist.WebApplication.Controllers
