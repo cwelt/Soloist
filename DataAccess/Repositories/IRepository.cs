@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace CW.Soloist.DataAccess.Repositories
 {
@@ -23,7 +21,7 @@ namespace CW.Soloist.DataAccess.Repositories
         #region Methods For Searching & Querying 
         #region Get
         /// <summary>
-        /// Gets the entity that is identifed by the given id.
+        /// Gets the entity that is identified by the given id.
         /// </summary>
         /// <param name="id"> The id that identifies the requested entity.</param>
         /// <returns> the entity that is identifed by the given id. </returns>
@@ -84,7 +82,7 @@ namespace CW.Soloist.DataAccess.Repositories
         #region Methods For Adding & Removing Elements
 
         #region Add
-        /// <summary> Adds the given entity to this repositoy. </summary>
+        /// <summary> Adds the given entity to this repository. </summary>
         /// <param name="entity"> The entity to add to this repository. </param>
         void Add(TEntity entity);
         #endregion
@@ -103,7 +101,7 @@ namespace CW.Soloist.DataAccess.Repositories
 
         #region RemoveRange
         /// <summary>
-        /// Removes the all entities in the given sequence from this repostiory.
+        /// Removes all the entities in the given sequence from this repository.
         /// </summary>
         /// <param name="entities"> The sequence of entities to remove. </param>
         void RemoveRange(IEnumerable<TEntity> entities);

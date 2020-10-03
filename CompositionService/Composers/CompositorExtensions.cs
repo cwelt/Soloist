@@ -1,8 +1,8 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.Enums;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService.Enums;
+using CW.Soloist.CompositionService.MusicTheory;
 
 namespace CW.Soloist.CompositionService.Composers
 {
@@ -21,8 +21,8 @@ namespace CW.Soloist.CompositionService.Composers
         /// so that it may be used in a fluent programming fashion along with all other 
         /// IList<typeparamref name="T"/> extensions. </para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
+        /// <typeparam name="T"> Type of the elements in the given sequence. </typeparam>
+        /// <param name="list"> List of <typeparamref name="T"/> elements to shuffle.</param>
         public static IList<T> Shuffle<T>(this IList<T> list)
         {
             // initialization 

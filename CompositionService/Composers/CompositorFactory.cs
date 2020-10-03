@@ -1,15 +1,15 @@
-﻿using CW.Soloist.CompositionService.Composers.Arpeggiator;
+﻿using System;
+using CW.Soloist.CompositionService.Composers.Scalerator;
+using CW.Soloist.CompositionService.Composers.Arpeggiator;
 using CW.Soloist.CompositionService.Composers.ArpeggioScaleMix;
 using CW.Soloist.CompositionService.Composers.GeneticAlgorithm;
-using CW.Soloist.CompositionService.Composers.Scalerator;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CW.Soloist.CompositionService.Composers
 {
+    /// <summary>
+    /// Factory for creating composers (see <see cref="Composer"/>) 
+    /// according to the requested composing algorithm strategy. 
+    /// </summary>
     internal static class CompositorFactory
     {
         #region CreateCompositor()

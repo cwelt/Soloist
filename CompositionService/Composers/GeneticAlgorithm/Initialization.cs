@@ -1,17 +1,17 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CW.Soloist.CompositionService.MusicTheory;
 
 namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 {
     internal partial class GeneticAlgorithmComposer : Composer
     {
         #region RegisterInitializers()
-        private void RegisterInitializers()
+        /// <summary>
+        /// Register initialization methods that world be called to initialize the first generation
+        /// of the candidate melodies population.
+        /// </summary>
+        protected virtual void RegisterInitializers()
         {
             _initializers = new Action<IEnumerable<IBar>>[]
             {
@@ -32,7 +32,7 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         /// <summary>
         /// Initialize first generation of solution candidates. 
         /// </summary>
-        protected internal void PopulateFirstGeneration()
+        protected virtual void PopulateFirstGeneration()
         {
             MelodyCandidate candidate, reversedCandidate, seedCandidate, reversedSeedCandidate;
             ICollection<MelodyCandidate> offspringCandidates;

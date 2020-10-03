@@ -33,10 +33,16 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         private protected const double MutationProbabilityStep = 0.025;
 
         /// <summary> Upper bound of generations for the algorithm to execute. </summary>
-        private protected const double MaxNumberOfIterations = 120;
+        private protected const int MaxNumberOfIterations = 120;
+
+        /// <summary> Low bound of generations for the algorithm to execute. </summary>
+        private protected const int MinNumberOfIterations = 50;
 
         /// <summary> Low bound of probability for a mutation method to execute. </summary>
         private protected const double MinMutationProbability = 0.05;
+
+        /// <summary> Grade value that is high enough to stop the algorithms execution. </summary>
+        private protected const double CuttingEvaluationGrade = 92;
 
         /// <summary> Evaluation methods set of propotional weights for their significance. </summary>
         internal protected MelodyEvaluatorsWeights EvaluatorsWeights { get; private set; }
@@ -65,16 +71,15 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
             // delegate the general initialization to base class 
             base.InitializeCompositionParams(chordProgression, melodyInitializationSeed, overallNoteDurationFeel, minPitch, maxPitch);
 
-            // initialize custom setting of the genetic algorithm 
+            // initialize custom settings of the genetic algorithm 
             _currentGeneration = 0;
-            _candidates = new List<MelodyCandidate>(120);
+            _candidates = new List<MelodyCandidate>(MaxPopulationSize);
 
             if (additionalParams.Length > 0 && additionalParams[0] is MelodyEvaluatorsWeights)
                 EvaluatorsWeights = additionalParams[0] as MelodyEvaluatorsWeights;
             else EvaluatorsWeights = new MelodyEvaluatorsWeights();
         }
         #endregion
-
 
         #region GenerateMelody()
         /// <inheritdoc/>
@@ -103,9 +108,10 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
                 // natural selection 
                 SelectNextGeneration();
 
-                //MelodyGenome.CurrentGeneration++;
-                if (++i == MaxNumberOfIterations || _candidates.Select(c => c.FitnessGrade).Max() >= 92
-                    && _currentGeneration > 50)
+                // Check if termination conditions are met 
+                if (++i == MaxNumberOfIterations 
+                    || (_candidates.Select(c => c.FitnessGrade).Max() >= CuttingEvaluationGrade
+                                                && _currentGeneration > MinNumberOfIterations))
                 {
                     terminateCondition = true;
                 }
@@ -120,8 +126,8 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
                 }
             }
 
-
-            var composedMelodies = _candidates
+            // return the result 
+            IEnumerable<IList<IBar>> composedMelodies = _candidates
                 .OrderByDescending(c => c.FitnessGrade)
                 .Select(c => c.Bars);
             return composedMelodies;

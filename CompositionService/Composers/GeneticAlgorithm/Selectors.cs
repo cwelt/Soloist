@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Deployment.Internal;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+
 
 namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 {
@@ -13,8 +11,8 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         #region SelectNextGeneration()
         /// <summary>
         /// Selects a partial set of candidate solutions to form the population 
-        /// of soultion candidates for the next generation.
-        /// The selection process is based on the the candidte's fitness (score).
+        /// of solution candidates for the next generation.
+        /// The selection process is based on the candidate's fitness (score).
         /// </summary>
         protected internal void SelectNextGeneration()
         {
@@ -27,9 +25,9 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         #region PlusSelection()
         /// <summary>
         /// <para>
-        /// Filters out the current population of candidates by determinsticly selecting only a limited amount 
+        /// Filters out the current population of candidates by deterministically selecting only a limited amount 
         /// of candidates from two separate populations: 
-        /// current generation candidates population, and the elder candidates population. 
+        /// current generation candidate's population, and the elder candidate's population. 
         /// </para>
         /// This selection method makes a clear distinction between the candidates of current generation
         /// and all the rest of the candidates, and makes sure that the next generation would contain 
@@ -103,7 +101,7 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 
         #region RouletteWheelSelection()
         /// <summary>
-        /// Filters out the current population of candidates with an un-determinstic algorithm
+        /// Filters out the current population of candidates with an un-deterministic algorithm
         /// that simulates a roulette wheel spin, and gives the candidates proportional chances
         /// to be selected according to their proportional fitness.
         /// <para>

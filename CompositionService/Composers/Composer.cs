@@ -707,7 +707,7 @@ namespace CW.Soloist.CompositionService.Composers
         /// the original note pitch.
         /// <para> The duration split is done according to the <paramref name="ratio"/>
         /// parameter. </para>
-        /// <para> Incase the note's in the bar are too short to be splited, no action 
+        /// <para> In case the notes in the bar are too short to be splited, no action 
         /// is made and the method returns false. Otherwise, it return true. </para>
         /// </summary>
         /// <remarks> The shortest possible duration is determined by the corresponding 

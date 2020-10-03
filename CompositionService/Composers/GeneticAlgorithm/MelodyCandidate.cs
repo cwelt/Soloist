@@ -1,19 +1,33 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Linq;
+using CW.Soloist.CompositionService.MusicTheory;
+
 
 namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 {
-    // TODO: Use abstraction -> Implement interface of  melody genome 
+    /// <summary>
+    /// Represents a single melody candidate solution in the context of a solution candidates population 
+    /// which is processed by a genetic algorithm.
+    /// </summary>
     internal class MelodyCandidate
     {
+        #region Properties
+
+        /// <summary> The generation that this candidate belongs in, i.e., what generation was he created at. </summary>
         internal uint Generation { get; }
+
+        /// <summary> The current score of this candidate, which signifies how good it is. </summary>
         internal double FitnessGrade { get; set; } = 0;
 
         /// <summary> List of bars which contain the melody of this candidate. </summary>
         internal IList<IBar> Bars { get; set; }
-        protected internal bool IsDirty { get; set; } = true;
 
+        /// <summary> Flag which indicates whether this candidate was modified during the last iteration. </summary>
+        internal bool IsDirty { get; set; } = true;
+
+        #endregion
+
+        #region Constructor
         /// <summary>
         ///  Constructs a new candidate with the given generation, based on the 
         ///  given composition structure bar sequence. 
@@ -57,7 +71,7 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
                  * notes in each bar to an empty melody. */
                 Bars = CompositionContext.CloneChordProgressionBars(compositionStructure);
             }
-
         }
+        #endregion
     }
 }

@@ -21,6 +21,7 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
              * or candidates that changed since last evaluation */
             foreach (MelodyCandidate candidate in _candidates.Where(c => c.IsDirty))
             {
+                // evaluate the various scores for the various melody properties using the various evaluators  
                 double adjacentPitchesGrade = EvaluateSmoothMovement(candidate);
                 double extremeIntervalsGrade = EvaluateExtremeIntervals(candidate);
                 double pitchVarietyGrade = EvaluatePitchVariety(candidate);
@@ -31,6 +32,7 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
                 double densityBalanceGrade = EvaluateDensityBalance(candidate);
                 double accentedBeatsGrade = EvaluateAccentedBeats(candidate);
 
+                // sum up all the individual properites scores taking their proportional weights into account 
                 candidate.FitnessGrade = (100 * Math.Round(digits: 7, value:
                     ((EvaluatorsWeights.ExtremeIntervals * extremeIntervalsGrade) +
                     (EvaluatorsWeights.SmoothMovement * adjacentPitchesGrade) +

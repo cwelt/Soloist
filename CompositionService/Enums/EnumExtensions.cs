@@ -13,6 +13,7 @@ namespace CW.Soloist.CompositionService.Enums
     /// </summary>
     public static class EnumExtensions
     {
+        #region GetDescription
         /// <summary>
         /// Returns a friendly string representation for the given enum value,
         /// which is defined for it in a custom <see cref="DescriptionAttribute"/>
@@ -38,11 +39,13 @@ namespace CW.Soloist.CompositionService.Enums
             }
             return null;
         }
+        #endregion
 
+        #region GetDisplayName
         /// <summary>
         /// Returns a friendly string representation for the given enum value,
         /// which is defined for it in a custom <see cref="DisplayAttribute"/>
-        /// annotation. This extension is primaly used for supporting the display 
+        /// annotation. This extension is primarily used for supporting the display 
         /// of the friendly descriptions in ASP.NET MVC applications. 
         /// </summary>
         /// <param name="enumValue"> The enumeration underlying value. </param>
@@ -55,5 +58,6 @@ namespace CW.Soloist.CompositionService.Enums
                             .GetCustomAttribute<DisplayAttribute>()
                             .GetName();
         }
+        #endregion
     }
 }

@@ -1,16 +1,15 @@
-﻿using CW.Soloist.CompositionService.Midi;
-using CW.Soloist.CompositionService.MusicTheory;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.CompositionService.MusicTheory;
+
 
 namespace CW.Soloist.DataAccess.DomainModels
 {
     public class Song
     {
+        #region Properties
         public int Id { get; set; }
         public string Title { get; set; }
         public string Artist { get; set; }
@@ -25,6 +24,7 @@ namespace CW.Soloist.DataAccess.DomainModels
         public bool IsPublic { get; set; }
         public ApplicationUser User { get; set; }
         public string UserId { get; set; }
+        #endregion
 
         #region SetPlaybackName
         /// <summary>
@@ -52,6 +52,7 @@ namespace CW.Soloist.DataAccess.DomainModels
     }
 
 
+    #region SongFileType Enumeration
     /// <summary>
     /// Enumeration that classifies the persisted files for a given song resource:
     /// <list type="number">
@@ -66,4 +67,5 @@ namespace CW.Soloist.DataAccess.DomainModels
         MidiOriginalFile,
         MidiPlaybackFile
     }
+    #endregion
 }

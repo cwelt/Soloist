@@ -67,7 +67,6 @@
     <Compile Include="DomainModels\Song.cs" />
     <Compile Include="EntityFramework\ApplicationDbContext.cs" />
     <Compile Include="EntityFramework\MappingConfigurations\SongConfiguration.cs" />
-    <Compile Include="EntityFramework\DbContexts\SoloistContext.cs" />
     <Compile Include="IUnitOfWork.cs" />
     <Compile Include="Migrations\202007150708153_InitialModel.cs" />
     <Compile Include="Migrations\202007150708153_InitialModel.designer.cs">

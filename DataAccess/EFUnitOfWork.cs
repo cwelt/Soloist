@@ -1,11 +1,8 @@
-﻿using CW.Soloist.DataAccess.EntityFramework;
-using CW.Soloist.DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
+﻿using System.Data.Entity;
 using System.Threading.Tasks;
+using CW.Soloist.DataAccess.Repositories;
+using CW.Soloist.DataAccess.EntityFramework;
+
 
 namespace CW.Soloist.DataAccess
 {

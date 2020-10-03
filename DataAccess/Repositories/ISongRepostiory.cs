@@ -1,5 +1,4 @@
 ﻿using CW.Soloist.DataAccess.DomainModels;
-using System.Collections.Generic;
 
 namespace CW.Soloist.DataAccess.Repositories
 {

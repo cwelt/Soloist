@@ -1,9 +1,7 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService.MusicTheory;
 
 namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 {
@@ -14,7 +12,7 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         /// Slices and mixes solution candidates and generates new solutions which are the outcome 
         /// offspring of the candidates that participated in the crossover process of slice and mix. 
         /// </summary>
-        protected internal void Crossover()
+        protected void Crossover()
         {
             // initialize 
             int randomIndex1, randomIndex2, numOfCandidates, numOfCrossoverPoints;
@@ -80,7 +78,7 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         /// are selected randomly. </param>
         /// <returns> New candidate solutions which are the offsprings of the participating candidates. 
         /// The participating candidates are not changed or modified during the proccess. </returns>
-        ICollection<MelodyCandidate> NPointCrossover(
+        protected ICollection<MelodyCandidate> NPointCrossover(
             IList<MelodyCandidate> participants,
             int n,
             bool optimizeCrossoverPointsSelection = true)
@@ -171,7 +169,7 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         /// <param name="parent2"> The second crossover participant. </param>
         /// <param name="n"> The required number of crossover points. </param>
         /// <returns> Array containing n indices of the recommended crossover points. </returns>
-        private protected int[] SelectOptimizedCrossoverPoints(MelodyCandidate parent1, MelodyCandidate parent2, int n)
+        protected int[] SelectOptimizedCrossoverPoints(MelodyCandidate parent1, MelodyCandidate parent2, int n)
         {
             // get all non-empty bars except the first one, and project their indices as well 
             var allNonEmptyBarsButFirstWithBarIndex = parent1.Bars
@@ -215,7 +213,7 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         /// <param name="numberOfBars"> The total number of bars in each participant. </param>
         /// <param name="n"> The required number of crossover points. </param>
         /// <returns> Array containing n indices of randomly selected crossover points. </returns>
-        private protected int[] SelectRandomCrossoverPoints(int numberOfBars, int n)
+        protected int[] SelectRandomCrossoverPoints(int numberOfBars, int n)
         {
             // initializiation  
             int randomIndex;

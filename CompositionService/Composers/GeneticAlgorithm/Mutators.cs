@@ -1,14 +1,17 @@
-﻿using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.CompositionService.Enums;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService.Enums;
+using CW.Soloist.CompositionService.MusicTheory;
 
 namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
 {
     internal partial class GeneticAlgorithmComposer : Composer
     {
-
+        #region RegisterMutators
+        /// <summary>
+        /// Registers mutation methods with their corresponding default probabilities to operate.
+        /// </summary>
         private protected virtual void RegisterMutators()
         {
             _barMutations = new Dictionary<Action<MelodyCandidate, int?>, double>
@@ -25,13 +28,14 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
                 [SyncopedNoteMutation]          = 0.8
             };
         }
+        #endregion
 
 
         #region Mutate()
         /// <summary>
         /// Alter the state of candidate solutions.
         /// </summary>
-        protected internal void Mutate()
+        private protected virtual void Mutate()
         {
             // initialization 
             int randomIndex;
@@ -84,24 +88,36 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         }
         #endregion
 
-
+        #region ChordPitchMutation
+        /// <summary>
+        /// Selects a random note in the requested bar and changes its pitch to one of the chords pitches. 
+        /// </summary>
+        /// <param name="melody"> The candidate melody to operate on.</param>
+        /// <param name="barIndex"> Index of the mutated bar. If no bar index supplied, then a random bar would be selected. </param>
         private protected virtual void ChordPitchMutation(MelodyCandidate melody, int? barIndex)
         {
             int selectedBarIndex = barIndex ?? new Random().Next(melody.Bars.Count);
             ChangePitchForARandomNote(melody.Bars[selectedBarIndex], mappingSource: ChordNoteMappingSource.Chord);
         }
+        #endregion
 
+        #region ScalePitchMutation
+        /// <summary>
+        /// Selects a random note in the requested bar and changes its pitch to one of the scale pitches. 
+        /// </summary>
+        /// <param name="melody"> The candidate melody to operate on.</param>
+        /// <param name="barIndex"> Index of the mutated bar. If no bar index supplied, then a random bar would be selected. </param>
         private protected virtual void ScalePitchMutation(MelodyCandidate melody, int? barIndex)
         {
             int index = barIndex ?? new Random().Next(melody.Bars.Count);
             ChangePitchForARandomNote(melody.Bars[index], mappingSource: ChordNoteMappingSource.Scale);
         }
-
+        #endregion
 
         #region DurationUnifyMutation()
         /// <summary>
         /// Randomly selects two consecutive notes in the given bar, or in a randomly selected
-        /// bar if <paramref name="barIndex"/> is null, and unifies thw two consecutive notes 
+        /// bar if <paramref name="barIndex"/> is null, and unifies the two consecutive notes 
         /// into one note by removing the consecutive note entirely and adding it's 
         /// duration length to the first note. 
         /// </summary>
@@ -141,6 +157,18 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         }
         #endregion
 
+        #region Duration Split Mutations
+
+        #region DurationSplitMutation
+        /// <summary>
+        /// Replaces a random note in the given bar with two new shorter notes 
+        /// with durations that sum up together to the originals note duration. 
+        /// Regarding pitch, one of the new notes after split would have the originals note pitch,
+        /// and the other note after split would have a pitch which is minor or major second away from
+        /// the original note pitch.
+        /// </summary>
+        /// <param name="melody"> The candidate melody to operate on.</param>
+        /// <param name="barIndex"> Index of the bar to do operate on. If no bar index supplied, then a random bar would be selected. </param>
         private protected virtual void DurationSplitMutation(MelodyCandidate melody, int? barIndex)
         {
             int index = barIndex ?? new Random().Next(melody.Bars.Count);
@@ -155,24 +183,36 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
             Action<MelodyCandidate, int?> durationSplitMutation = durationSplitters[randomIndex];
             durationSplitMutation(melody, barIndex);
         }
+        #endregion
 
+        #region DurationEqualSplitMutation
+        /// <inheritdoc cref="DurationSplitMutation(MelodyCandidate, int?)"/>
         private protected virtual void DurationEqualSplitMutation(MelodyCandidate melody, int? barIndex)
         {
             int index = barIndex ?? new Random().Next(melody.Bars.Count);
             NoteDurationSplit(melody.Bars[index], DurationSplitRatio.Equal);
         }
+        #endregion
 
+        #region DurationAnticipationSplitMutation
+        /// <inheritdoc cref="DurationSplitMutation(MelodyCandidate, int?)"/>
         private protected virtual void DurationAnticipationSplitMutation(MelodyCandidate melody, int? barIndex)
         {
             int index = barIndex ?? new Random().Next(melody.Bars.Count);
             NoteDurationSplit(melody.Bars[index], DurationSplitRatio.Anticipation);
         }
+        #endregion
 
+        #region DurationDelaySplitMutation
+        /// <inheritdoc cref="DurationSplitMutation(MelodyCandidate, int?)"/>
         private protected virtual void DurationDelaySplitMutation(MelodyCandidate melody, int? barIndex)
         {
             int index = barIndex ?? new Random().Next(melody.Bars.Count);
             NoteDurationSplit(melody.Bars[index], DurationSplitRatio.Delay);
         }
+        #endregion
+
+        #endregion
 
         #region ReverseChordNotesMutation()
         /// <summary>
@@ -265,6 +305,11 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
         #endregion
 
         #region ToggleToHoldNoteMutation()
+        /// <summary>
+        /// Replaces a random concrete note pitch with a hold note. 
+        /// </summary>
+        /// <param name="melody"> The candidate melody which contains the bar sequence to operate on. </param>
+        /// <param name="barIndex"> An index of specific requested bar to operate on. </param>
         private protected virtual void ToggleToHoldNoteMutation(MelodyCandidate melody, int? barIndex)
         {
             // intialize random generator 
@@ -352,8 +397,5 @@ namespace CW.Soloist.CompositionService.Composers.GeneticAlgorithm
             bar.Notes.Insert(note2Index, note1);
         }
         #endregion
-
     }
-
-
 }
