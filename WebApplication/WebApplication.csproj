@@ -396,23 +396,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202007201646493_InitializeUserIdentityTables.cs" />
-    <Compile Include="Migrations\202007201646493_InitializeUserIdentityTables.designer.cs">
-      <DependentUpon>202007201646493_InitializeUserIdentityTables.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202007212125210_UniteContexts.cs" />
-    <Compile Include="Migrations\202007212125210_UniteContexts.designer.cs">
-      <DependentUpon>202007212125210_UniteContexts.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202007231747243_AddMidiFilePlaybackColumnToSongsTable.cs" />
-    <Compile Include="Migrations\202007231747243_AddMidiFilePlaybackColumnToSongsTable.designer.cs">
-      <DependentUpon>202007231747243_AddMidiFilePlaybackColumnToSongsTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202007231803190_MakeFilePlaybackColumnNotNullable.cs" />
-    <Compile Include="Migrations\202007231803190_MakeFilePlaybackColumnNotNullable.designer.cs">
-      <DependentUpon>202007231803190_MakeFilePlaybackColumnNotNullable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -524,20 +507,6 @@
       <Project>{f710bc52-19a8-4dee-97b0-3f356650b333}</Project>
       <Name>DataAccess</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202007201646493_InitializeUserIdentityTables.resx">
-      <DependentUpon>202007201646493_InitializeUserIdentityTables.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202007212125210_UniteContexts.resx">
-      <DependentUpon>202007212125210_UniteContexts.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202007231747243_AddMidiFilePlaybackColumnToSongsTable.resx">
-      <DependentUpon>202007231747243_AddMidiFilePlaybackColumnToSongsTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202007231803190_MakeFilePlaybackColumnNotNullable.resx">
-      <DependentUpon>202007231803190_MakeFilePlaybackColumnNotNullable.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
