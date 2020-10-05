@@ -44,13 +44,10 @@ namespace CW.Soloist.WebApplication.Filters.ActionFilters
                 ContentType = filterContext.HttpContext.Request.ContentType,
                 RequestLength = filterContext.HttpContext.Request.InputStream.Length,
                 Cookies = filterContext.HttpContext.Request.Cookies,
-                //RequestParams = filterContext.HttpContext.Request.Params,
-                //Form = filterContext.HttpContext.Request.Form,
 
                 // MVC properties 
                 Controller = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName,
                 Action = filterContext.ActionDescriptor.ActionName,
-                //ActionParameters = filterContext.ActionParameters.Keys,
 
                 // Timestamp 
                 DateTime = filterContext.HttpContext.Timestamp.ToString(format: "dddd, MMMM dd, yyyy h:mm:ss tt")

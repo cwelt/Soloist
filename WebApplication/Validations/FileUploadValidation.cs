@@ -1,94 +1,93 @@
-﻿using CsQuery.StringScanner.Implementation;
-using CW.Soloist.CompositionService;
-using CW.Soloist.CompositionService.Midi;
-using CW.Soloist.CompositionService.MusicTheory;
-using CW.Soloist.DataAccess.DomainModels;
-using CW.Soloist.WebApplication.ViewModels;
-using EllipticCurve.Utils;
-using SendGrid;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Net.Mime;
-using System.Threading.Tasks;
 using System.Web;
-using System.Web.UI.WebControls;
+using System.Linq;
+using System.Collections.Generic;
+using CW.Soloist.CompositionService;
+using CW.Soloist.DataAccess.DomainModels;
+using CW.Soloist.CompositionService.Midi;
+using CW.Soloist.WebApplication.ViewModels;
+using System.ComponentModel.DataAnnotations;
+using CW.Soloist.CompositionService.MusicTheory;
+
 
 namespace CW.Soloist.WebApplication.Validations
 {
     /// <summary>
-    /// Validation attribiute class for validating uploaded chord progression & MIDI files.
+    /// Validation attribiute class for validating uploaded chord progression and MIDI files.
     /// </summary>
     internal class FileUploadValidation : ValidationAttribute
     {
-        // initialization 
+        #region Fields
+        // field initialization
         private const int FileMaxLength = 1048576; // 1 MB 
-        private string errorMessage = string.Empty;
-        IMidiFile midi = null;
-        IList<IBar> bars = null;
-        SongFileType songFileType;
-        SongViewModel songViewModel = null;
-        HttpPostedFileBase fileHandler;
-        HttpPostedFileBase midiFileHandler;
-        HttpPostedFileBase chordsFileHandler;
-        MelodyTrackIndex? melodyTrackIndex;
+        private string _errorMessage = string.Empty;
+        private IMidiFile _midi = null;
+        private IList<IBar> _bars = null;
+        private SongFileType _songFileType;
+        private SongViewModel _songViewModel = null;
+        private HttpPostedFileBase _fileHandler;
+        private HttpPostedFileBase _midiFileHandler;
+        private HttpPostedFileBase _chordsFileHandler;
+        private MelodyTrackIndex? _melodyTrackIndex;
+        #endregion
 
+        #region IsValid
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            songViewModel = validationContext.ObjectInstance as SongViewModel;
+            _songViewModel = validationContext.ObjectInstance as SongViewModel;
 
-            midiFileHandler = songViewModel?.MidiFileHandler;
-            chordsFileHandler = songViewModel?.ChordsFileHandler;
-            melodyTrackIndex = songViewModel?.MelodyTrackIndex;
+            _midiFileHandler = _songViewModel?.MidiFileHandler;
+            _chordsFileHandler = _songViewModel?.ChordsFileHandler;
+            _melodyTrackIndex = _songViewModel?.MelodyTrackIndex;
 
 
             // nothing to check if no file is uploaded for current file handler property
             if (value == null)
                 return ValidationResult.Success;
-            else fileHandler = value as HttpPostedFileBase;
+            else _fileHandler = value as HttpPostedFileBase;
 
             // set the subjected validated file type according to the subject file handler
-            if (fileHandler == midiFileHandler)
-                songFileType = SongFileType.MidiOriginalFile;
-            else songFileType = SongFileType.ChordProgressionFile;
+            if (_fileHandler == _midiFileHandler)
+                _songFileType = SongFileType.MidiOriginalFile;
+            else _songFileType = SongFileType.ChordProgressionFile;
 
             // validate file metadata (size, mime type, etc)
-            if (!FileUploadValidation.IsFileMetadataValid(fileHandler, songFileType, out errorMessage))
-                return new ValidationResult(errorMessage);
+            if (!FileUploadValidation.IsFileMetadataValid(_fileHandler, _songFileType, out _errorMessage))
+                return new ValidationResult(_errorMessage);
 
             // fetch chords data from new chords file or from existing db record 
-            if (chordsFileHandler != null)
+            if (_chordsFileHandler != null)
             {
-                if(!IsChordsFileValid(chordsFileHandler, songFileType, out bars, out errorMessage))
-                    return new ValidationResult(errorMessage);
+                if(!IsChordsFileValid(_chordsFileHandler, _songFileType, out _bars, out _errorMessage))
+                    return new ValidationResult(_errorMessage);
             }
 
             // validations for MIDI progression file
-            if (songFileType == SongFileType.MidiOriginalFile)
+            if (_songFileType == SongFileType.MidiOriginalFile)
             {
-                if (!FileUploadValidation.IsMidiFileValid(midiFileHandler, out midi, out errorMessage))
-                    return new ValidationResult(errorMessage);
+                if (!FileUploadValidation.IsMidiFileValid(_midiFileHandler, out _midi, out _errorMessage))
+                    return new ValidationResult(_errorMessage);
             }
 
             // aditional validation for midi file and midi vs chords file 
-            if (fileHandler == midiFileHandler)
+            if (_fileHandler == _midiFileHandler)
             {
                 // validate melody track index is not out of bounds 
-                if (!CompositionContext.IsMelodyTrackIndexValid((int?)melodyTrackIndex, midi, out errorMessage))
-                    return new ValidationResult(errorMessage);
+                if (!CompositionContext.IsMelodyTrackIndexValid((int?)_melodyTrackIndex, _midi, out _errorMessage))
+                    return new ValidationResult(_errorMessage);
 
                 // validate that bars in CHORD progression are compatible with MIDI file 
-                if (!CompositionContext.AreBarsCompatible(bars, midi, out errorMessage))
-                    return new ValidationResult(errorMessage);
+                if (!CompositionContext.AreBarsCompatible(_bars, _midi, out _errorMessage))
+                    return new ValidationResult(_errorMessage);
             }
 
             // if we got this far then hopefully everything is okay 
             return ValidationResult.Success;
         }
+        #endregion
 
-
+        #region IsFileMetadataValid
         public static bool IsFileMetadataValid(HttpPostedFileBase fileHandler, SongFileType fileType, out string errorMessage)
         {
             // initialize 
@@ -130,7 +129,9 @@ namespace CW.Soloist.WebApplication.Validations
             // if we got this far then hopefully everything is okay
             return true;
         }
+        #endregion
 
+        #region IsChordsFileValid
         public static bool IsChordsFileValid(HttpPostedFileBase chordsFileHandler, SongFileType fileType, out IList<IBar> bars, out string errorMessage)
         {
             bars = null;
@@ -162,7 +163,9 @@ namespace CW.Soloist.WebApplication.Validations
                 return true; 
             }
         }
+        #endregion
 
+        #region IsMidiFileValid
         public static bool IsMidiFileValid(HttpPostedFileBase midiFileHandler, out IMidiFile midiFile, out string errorMessage)
         {
             errorMessage = null;
@@ -178,9 +181,7 @@ namespace CW.Soloist.WebApplication.Validations
                 return false;
             }
         }
+        #endregion
     }
-
-
-
 }
 

@@ -1,9 +1,9 @@
 using Autofac;
-using Autofac.Integration.Mvc;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Web.Optimization;
 using System.Data.Entity;
+using Autofac.Integration.Mvc;
+using System.Web.Optimization;
 using CW.Soloist.DataAccess.UnitOfWork;
 using CW.Soloist.DataAccess.Repositories;
 using CW.Soloist.DataAccess.EntityFramework;

@@ -13,22 +13,30 @@ using System.Threading.Tasks;
 using Microsoft.Owin.Security;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNet.Identity.EntityFramework;
 using CW.Soloist.DataAccess.DomainModels;
 using CW.Soloist.DataAccess.EntityFramework;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace CW.Soloist.WebApplication
 {
+    #region EmailService
     public class EmailService : IIdentityMessageService
     {
+        // the email service 
         public async Task SendAsync(IdentityMessage message)
         {
+            // set recipient 
             string emailRecipient = message.Destination;
+
+            // set email subject + body 
             string emailSubject = "Soloist - " + message.Subject;
             string emailBody = "Hello," + Environment.NewLine + message.Body;
+
+            // call the method that actual deals with sending the email 
             await SendEmailAsyncWithSendGridService(emailRecipient, emailSubject, emailBody);
         }
 
+        #region SendEmailAsyncWithSMTP
         private async Task SendEmailAsyncWithSMTP(string recipient, string subject, string body)
         {
             using (SmtpClient smtpClient = new SmtpClient())
@@ -72,7 +80,9 @@ namespace CW.Soloist.WebApplication
                 }
             }
         }
+        #endregion
 
+        #region SendEmailAsyncWithSendGridService
         private async Task SendEmailAsyncWithSendGridService(string recipient, string subject, string body)
         {
             // set sender and recipent email addresses 
@@ -97,8 +107,11 @@ namespace CW.Soloist.WebApplication
             // use the http client for sending the email
             await httpClient.SendEmailAsync(email);
         }
+        #endregion
     }
+    #endregion
 
+    #region SmsService
     public class SmsService : IIdentityMessageService
     {
         public Task SendAsync(IdentityMessage message)
@@ -107,9 +120,9 @@ namespace CW.Soloist.WebApplication
             return Task.FromResult(0);
         }
     }
+    #endregion
 
-
-
+    #region ApplicationUserManager
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
@@ -165,7 +178,9 @@ namespace CW.Soloist.WebApplication
             return manager;
         }
     }
+    #endregion
 
+    #region ApplicationSignInManager
     // Configure the application sign-in manager which is used in this application.
     public class ApplicationSignInManager : SignInManager<ApplicationUser, string>
     {
@@ -184,4 +199,5 @@ namespace CW.Soloist.WebApplication
             return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
         }
     }
+    #endregion
 }

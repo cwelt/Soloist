@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Web;
+﻿using System.IO;
 using System.Web.Mvc;
-using System.Web.UI.WebControls;
 
 namespace CW.Soloist.WebApplication.Filters.ExceptionFilters
 {
@@ -13,11 +7,11 @@ namespace CW.Soloist.WebApplication.Filters.ExceptionFilters
     {
         public void OnException(ExceptionContext filterContext)
         {
-            var path = filterContext.HttpContext.Server.MapPath("/Views/Shared/Error500.html");
+            string htmlErrorPagePath = filterContext.HttpContext.Server.MapPath("/Views/Shared/Error500.html");
             
-            var bytes = File.ReadAllBytes(path);
+            byte[] htmlErrorPageContent = File.ReadAllBytes(htmlErrorPagePath);
 
-            filterContext.Result = new FileContentResult(bytes, "text/html");
+            filterContext.Result = new FileContentResult(htmlErrorPageContent, "text/html");
             filterContext.ExceptionHandled = true;
         }
     }

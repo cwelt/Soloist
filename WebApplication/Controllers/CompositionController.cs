@@ -26,7 +26,7 @@ namespace CW.Soloist.WebApplication.Controllers
         #region Private Instance Fields
         private IMidiFile _midiFile; // used for the composed melody output file
         private IUnitOfWork _databaseGateway; // abstract gateway to the underlying database
-        private IEnumerable<PitchRecord> _pitchSelectList; // internal sequence for structing data to view  
+        private IEnumerable<PitchRecord> _pitchSelectList; // internal sequence for structuring data to view  
         #endregion
 
         #region Constructor

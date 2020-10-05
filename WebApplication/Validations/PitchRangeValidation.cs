@@ -1,19 +1,17 @@
 ﻿using CW.Soloist.CompositionService;
 using CW.Soloist.WebApplication.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace CW.Soloist.WebApplication.Validations
 {
+    /// <summary>
+    /// Custom validation class for validating pitch range in composition form.
+    /// </summary>
     public class PitchRangeValidation : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            CompositionViewModel formData =
-                validationContext.ObjectInstance as CompositionViewModel;
+            CompositionViewModel formData = validationContext.ObjectInstance as CompositionViewModel;
 
             if (formData == null)
                 return ValidationResult.Success;

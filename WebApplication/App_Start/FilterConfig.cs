@@ -1,7 +1,6 @@
-﻿using CW.Soloist.WebApplication.Filters.ActionFilters;
+﻿using System.Web.Mvc;
+using CW.Soloist.WebApplication.Filters.ActionFilters;
 using CW.Soloist.WebApplication.Filters.ExceptionFilters;
-using System.Web;
-using System.Web.Mvc;
 
 namespace CW.Soloist.WebApplication
 {
@@ -9,18 +8,21 @@ namespace CW.Soloist.WebApplication
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new HandleErrorAttribute()); 
-            /*filters.Add(new CustomExceptionHandler());*/
+            // handler un catched exceptions 
+            filters.Add(new CustomExceptionHandler());
+            /* filters.Add(new HandleErrorAttribute()); */
 
             // configure the custom action log request filter
             filters.Add(new LogRequestFilter());
 
-            // restrict application access globaly 
-            /*filters.Add(new AuthorizeAttribute());*/
-
             // force an unsecured HTTP request to be re-sent over HTTPS
             filters.Add(new RequireHttpsAttribute());
 
+            // filter automatic machine search engines traffic 
+            //filters.Add(new CrawlerFilter());
+
+            // restrict application access globaly 
+            /*filters.Add(new AuthorizeAttribute());*/
         }
     }
 }
