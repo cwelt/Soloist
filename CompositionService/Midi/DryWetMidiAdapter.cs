@@ -12,8 +12,6 @@ using CW.Soloist.CompositionService.Enums;
 using CW.Soloist.CompositionService.MusicTheory;
 using DWMidiI = Melanchall.DryWetMidi.Interaction;
 using DWMidiMT = Melanchall.DryWetMidi.MusicTheory;
-using Note = CW.Soloist.CompositionService.MusicTheory.Note;
-using Melanchall.DryWetMidi.Tools;
 
 namespace CW.Soloist.CompositionService.Midi
 {
@@ -59,12 +57,11 @@ namespace CW.Soloist.CompositionService.Midi
         public NotePitch? HighestPitch { get; }
         public IReadOnlyList<IMidiTrack> Tracks => _midiContent
             .GetTrackChunks()
-            .Select((trackChunk, trackIndex) =>
-                new DryWetMidiTrackAdapter(trackChunk, trackIndex))
+            .Where((trackchunk, trackIndex) => trackIndex <= (int)MelodyTrackIndex.TrackNumber16)
+            .Select((trackChunk, trackIndex) => new DryWetMidiTrackAdapter(trackChunk, (MelodyTrackIndex)trackIndex))
             .Cast<IMidiTrack>()
             .ToList()
             .AsReadOnly();
-
         #endregion
 
 
@@ -504,9 +501,6 @@ namespace CW.Soloist.CompositionService.Midi
         }
         #endregion
 
-
-
-
         #endregion
 
 
@@ -525,7 +519,7 @@ namespace CW.Soloist.CompositionService.Midi
             private const string DrumsInstrumentDescription = "Drums & Percussion";
             private const string UnkownInstrumentDescription = "Unknown";
 
-            public int TrackNumber { get; }
+            public MelodyTrackIndex TrackNumber { get; }
             public string TrackName { get; }
             public MusicalInstrument? InstrumentMidiCode { get; }
             public string InstrumentName { get; }
@@ -537,7 +531,7 @@ namespace CW.Soloist.CompositionService.Midi
             /// </summary>
             /// <param name="track"> Raw midi track chunk which holds the raw midi event data of this midi track.</param>
             /// <param name="trackNumber"> Ordinal track nubmer of this track in it's containing midi file.</param>
-            internal DryWetMidiTrackAdapter(TrackChunk track, int trackNumber)
+            internal DryWetMidiTrackAdapter(TrackChunk track, MelodyTrackIndex trackNumber)
             {
                 /* define range for the midi instrument code values in-order
                  * to identify them in the raw midi data event values */

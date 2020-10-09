@@ -17,10 +17,10 @@ namespace CW.Soloist.CompositionService.MusicTheory
         #region Internal private members 
 
         /// <summary>Number of beats in the bar (nominator from the time signature property). </summary>
-        byte _beatsPerBar;
+        private byte _beatsPerBar;
 
         /// <summary>Duration of a single beat in the bar (denominator from the time signature property). </summary>
-        byte _beatsDuration;
+        private byte _beatsDuration;
 
         #endregion
 

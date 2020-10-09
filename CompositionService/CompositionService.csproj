@@ -50,8 +50,8 @@
     <Compile Include="Composers\Arpeggiator\ArpeggiatorComposer.cs" />
     <Compile Include="Composers\ArpeggioScaleMix\ArpeggioScaleMixComposer.cs" />
     <Compile Include="Composers\CompositionStrategy.cs" />
-    <Compile Include="Composers\CompositorExtensions.cs" />
-    <Compile Include="Composers\CompositorFactory.cs" />
+    <Compile Include="Composers\ComposerExtensions.cs" />
+    <Compile Include="Composers\ComposerFactory.cs" />
     <Compile Include="Composers\GeneticAlgorithm\Crossovers.cs" />
     <Compile Include="Composers\GeneticAlgorithm\FitnessEvaluators.cs" />
     <Compile Include="Composers\GeneticAlgorithm\GeneticAlgorithmComposer.cs" />

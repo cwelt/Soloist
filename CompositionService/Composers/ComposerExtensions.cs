@@ -7,9 +7,9 @@ using CW.Soloist.CompositionService.MusicTheory;
 namespace CW.Soloist.CompositionService.Composers
 {
     /// <summary>
-    /// Extension methods for compositors usage. 
+    /// Extension methods for composers usage. 
     /// </summary>
-    internal static class CompositorExtensions
+    internal static class ComposerExtensions
     {
         #region Shuffle<T>()
         /// <summary>

@@ -20,8 +20,8 @@ namespace CW.Soloist.CompositionService
     {
         #region Private Field Members
 
-        /// <summary> compositor responsible for composing the solo melody with the desired composition strategy.</summary>
-        private Composer _compositor;
+        /// <summary> composer responsible for composing the solo melody with the desired composition strategy.</summary>
+        private Composer _composer;
 
         /// <summary> Original melody from the midi file that coud be used as initialization seed for new melody. </summary>
         private IList<IBar> _melodySeed;
@@ -466,7 +466,7 @@ namespace CW.Soloist.CompositionService
             params object[] customParams)
         {
             // set compositor according to composition strategy
-            _compositor = CompositorFactory.CreateCompositor(strategy);
+            _composer = ComposerFactory.CreateComposer(strategy);
 
             // make a copy of the input midi file for the output file   
             MidiOutputFile = MidiFactory.CreateMidiFile(_midiInputFilePath);
@@ -506,7 +506,7 @@ namespace CW.Soloist.CompositionService
                 throw new ArgumentException(errorMessage);
 
             // compose a new melody 
-            IList<IBar>[] composedMelodies = _compositor.Compose(
+            IList<IBar>[] composedMelodies = _composer.Compose(
                 chordProgression: ChordProgression,
                 melodyInitializationSeed: _melodySeed,
                 overallNoteDurationFeel: overallNoteDurationFeel,

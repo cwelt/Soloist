@@ -6,7 +6,7 @@
     public interface IMidiTrack
     {
         /// <summary> Ordinal number of this track in the midi file. </summary>
-        int TrackNumber { get; }
+        MelodyTrackIndex TrackNumber { get; }
 
         /// <summary> Midi sequence track name. </summary>
         string TrackName { get;  }

@@ -10,16 +10,16 @@ namespace CW.Soloist.CompositionService.Composers
     /// Factory for creating composers (see <see cref="Composer"/>) 
     /// according to the requested composing algorithm strategy. 
     /// </summary>
-    internal static class CompositorFactory
+    internal static class ComposerFactory
     {
-        #region CreateCompositor()
+        #region CreateComposer()
         /// <summary>
-        /// Factory for creating a compositor instance based on the given 
+        /// Factory for creating a composer instance based on the given 
         /// composition strategy enumeration value.  
         /// </summary>
         /// <param name="strategy"> The requested composition algorithm strategy. </param>
         /// <returns></returns>
-        internal static Composer CreateCompositor(CompositionStrategy strategy = CompositionStrategy.GeneticAlgorithmStrategy)
+        internal static Composer CreateComposer(CompositionStrategy strategy = CompositionStrategy.GeneticAlgorithmStrategy)
         {
             switch (strategy)
             {
