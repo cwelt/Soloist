@@ -29,10 +29,12 @@ with the new generated melody.
 Just select a song, mark your preferences,  
 hit the submit button, and VWallaaaaa -  
 your new generated melody would be automatically downloaded as MIDI file. 
-![DesignDiagramSnippet](Design/ScreenShots/compose.png)
+![DesignDiagramSnippet](Design/ScreenShots/compose.png)  
+
 
 ## Initial Prototype Sample for Desktop Application :notes: 
-![PrototypeSample](Design/ScreenShots/prototype-screenshot.png)
+![PrototypeSample](Design/ScreenShots/prototype-screenshot.png)  
+
 
 ## Code Snippet :man_technologist:
 This appliation implements a genetic algorithm to carry out the composition process. 
@@ -68,7 +70,7 @@ This appliation implements a genetic algorithm to carry out the composition proc
                         terminateCondition = true;                   
             }
             //...
-                        // return the result 
+            // return the result 
             IEnumerable<IList<IBar>> composedMelodies = _candidates
                 .OrderByDescending(c => c.FitnessGrade)
                 .Select(c => c.Bars);
