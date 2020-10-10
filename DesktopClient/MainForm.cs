@@ -118,7 +118,7 @@ namespace DesktopClient
 
             var composition = new CompositionContext(_chordsFilePath, _midiFilePath, melodyTrackIndex: MelodyTrackIndex.TrackNumber1);
             var newMelody = composition.Compose(musicalInstrument: _musicalInstrument);
-
+            composition.MidiOutputFile.SaveFile();
             composition.MidiOutputFile.PlayAsync();
             var res = MessageBox.Show("Want to pause?", "Playing", MessageBoxButtons.YesNoCancel);
             if (res == DialogResult.Yes)
