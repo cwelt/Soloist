@@ -15,6 +15,7 @@ Soloist analyzes the chord-progression,
 generates a new melody over it using a [genetic algorithm](https://en.wikipedia.org/wiki/Genetic_algorithm),  
 and finally replaces the original melody track in the MIDI file  
 with the new generated melody.
+<hr/>
 
 ## Try It Yourself! :musical_note:
 [_**Click Here**_](http://soloist.gear.host/Composition/Compose) to try it out your self: 
@@ -22,13 +23,48 @@ Just select a song, mark your preferences,
 hit the submit button, and VWallaaaaa -  
 your new generated melody would be automatically downloaded as MIDI file. 
 ![DesignDiagramSnippet](Design/ScreenShots/compose.png)
-
-
-
-
+<hr/>
 
 This appliation implements a genetic algorithm to carry out the composition process. 
+ ```csharp
+ 
+         private protected override IEnumerable<IList<IBar>> GenerateMelody()
+        {
+            // get first generatiion 
+            PopulateFirstGeneration();
 
-## Initial Prototype Sample for Desktop Application :notes: 
-![Initial Prototype Sample](Design/prototype-screenshot.png)
+            int i = 0;
+            bool terminateCondition = false;
+
+            while (!terminateCondition)
+            {
+                // update generation counter 
+                _currentGeneration++;
+
+                // mix and combine pieces of different individuals 
+                Crossover();
+
+                // modify parts of individuals 
+                Mutate();
+
+                // rate each individual 
+                EvaluateFitness();
+
+                // natural selection 
+                SelectNextGeneration();
+
+                // Check if termination conditions are met 
+                if (++i == MaxNumberOfIterations || (_candidates.Select(c => c.FitnessGrade).Max() >= CuttingEvaluationGrade))
+                        terminateCondition = true;                   
+            }
+            //...
+                        // return the result 
+            IEnumerable<IList<IBar>> composedMelodies = _candidates
+                .OrderByDescending(c => c.FitnessGrade)
+                .Select(c => c.Bars);
+            return composedMelodies;
+```
+ 
+<hr/>
+
 
