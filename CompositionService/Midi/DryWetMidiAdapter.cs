@@ -211,7 +211,9 @@ namespace CW.Soloist.CompositionService.Midi
             }
 
             // set full path: if no path is specified then set desktop as the default path
-            path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\midioutput";
+            path = path ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\soloist-midi-output";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
 
             string fullPath;
 

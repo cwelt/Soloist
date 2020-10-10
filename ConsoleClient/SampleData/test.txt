@@ -1,0 +1,6 @@
+4/4	C-Major-2			F-Major-2
+4/4	G-Major7-2			C-Major-2
+4/4	C-Major-2			F-Major-2
+4/4	G-Major7-2			C-Major-2
+
+		

@@ -166,7 +166,7 @@ namespace CW.Soloist.WebApplication.Controllers
             string directoryPath = HomeController.GetFileServerPath() + "Outputs" + 
                 Path.DirectorySeparatorChar + song.Id + Path.DirectorySeparatorChar;
             Directory.CreateDirectory(directoryPath);
-            string filePath = _midiFile.SaveFile(directoryPath);
+            string filePath = _midiFile.SaveFile(outputPath: directoryPath);
 
             // return the file to the client client for downloading 
             string fileName = Path.GetFileName(filePath);
