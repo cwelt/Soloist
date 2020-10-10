@@ -50,7 +50,7 @@ namespace CW.Soloist.WebApplication.Controllers
         public ActionResult Contact() => View();
 
 
-        // Download the seminar 
+        // Download the seminar document 
         public FileResult Seminar()
         {
             //upload the seminar paper document into memory from the file server
@@ -61,7 +61,6 @@ namespace CW.Soloist.WebApplication.Controllers
             // return file content to client for downloading
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
-
 
         // Privacy policy statement
         public ActionResult PrivacyPolicy() => View();

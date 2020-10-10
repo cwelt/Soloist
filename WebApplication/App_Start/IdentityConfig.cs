@@ -33,7 +33,8 @@ namespace CW.Soloist.WebApplication
             string emailBody = "Hello," + Environment.NewLine + message.Body;
 
             // call the method that actual deals with sending the email 
-            await SendEmailAsyncWithSendGridService(emailRecipient, emailSubject, emailBody);
+            await SendEmailAsyncWithSMTP(emailRecipient, emailSubject, emailBody); 
+            // await SendEmailAsyncWithSendGridService(emailRecipient, emailSubject, emailBody); SendGrid service stopped working 10/10/20
         }
 
         #region SendEmailAsyncWithSMTP
