@@ -410,6 +410,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\images\openUlogo.jpg" />
     <Content Include="Content\Themes\bootstrap-cerulean.css" />
     <Content Include="Content\Themes\bootstrap-darkly.css" />
     <Content Include="Content\Themes\bootstrap-readable.css" />
@@ -484,6 +485,7 @@
   <ItemGroup>
     <Folder Include="App_Data\Logs\" />
     <Folder Include="App_Data\Songs\" />
+    <Folder Include="Content\media\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

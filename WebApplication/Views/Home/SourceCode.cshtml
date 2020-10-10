@@ -3,15 +3,27 @@
     ViewBag.Title = "Source Code";
 }
 
-<h2>Source Code</h2>
+<h2 style="color:gold">Source Code</h2>
+
 <p>
-    The entire source code for this application is available on my github page
+    <a href="https://github.com/cwelt/Soloist/archive/master.zip" target="_blank">Click here</a>
+    for a direct download of a zip file which contains the entire code base.
+</p>
+
+<p>
+    The entire source code for this application is also available online on my github page
     inside the
     @Html.ActionLink("soloist repository.", "Repository", "Home", null, htmlAttributes: new { target = "_blank" })
 </p>
 <p>
+    You could use the following command from a git client console to clone this repository: <br />
+    <i style="color:lightblue"> git clone https://github.com/cwelt/Soloist.git </i>
+</p>
+
+<p>
     Feel free to
-    @Html.ActionLink("contact me", "Contact", "Home", null, htmlAttributes: new { target = "_" })
+    @Html.ActionLink("contact me", "Contact", "Home", null, htmlAttributes: new { target = "_blank" })
     if you're interestd in contributing and extending the current project.
 </p>
+
 
