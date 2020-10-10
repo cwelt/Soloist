@@ -62,7 +62,7 @@
     string hidden = Model.IsAdminUser ? "" : "hidden";
     <div class="checkbox" @Html.AttributeEncode(hidden)>
         <label @Html.AttributeEncode(hidden) style="@labelColor">
-            @Html.CheckBoxFor(m => m.IsPublic) Make song public to all users??
+            @Html.CheckBoxFor(m => m.IsPublic) Make song public to all users?
             <span class="alert-danger">
                 @Html.ValidationMessageFor(m => m.IsPublic)
             </span>
