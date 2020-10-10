@@ -5,6 +5,10 @@
 ## Description 
 Soloist is a web application which generates solo-melodies improvisations over a given playback.  
 
+![DesignDiagramSnippet](Design/ScreenShots/designMix.png)
+
+
+
 ## Try It Yourself!
 [_**Click Here**_](http://soloist.gear.host/Composition/Compose) to try it out your self:  
 
