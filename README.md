@@ -7,7 +7,7 @@ Soloist is a web application which generates solo-melodies improvisations over a
 
 ### Design Documentation  :memo:
 * [User Manual.](Design/Documents/pdf/User-Manual.pdf) :man_teacher:
-* <a href="https://github.com/cwelt/Soloist/blob/master/Design/Documents/pdf/Genetic-Algorithms-For-Melody-Generation-Seminar-Paper.pdf" target="_blank">User Manual.</a>
+* <a href="https://github.com/cwelt/Soloist/blob/master/Design/Documents/pdf/Genetic-Algorithms-For-Melody-Generation-Seminar-Paper.pdf" target="_">User Manual 2.</a>
 * [Object-Orineted Analysis Document (OOA)](Design/Documents/pdf/OOA-Object-Oriented-Analysis.pdf)  :clipboard:
 * [Object-Orineted Design   Document (OOD)](Design/Documents/pdf/OOA-Object-Oriented-Design.pdf)    :triangular_ruler:
 * [Genetic Algorithms Composition Seminar Paper.](Design/Documents/pdf/Genetic-Algorithms-For-Melody-Generation-Seminar-Paper.pdf) :books: 
