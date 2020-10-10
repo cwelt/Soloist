@@ -3,9 +3,9 @@
  :musical_note: :notes: :musical_score:  :musical_keyboard: 
 
 ## Description 
-Soloist is a web application for generating a solo-melody improvisation over a given playback.
-
-## [Try It Yourself!](http://soloist.gear.host) 
+Soloist is a web application which generates solo-melodies improvisations over a given playback.
+**Home Page:** __*http://soloist.gear.host*__
+## [Try It Yourself!]
 [Click Here](http://soloist.gear.host/Composition/Compose) to try it out your self:  
 just select your preferences, hit the submit button, and walla -  
 your generated melody would be downloaded as MIDI file. 
