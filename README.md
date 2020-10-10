@@ -5,6 +5,13 @@
 ## Description  :musical_score:  
 Soloist is a web application which generates solo-melodies improvisations over a given playback.  
 
+### Design Documentation  :memo:
+* [User Manual.](Design/Documents/pdf/User-Manual.pdf) :man_teacher:
+* [Object-Orineted Analysis Document (OOA)](Design/Documents/pdf/OOA-Object-Oriented-Analysis.pdf)  :clipboard:
+* [Object-Orineted Design   Document (OOD)](Design/Documents/pdf/OOA-Object-Oriented-Design.pdf)    :triangular_ruler:
+* [Genetic Algorithms Composition Seminar Paper.](Design/Documents/pdf/Genetic-Algorithms-For-Melody-Generation-Seminar-Paper.pdf) :books: 
+
+
 ![DesignDiagramSnippet](Design/ScreenShots/designMix.png)
 <hr/>
 
@@ -23,12 +30,15 @@ Just select a song, mark your preferences,
 hit the submit button, and VWallaaaaa -  
 your new generated melody would be automatically downloaded as MIDI file. 
 ![DesignDiagramSnippet](Design/ScreenShots/compose.png)
-<hr/>
 
+## Initial Prototype Sample for Desktop Application :notes: 
+![PrototypeSample](Design/ScreenShots/prototype-screenshot.png)
+
+## Code Snippet 
 This appliation implements a genetic algorithm to carry out the composition process. 
  ```csharp
  
-         private protected override IEnumerable<IList<IBar>> GenerateMelody()
+        private protected override IEnumerable<IList<IBar>> GenerateMelody()
         {
             // get first generatiion 
             PopulateFirstGeneration();
@@ -63,8 +73,8 @@ This appliation implements a genetic algorithm to carry out the composition proc
                 .OrderByDescending(c => c.FitnessGrade)
                 .Select(c => c.Bars);
             return composedMelodies;
+       }
 ```
- 
-<hr/>
+
 
 
