@@ -29,7 +29,7 @@ with the new generated melody.
 Just select a song, mark your preferences,  
 hit the submit button, and VWallaaaaa -  
 your new generated melody would be automatically downloaded as MIDI file. 
-![DesignDiagramSnippet](Design/ScreenShots/compose.png)  
+![DesignDiagramSnippet](Design/ScreenShots/screenshots.gif)  
 
 
 ## Initial Prototype Sample for Desktop Application :notes: 
