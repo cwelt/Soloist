@@ -29,9 +29,7 @@ with the new generated melody.
 Just select a song, mark your preferences,  
 hit the submit button, and VWallaaaaa -  
 your new generated melody would be automatically downloaded as MIDI file. 
-  <a href="https://soloist.gear.host/Composition/Compose">
-         <img alt="DesignDiagramSnippet" src="Design/ScreenShots/screenshots.gif"
-              width=150" height="70"></a>
+  <a href="https://soloist.gear.host/Composition/Compose"> <img alt="DesignDiagramSnippet" src="Design/ScreenShots/screenshots.gif"></a>
 
 
 ## Initial Prototype Sample for Desktop Application :notes: 
