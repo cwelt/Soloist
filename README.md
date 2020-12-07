@@ -1,6 +1,6 @@
 
 # Soloist :guitar:  
-**Application Home Page :** __*http://soloist.gear.host*__  
+## **Application Home Page :** __*http://soloist.gear.host*__  
 
 ## Description  :musical_score:  
 Soloist is a web application which generates solo-melodies improvisations over a given playback.  
